@@ -1,0 +1,26 @@
+@import "../../styles/colors";
+
+.textfield {
+    font: inherit;
+
+    padding: 0.7rem 1.1rem;
+
+    border: 1px solid $idle;
+    border-radius: 5px;
+
+    transition:
+        border-color 150ms ease-in-out;
+
+    &::placeholder {
+        color: $idle;
+    }
+
+    &:active,
+    &:focus {
+        outline: none;
+    }
+
+    &:focus {
+        border-color: $primary;
+    }
+}

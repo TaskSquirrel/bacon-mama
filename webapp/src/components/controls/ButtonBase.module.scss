@@ -1,0 +1,27 @@
+@import "../../styles/colors";
+
+.base {
+    all: unset;
+    box-sizing: border-box;
+    cursor: pointer;
+
+    color: var(--white);
+    font: inherit;
+    text-align: center;
+
+    background-color: $primary;
+    padding: 0.7rem 1.1rem;
+
+    border: 1px solid $primary;
+    border-radius: 5px;
+
+    transition: background-color 150ms ease-in-out;
+
+    &:hover {
+        background-color: darken($primary, 10%);
+    }
+
+    &:focus {
+        outline: lightblue solid 1px;
+    }
+}

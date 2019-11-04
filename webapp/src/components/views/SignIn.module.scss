@@ -1,0 +1,10 @@
+.form {
+    display: grid;
+    grid-template-rows: auto;
+    row-gap: 1rem;
+}
+
+.actions {
+    display: flex;
+    justify-content: space-between;
+}

@@ -7,6 +7,12 @@ interface UserData {
     token: string | null;
 }
 
+/**
+ * Before loading any content on the page the `UserProvider` waits until
+ * the browser storage is loaded. A preflight request is sent to an API
+ * server every time the page loads to ensure the user token stored is
+ * legitimate.
+ */
 const UserProvider: React.FC = ({ children }) => {
     const {
         ready,
