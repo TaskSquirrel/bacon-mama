@@ -18,6 +18,7 @@ public class UserController extends BaseApiController {
     this.userRepository = userRepository;
   }
 
+  @CrossOrigin
   @PostMapping(
       path = "/login",
       consumes = "application/json",
@@ -32,7 +33,8 @@ public class UserController extends BaseApiController {
     List<User> list = userRepository.findByName(name);
 
     if (list.size() != 1) {
-      returnMap.put("error", true);
+      returnMap.put("status", "error");
+      returnMap.put("message", "Failed to login!");
       return returnMap;
     }
 
@@ -41,11 +43,13 @@ public class UserController extends BaseApiController {
       returnMap.put("status", "OK");
       return returnMap;
     } else {
-      returnMap.put("error", true);
+      returnMap.put("status", "error");
+      returnMap.put("message", "Failed to login (2)");
       return returnMap;
     }
   }
 
+  @CrossOrigin
   @PostMapping(
       path = "/addUser",
       consumes = "application/json",

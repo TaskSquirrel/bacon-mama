@@ -31,7 +31,7 @@ const SignIn: React.FC = () => {
             try {
                 const { data: {
                     status,
-                    error: errorMessage
+                    message: errorMessage
                 } } = await APIClient.request(
                     "/login",
                     {
@@ -43,7 +43,9 @@ const SignIn: React.FC = () => {
                     }
                 );
 
-                if (status !== "OK") {
+                if (status === "OK") {
+                    setError(null);
+                } else {
                     throw new Error(errorMessage);
                 }
             } catch (e) {

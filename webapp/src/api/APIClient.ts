@@ -23,7 +23,7 @@ class APIClient {
 
     constructor(https?: boolean) {
         const { API_URL } = process.env;
-        const USE_URL = API_URL || "localhost:8080";
+        const USE_URL = API_URL || "localhost:8080/api";
 
         const useProtocol = https
             ? "https"
