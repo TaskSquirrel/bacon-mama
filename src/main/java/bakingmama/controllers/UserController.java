@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-public class UserController extends BaseApiController {
+public class UserController implements BaseApiController {
   private UserRepository userRepository;
 
   public UserController(UserRepository userRepository) {
@@ -30,15 +30,14 @@ public class UserController extends BaseApiController {
     String name = (String) body.get("username");
     String password = (String) body.get("password");
 
-    List<User> list = userRepository.findByName(name);
+    User user = userRepository.findByUsername(name);
 
-    if (list.size() != 1) {
+    if (user == null) {
       returnMap.put("status", "error");
       returnMap.put("message", "Failed to login!");
       return returnMap;
     }
 
-    User user = list.get(0);
     if (user.getPassword().equals(password)) {
       returnMap.put("status", "OK");
       return returnMap;
@@ -61,12 +60,12 @@ public class UserController extends BaseApiController {
     String name = (String) body.get("username");
     String password = (String) body.get("password");
 
-    if (userRepository.existsByName(name)) {
+    if (userRepository.existsByUsername(name)) {
       returnMap.put("error", true);
       returnMap.put("message", "Username already taken.");
     } else {
       User newUser = new User();
-      newUser.setName(name);
+      newUser.setUsername(name);
       newUser.setPassword(password);
       userRepository.save(newUser);
       returnMap.put("success", true);

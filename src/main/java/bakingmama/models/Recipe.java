@@ -3,23 +3,18 @@ package bakingmama.models;
 import lombok.*;
 
 import javax.persistence.*;
-import java.util.Set;
 
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter
 @Entity
-public class User {
+public class Recipe {
   @Id
   @GeneratedValue(strategy = GenerationType.AUTO)
   private Long id;
-  private String username;
-  private String password;
+  private String recipeName;
 
-  @OneToMany(
-      cascade = CascadeType.PERSIST,
-      mappedBy = "user"
-  )
-  private Set<Recipe> recipes;
+  @ManyToOne(cascade = CascadeType.PERSIST)
+  private User user;
 }
