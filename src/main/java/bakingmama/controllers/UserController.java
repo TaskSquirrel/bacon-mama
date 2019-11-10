@@ -3,6 +3,7 @@ package bakingmama.controllers;
 import bakingmama.models.User;
 import bakingmama.models.UserRepository;
 
+import bakingmama.util.JsonUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Collection;
@@ -27,23 +28,21 @@ public class UserController implements BaseApiController {
   Map<String, Object> login(@RequestBody Map<String, Object> body) {
     Map<String, Object> returnMap = new HashMap<>();
 
-    String name = (String) body.get("username");
+    String username = (String) body.get("username");
     String password = (String) body.get("password");
 
-    User user = userRepository.findByUsername(name);
+    User user = userRepository.findByUsername(username);
 
     if (user == null) {
-      returnMap.put("status", "error");
-      returnMap.put("message", "Failed to login!");
+      JsonUtils.setStatus(returnMap, JsonUtils.ERROR, "Failed to login!");
       return returnMap;
     }
 
     if (user.getPassword().equals(password)) {
-      returnMap.put("status", "OK");
+      JsonUtils.setStatus(returnMap, JsonUtils.SUCCESS);
       return returnMap;
     } else {
-      returnMap.put("status", "error");
-      returnMap.put("message", "Failed to login (2)");
+      JsonUtils.setStatus(returnMap, JsonUtils.ERROR, "Failed to login!");
       return returnMap;
     }
   }
@@ -57,18 +56,17 @@ public class UserController implements BaseApiController {
   Map<String, Object> addUser(@RequestBody Map<String, Object> body) {
     Map<String, Object> returnMap = new HashMap<>();
 
-    String name = (String) body.get("username");
+    String username = (String) body.get("username");
     String password = (String) body.get("password");
 
-    if (userRepository.existsByUsername(name)) {
-      returnMap.put("error", true);
-      returnMap.put("message", "Username already taken.");
+    if (userRepository.existsByUsername(username)) {
+      JsonUtils.setStatus(returnMap, JsonUtils.ERROR, "Username already taken.");
     } else {
       User newUser = new User();
-      newUser.setUsername(name);
+      newUser.setUsername(username);
       newUser.setPassword(password);
       userRepository.save(newUser);
-      returnMap.put("success", true);
+      JsonUtils.setStatus(returnMap, JsonUtils.SUCCESS);
     }
     return returnMap;
   }
