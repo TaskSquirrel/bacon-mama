@@ -31,20 +31,19 @@ public class UserController implements BaseApiController {
     String username = (String) body.get("username");
     String password = (String) body.get("password");
 
+    // 1) Check if user can be found
+    // 2) If found, check if passwords are NOT equal
+    // 3) Otherwise, return success
     User user = userRepository.findByUsername(username);
-
     if (user == null) {
-      JsonUtils.setStatus(returnMap, JsonUtils.ERROR, "Failed to login!");
-      return returnMap;
+      JsonUtils.setStatus(returnMap, JsonUtils.ERROR, "Username couldn't be found!");
+    } else if (!user.getPassword().equals(password)) {
+      JsonUtils.setStatus(returnMap, JsonUtils.ERROR, "Incorrect password for user~");
+    } else {
+      JsonUtils.setStatus(returnMap, JsonUtils.SUCCESS);
     }
 
-    if (user.getPassword().equals(password)) {
-      JsonUtils.setStatus(returnMap, JsonUtils.SUCCESS);
-      return returnMap;
-    } else {
-      JsonUtils.setStatus(returnMap, JsonUtils.ERROR, "Failed to login!");
-      return returnMap;
-    }
+    return returnMap;
   }
 
   @CrossOrigin
@@ -66,6 +65,7 @@ public class UserController implements BaseApiController {
       newUser.setUsername(username);
       newUser.setPassword(password);
       userRepository.save(newUser);
+
       JsonUtils.setStatus(returnMap, JsonUtils.SUCCESS);
     }
     return returnMap;
