@@ -80,6 +80,9 @@ public class RecipeController implements BaseApiController {
     return returnMap;
   }
 
+  /**
+   * Gets all the steps of a recipe.
+   */
   @CrossOrigin
   @PostMapping(
       path = "/getSteps",
