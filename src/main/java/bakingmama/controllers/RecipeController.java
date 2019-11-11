@@ -1,9 +1,6 @@
 package bakingmama.controllers;
 
-import bakingmama.models.Recipe;
-import bakingmama.models.RecipeRepository;
-import bakingmama.models.User;
-import bakingmama.models.UserRepository;
+import bakingmama.models.*;
 
 import bakingmama.util.JsonUtils;
 import org.springframework.web.bind.annotation.*;
@@ -73,9 +70,42 @@ public class RecipeController implements BaseApiController {
     returnMap.put("recipes", recipes);
     for (Recipe recipe : user.getRecipes()) {
       HashMap<String, Object> recipeMap = new HashMap<>();
+      recipeMap.put("id", recipe.getId());
       recipeMap.put("recipeName", recipe.getRecipeName());
 
       recipes.add(recipeMap);
+    }
+
+    JsonUtils.setStatus(returnMap, JsonUtils.SUCCESS);
+    return returnMap;
+  }
+
+  @CrossOrigin
+  @PostMapping(
+      path = "/getSteps",
+      consumes = "application/json",
+      produces = "application/json"
+  )
+  Map<String, Object> getSteps(@RequestBody Map<String, Object> body) {
+    Map<String, Object> returnMap = new HashMap<>();
+
+    Long id = JsonUtils.parseId(body.get("id"));
+
+    // Check for recipe existence by ID.
+    Optional<Recipe> oRecipe = recipeRepository.findById(id);
+    if (oRecipe.isEmpty()) {
+      JsonUtils.setStatus(returnMap, JsonUtils.ERROR, "Recipe couldn't be found!");
+      return returnMap;
+    }
+
+    Recipe recipe = oRecipe.get();
+    List<Map<String, Object>> steps = new ArrayList<>();
+    returnMap.put("steps", steps);
+    for (Step step : recipe.getSteps()) {
+      HashMap<String, Object> stepMap = new HashMap<>();
+      stepMap.put("id", step.getId());
+
+      steps.add(stepMap);
     }
 
     JsonUtils.setStatus(returnMap, JsonUtils.SUCCESS);

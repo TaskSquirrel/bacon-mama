@@ -17,4 +17,15 @@ public class JsonUtils {
     json.put(STATUS, status);
     json.put(MESSAGE, message);
   }
+
+  // Parses ID into Long for searching
+  public static Long parseId(Object id) {
+    Long l;
+    try {
+      l = (Long) id;
+    } catch (ClassCastException cce) {
+      l = (Long) ((Integer) id).longValue();
+    }
+    return l;
+  }
 }

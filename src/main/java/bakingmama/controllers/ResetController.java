@@ -1,9 +1,6 @@
 package bakingmama.controllers;
 
-import bakingmama.models.Recipe;
-import bakingmama.models.RecipeRepository;
-import bakingmama.models.User;
-import bakingmama.models.UserRepository;
+import bakingmama.models.*;
 import bakingmama.util.JsonUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -22,6 +19,8 @@ public class ResetController implements BaseApiController {
   UserRepository userRepository;
   @Autowired
   RecipeRepository recipeRepository;
+  @Autowired
+  StepRepository stepRepository;
 
   @CrossOrigin
   @GetMapping(path = "/reset", produces = "application/json")
@@ -69,5 +68,12 @@ public class ResetController implements BaseApiController {
     newRecipe.setRecipeName("test-recipeName");
     newRecipe.setUser(user);
     recipeRepository.save(newRecipe);
+
+    Step newStep1 = new Step();
+    newStep1.setRecipe(newRecipe);
+    Step newStep2 = new Step();
+    newStep2.setRecipe(newRecipe);
+    stepRepository.save(newStep1);
+    stepRepository.save(newStep2);
   }
 }
