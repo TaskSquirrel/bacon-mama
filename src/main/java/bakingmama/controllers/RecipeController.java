@@ -119,26 +119,51 @@ public class RecipeController implements BaseApiController {
 
   @CrossOrigin
   @PostMapping(
+      path = "/getRecipe",
+      consumes = "application/json",
+      produces = "application/json"
+  )
+  Map<String, Object> getRecipe(@RequestBody Map<String, Object> body) {
+    Map<String, Object> returnMap = new HashMap<>();
+
+    Long id = JsonUtils.parseId(body.get("id"));
+
+    // Check for recipe existence by ID.
+    Recipe recipe = unpackOptional(id);
+    if (recipe == null) {
+      JsonUtils.setStatus(returnMap, JsonUtils.ERROR, "Recipe couldn't be found!");
+      return returnMap;
+    }
+
+    returnMap.put("recipe", recipe.toMap());
+
+    JsonUtils.setStatus(returnMap, JsonUtils.SUCCESS);
+    return returnMap;
+  }
+
+  @CrossOrigin
+  @PostMapping(
       path = "/getSteps",
       consumes = "application/json",
       produces = "application/json"
   )
   Map<String, Object> getSteps(@RequestBody Map<String, Object> body) {
     Map<String, Object> returnMap = new HashMap<>();
-
-    Long id = JsonUtils.parseId(body.get("id"));
-
-    // Check for recipe existence by ID.
-    Optional<Recipe> oRecipe = recipeRepository.findById(id);
-    if (oRecipe.isEmpty()) {
-      JsonUtils.setStatus(returnMap, JsonUtils.ERROR, "Recipe couldn't be found!");
-      return returnMap;
-    }
-
-    Recipe recipe = oRecipe.get();
-    returnMap.put("recipe", recipe.toMap());
-
-    JsonUtils.setStatus(returnMap, JsonUtils.SUCCESS);
+    JsonUtils.setStatus(returnMap, JsonUtils.ERROR, "Endpoint deprecated!");
+//
+//    Long id = JsonUtils.parseId(body.get("id"));
+//
+//    // Check for recipe existence by ID.
+//    Optional<Recipe> oRecipe = recipeRepository.findById(id);
+//    if (oRecipe.isEmpty()) {
+//      JsonUtils.setStatus(returnMap, JsonUtils.ERROR, "Recipe couldn't be found!");
+//      return returnMap;
+//    }
+//
+//    Recipe recipe = oRecipe.get();
+//    returnMap.put("recipe", recipe.toMap());
+//
+//    JsonUtils.setStatus(returnMap, JsonUtils.SUCCESS);
     return returnMap;
   }
 

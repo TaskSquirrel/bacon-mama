@@ -48,6 +48,12 @@ public class Recipe {
     for (Step step : steps) {
       stepsList.add(step.toMap());
     }
+
+    List<Map<String, Object>> itemsList = new ArrayList<>();
+    map.put("items", itemsList);
+    for (Item item : items) {
+      itemsList.add(item.toMap());
+    }
     return map;
   }
 }
