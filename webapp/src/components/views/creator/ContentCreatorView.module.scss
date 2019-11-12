@@ -1,0 +1,43 @@
+@import "../../../styles/colors";
+
+.top {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  padding: 1rem 0rem;
+  border-bottom: 1px solid $creation;
+}
+
+.container {
+  font: inherit;
+}
+
+.circle:hover {
+  cursor: pointer;
+}
+
+.right,
+.left,
+.center {
+  display: flex;
+  flex-direction: column;
+  width: 33.33%;
+}
+
+.left,
+.center {
+  border-right: 1px solid $creation;
+}
+
+.bottom {
+  display: flex;
+  flex-direction: row;
+  border-top: 1px solid $creation;
+}
+
+.content {
+  display: flex;
+  flex-direction: row;
+  height: 75vh;
+}

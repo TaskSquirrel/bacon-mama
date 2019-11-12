@@ -1,17 +1,22 @@
-import React, { useContext } from "react";
+import React, { useState } from "react";
+import NavBar from "../../controls/NavBar";
 
-import { ContentCreatorContext } from "./ContentCreatorProvider";
+import style from "./ContentCreatorView.module.scss";
 
-const ContentCreatorView: React.FC = () => {
-    const {
-        metadata
-    } = useContext(ContentCreatorContext);
-
+const CreateRecipe: React.FC = () => {
     return (
-        <div>
-            Hello
+        <div className={ style.container }>
+            <div className={ style.top }>
+                <NavBar className={ style.circle } userName={ "Ben" } />
+            </div>
+            <div className={ style.content }>
+                <div className={ style.left }>a</div>
+                <div className={ style.center }>b</div>
+                <div className={ style.right }>c</div>
+            </div>
+            <div className={ style.bottom }>d</div>
         </div>
     );
 };
 
-export default ContentCreatorView;
+export default CreateRecipe;
