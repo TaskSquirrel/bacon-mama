@@ -1,0 +1,16 @@
+.form {
+    display: grid;
+    grid-template-rows: auto;
+    row-gap: 1rem;
+}
+
+.actions {
+    display: flex;
+    justify-content: space-between;
+}
+
+.stack {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
