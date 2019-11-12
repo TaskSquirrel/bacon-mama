@@ -38,6 +38,8 @@ public class ResetController implements BaseApiController {
     try {
       utx.begin();
 
+      em.createQuery("DELETE FROM Step").executeUpdate();
+      em.createQuery("DELETE FROM Recipe").executeUpdate();
       em.createQuery("DELETE FROM User").executeUpdate();
 
       utx.commit();
