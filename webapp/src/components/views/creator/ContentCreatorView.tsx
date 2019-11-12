@@ -1,6 +1,10 @@
 import React, { useState } from "react";
 import NavBar from "../../controls/NavBar";
 
+import Steps from "./Steps";
+import ItemPicker from "./ItemPicker";
+import Editor from "./Editor";
+
 import style from "./ContentCreatorView.module.scss";
 
 const CreateRecipe: React.FC = () => {
@@ -10,9 +14,15 @@ const CreateRecipe: React.FC = () => {
                 <NavBar className={ style.circle } userName={ "Ben" } />
             </div>
             <div className={ style.content }>
-                <div className={ style.left }>a</div>
-                <div className={ style.center }>b</div>
-                <div className={ style.right }>c</div>
+                <div className={ style.left }>
+                    <Steps />
+                </div>
+                <div className={ style.center }>
+                    <ItemPicker />
+                </div>
+                <div className={ style.right }>
+                    <Editor />
+                </div>
             </div>
             <div className={ style.bottom }>d</div>
         </div>
