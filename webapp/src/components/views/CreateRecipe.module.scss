@@ -11,11 +11,6 @@
 
 .container {
     font:inherit;
-    font-weight: bold;
-}
-
-.circle {
-    padding: 0.7rem 1.1rem;
 }
 
 .circle:hover {
@@ -32,8 +27,6 @@
 .left,.center {
     border-right: 1px solid $creation;
 }
-
-
 
 .bottom {
     display: flex;

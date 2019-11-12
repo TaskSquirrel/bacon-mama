@@ -1,0 +1,9 @@
+@import "../../styles/colors";
+
+.navbar {
+    width:100%;
+    display:flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    padding: 2rem 0rem;
+}
