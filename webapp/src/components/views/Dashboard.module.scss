@@ -1,16 +1,9 @@
-.form {
-    display: grid;
-    grid-template-rows: auto;
-    row-gap: 1rem;
-}
+@import "../../styles/colors";
 
-.actions {
-    display: flex;
-    justify-content: space-between;
-}
-
-.stack {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
+.navbar {
+    width:100%;
+    display:flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    padding: 2rem 0rem;
 }

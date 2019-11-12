@@ -1,0 +1,35 @@
+@import "../../styles/colors";
+
+.navbar {
+    width: 100%;
+
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+
+    a {
+        color: black;
+        padding: 0.9rem 1rem;
+    }
+
+    a:hover {
+        margin-top:-5px;
+        cursor: pointer;
+        border-bottom: 5px solid lightblue;
+    }
+
+    padding: 1rem 0rem;
+        
+
+    color: var(--white);
+    font: inherit;
+}
+
+.button {
+    padding: 0;
+
+    a:hover {
+        cursor: pointer;
+        border-bottom: none;
+    }
+}
