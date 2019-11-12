@@ -2,6 +2,7 @@ package bakingmama.controllers;
 
 import bakingmama.models.*;
 import bakingmama.util.JsonUtils;
+import bakingmama.util.ModelUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,6 +26,8 @@ public class ResetController implements BaseApiController {
   ItemRepository itemRepository;
   @Autowired
   IngredientRepository ingredientRepository;
+  @Autowired
+  ModelUtils mu;
 
   @CrossOrigin
   @GetMapping(path = "/reset", produces = "application/json")
@@ -81,61 +84,18 @@ public class ResetController implements BaseApiController {
     recipeRepository.save(newRecipe);
 
     // Add some items for test recipe:
-    Item eggs = new Item();
-    eggs.setItemName("eggs");
-    eggs.setRecipe(newRecipe);
-    itemRepository.save(eggs);
-    //
-    Item flour = new Item();
-    flour.setItemName("flour");
-    flour.setRecipe(newRecipe);
-    itemRepository.save(flour);
-    //
-    Item dough = new Item();
-    dough.setItemName("dough");
-    dough.setRecipe(newRecipe);
-    itemRepository.save(dough);
-    //
-    Item bread = new Item();
-    bread.setItemName("bread");
-    bread.setRecipe(newRecipe);
-    itemRepository.save(bread);
+    Item eggs = mu.addItem("eggs", newRecipe);
+    Item flour = mu.addItem("flour", newRecipe);
+    Item dough = mu.addItem("dough", newRecipe);
+    Item bread = mu.addItem("bread", newRecipe);
 
     // Add steps
-    Step newStep1 = new Step();
-    newStep1.setRecipe(newRecipe);
-    newStep1.setResultItem(dough);
-    newStep1.setSequence(1);
-    newStep1.setVerb("mix");
-    //
-    Step newStep2 = new Step();
-    newStep2.setRecipe(newRecipe);
-    newStep2.setResultItem(bread);
-    newStep2.setSequence(2);
-    newStep2.setVerb("bake");
-    stepRepository.save(newStep1);
-    stepRepository.save(newStep2);
+    Step newStep1 = mu.addStepNaive(newRecipe, dough, "mix", 1);
+    Step newStep2 = mu.addStepNaive(newRecipe, bread, "bake", 2);
 
     // Add ingredients to the steps:
-    Ingredient ieggs = new Ingredient();
-    ieggs.setItem(eggs);
-    ieggs.setAmount(3d);
-    ieggs.setUnit("");
-    ieggs.setStep(newStep1);
-    ingredientRepository.save(ieggs);
-    //
-    Ingredient iflour = new Ingredient();
-    iflour.setItem(flour);
-    iflour.setAmount(500d);
-    iflour.setUnit("grams");
-    iflour.setStep(newStep1);
-    ingredientRepository.save(iflour);
-    //
-    Ingredient idough = new Ingredient();
-    idough.setItem(dough);
-    idough.setAmount(10d);
-    idough.setUnit("ounces");
-    idough.setStep(newStep2);
-    ingredientRepository.save(idough);
+    mu.addIngredient(eggs, newStep1, 3d, "");
+    mu.addIngredient(flour, newStep1, 500d, "grams");
+    mu.addIngredient(dough, newStep2, 10d, "ounces");
   }
 }

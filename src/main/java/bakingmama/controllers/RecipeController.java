@@ -3,22 +3,17 @@ package bakingmama.controllers;
 import bakingmama.models.*;
 
 import bakingmama.util.JsonUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
 
 @RestController
 public class RecipeController implements BaseApiController {
+  @Autowired
   private UserRepository userRepository;
+  @Autowired
   private RecipeRepository recipeRepository;
-
-  public RecipeController(
-      UserRepository userRepository,
-      RecipeRepository recipeRepository
-  ) {
-    this.userRepository = userRepository;
-    this.recipeRepository = recipeRepository;
-  }
 
   @CrossOrigin
   @PostMapping(
