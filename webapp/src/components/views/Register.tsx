@@ -141,14 +141,10 @@ const Register: React.FC = () => {
                         className={ styles.actions }
                     >
                         <Link
-                            to="/forgot"
-                        >
-                            Forgot password?
-                        </Link>
-                        <Link
                             to="/sign-in"
                         >
-                            Log In
+                            
+                            Sign-in Instead
                         </Link>
                     </div>
                 </div>

@@ -71,7 +71,12 @@ const SignIn: React.FC = () => {
                         You've successfully signed-in!
                     </span>
                     <ButtonBase>
-                        Start baking!
+                        <Link
+                            to="/dashboard"
+                        >
+                            
+                            Start Baking!
+                        </Link>
                     </ButtonBase>
                 </div>
             </CenteredPane>
