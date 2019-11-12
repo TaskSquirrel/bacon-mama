@@ -21,6 +21,15 @@ public class RecipeController implements BaseApiController {
   @Autowired
   ModelUtils mu;
 
+  Recipe unpackOptional(Long id) {
+    Optional<Recipe> optional = recipeRepository.findById(id);
+    if (optional.isEmpty()) {
+      return null;
+    } else {
+      return optional.get();
+    }
+  }
+
   @CrossOrigin
   @PostMapping(
       path = "/addRecipe",
@@ -95,13 +104,12 @@ public class RecipeController implements BaseApiController {
     Integer sequence = (Integer) stepMap.get("sequence");
 
     // Check for recipe existence by ID.
-    Optional<Recipe> oRecipe = recipeRepository.findById(id);
-    if (oRecipe.isEmpty()) {
+    Recipe recipe = unpackOptional(id);
+    if (recipe == null) {
       JsonUtils.setStatus(returnMap, JsonUtils.ERROR, "Recipe couldn't be found!");
       return returnMap;
     }
 
-    Recipe recipe = oRecipe.get();
     Step newStep = mu.addStepNaive(recipe, item, verb, sequence);
     returnMap.put("id", newStep.getId());
 
@@ -129,6 +137,63 @@ public class RecipeController implements BaseApiController {
 
     Recipe recipe = oRecipe.get();
     returnMap.put("recipe", recipe.toMap());
+
+    JsonUtils.setStatus(returnMap, JsonUtils.SUCCESS);
+    return returnMap;
+  }
+
+  @CrossOrigin
+  @PostMapping(
+      path = "/addItem",
+      consumes = "application/json",
+      produces = "application/json"
+  )
+  Map<String, Object> addItem(@RequestBody Map<String, Object> body) {
+    Map<String, Object> returnMap = new HashMap<>();
+
+    // Grab Recipe ID
+    Long id = JsonUtils.parseId(body.get("id"));
+    // Grab Item Stuff
+    Map<String, Object> stepMap = JsonUtils.castMap(body.get("item"));
+    String itemName = (String) stepMap.get("name");
+
+    // Check for recipe existence by ID.
+    Recipe recipe = unpackOptional(id);
+    if (recipe == null) {
+      JsonUtils.setStatus(returnMap, JsonUtils.ERROR, "Recipe couldn't be found!");
+      return returnMap;
+    }
+
+    Item newItem = mu.addItem(itemName, recipe);
+    returnMap.put("id", newItem.getId());
+
+    JsonUtils.setStatus(returnMap, JsonUtils.SUCCESS);
+    return returnMap;
+  }
+
+  @CrossOrigin
+  @PostMapping(
+      path = "/getItems",
+      consumes = "application/json",
+      produces = "application/json"
+  )
+  Map<String, Object> getItems(@RequestBody Map<String, Object> body) {
+    Map<String, Object> returnMap = new HashMap<>();
+
+    Long id = JsonUtils.parseId(body.get("id"));
+
+    // Check for recipe existence by ID.
+    Recipe recipe = unpackOptional(id);
+    if (recipe == null) {
+      JsonUtils.setStatus(returnMap, JsonUtils.ERROR, "Recipe couldn't be found!");
+      return returnMap;
+    }
+
+    List<Map<String, Object>> items = new ArrayList<>();
+    returnMap.put("items", items);
+    for (Item item : recipe.getItems()) {
+      items.add(item.toMap());
+    }
 
     JsonUtils.setStatus(returnMap, JsonUtils.SUCCESS);
     return returnMap;
