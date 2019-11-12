@@ -1,8 +1,9 @@
 import React, { useState } from "react";
+import NavBar from "../controls/NavBar";
 
 const Dashboard: React.FC  = () => {
 
-    return <div></div>
+    return <NavBar userName={"Ben"} />;
 }
 
 export default Dashboard;

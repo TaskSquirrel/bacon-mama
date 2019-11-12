@@ -1,0 +1,52 @@
+.top {
+    width:100%;
+    display:flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    padding: 1rem 0rem;
+    border-bottom: 1px solid gray;
+    font:inherit;
+}
+
+.circle {
+    padding: 0.7rem 1.1rem;
+}
+
+.circle:hover {
+    cursor: pointer;
+}
+
+.step {
+    margin: auto;
+}
+
+.left {
+    display: flex;
+    flex-direction: column;
+    width:20%;
+    border-right: 1px solid gray;
+}
+.center {
+    display: flex;
+    flex-direction: column;
+    width:60%;
+    border-right: 1px solid gray;
+    background-color: #DCDCDC;
+}
+.right {
+    display: flex;
+    flex-direction: column;
+    width:20%;
+}
+
+.bottom {
+    display: flex;
+    flex-direction: row;
+    border-top:1px solid gray;
+}
+
+.content {
+    display: flex;
+    flex-direction: row;
+    height: 75vh;
+}
