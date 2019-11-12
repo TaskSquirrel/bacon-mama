@@ -15,14 +15,14 @@ const UserCircle: React.FC<UserCircleProps> = ({
     const [menu, setMenu] = useState<boolean>(false); 
 
     return (
-        <div onClick={() => setMenu(!menu)}>
+        <div>
             <div
                 className={ classNames(
                     styles.circle,
                     className
                 ) }
 
-                
+                onClick={() => setMenu(!menu)}
             >
                 {userName ? userName.substring(0,1) : '?'}
             </div>

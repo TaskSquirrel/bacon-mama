@@ -13,7 +13,7 @@ export interface NavBarProps extends React.HTMLProps<HTMLDivElement> {
 const NavBar: React.FC<NavBarProps> = ({
     children,
     className,
-    userName
+    userName,
 }) => {
     return (
         <div
