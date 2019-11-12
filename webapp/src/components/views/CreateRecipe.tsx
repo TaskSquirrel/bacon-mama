@@ -1,14 +1,13 @@
 import React, { useState } from "react";
-import UserCircle from "../controls/UserCircle";
 import style from "./CreateRecipe.module.scss";
+import NavBar from "../controls/NavBar";
 
 const CreateRecipe: React.FC  = () => {
 
     return (
         <div className={style.container}>
             <div className={style.top}>
-                <div className={style.step}>Step "X" out of 10</div>
-                <UserCircle className={style.circle} userName={"Ben"} />
+                <NavBar className={style.circle} userName={"Ben"} />
             </div>
             <div className={style.content}>
                 <div className={style.left}>
