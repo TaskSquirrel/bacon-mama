@@ -3,6 +3,8 @@ package bakingmama.models;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
 @NoArgsConstructor
@@ -15,13 +17,19 @@ public class Ingredient {
   @GeneratedValue(strategy = GenerationType.AUTO)
   private Long id;
 
-  @OneToMany(
-      cascade = CascadeType.PERSIST,
-      mappedBy = "food"
-  )
-  private String ingredientName;
-
-  private double amount;
-
+  private Double amount;
   private String unit;
+
+  @OneToOne(cascade = CascadeType.PERSIST)
+  private Item item;
+
+  @ManyToOne(cascade = CascadeType.PERSIST)
+  private Step step;
+
+  public Map<String, Object> toMap() {
+    Map<String, Object> map = item.toMap();
+    map.put("amount", amount);
+    map.put("unit", unit);
+    return map;
+  }
 }

@@ -3,6 +3,8 @@ package bakingmama.models;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
 //
@@ -21,4 +23,14 @@ public class Item {
 
   // Image related stuff (future support)
   private String imageUrl;
+
+  @ManyToOne(cascade = CascadeType.PERSIST)
+  private Recipe recipe;
+
+  public Map<String, Object> toMap() {
+    Map<String, Object> map = new HashMap<>();
+    map.put("id", id);
+    map.put("itemName", itemName);
+    return map;
+  }
 }

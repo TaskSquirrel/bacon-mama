@@ -69,11 +69,7 @@ public class RecipeController implements BaseApiController {
     List<Map<String, Object>> recipes = new ArrayList<>();
     returnMap.put("recipes", recipes);
     for (Recipe recipe : user.getRecipes()) {
-      HashMap<String, Object> recipeMap = new HashMap<>();
-      recipeMap.put("id", recipe.getId());
-      recipeMap.put("recipeName", recipe.getRecipeName());
-
-      recipes.add(recipeMap);
+      recipes.add(recipe.toMapOverview());
     }
 
     JsonUtils.setStatus(returnMap, JsonUtils.SUCCESS);
@@ -102,14 +98,7 @@ public class RecipeController implements BaseApiController {
     }
 
     Recipe recipe = oRecipe.get();
-    List<Map<String, Object>> steps = new ArrayList<>();
-    returnMap.put("steps", steps);
-    for (Step step : recipe.getSteps()) {
-      HashMap<String, Object> stepMap = new HashMap<>();
-      stepMap.put("id", step.getId());
-
-      steps.add(stepMap);
-    }
+    returnMap.put("recipe", recipe.toMap());
 
     JsonUtils.setStatus(returnMap, JsonUtils.SUCCESS);
     return returnMap;
