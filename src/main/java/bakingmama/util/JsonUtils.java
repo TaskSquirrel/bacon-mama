@@ -28,4 +28,8 @@ public class JsonUtils {
     }
     return l;
   }
+
+  public static Map<String, Object> castMap(Object map) {
+    return (Map<String, Object>) map;
+  }
 }

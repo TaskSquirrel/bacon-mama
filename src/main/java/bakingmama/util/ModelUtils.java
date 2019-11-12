@@ -22,6 +22,15 @@ public class ModelUtils {
   @Autowired
   IngredientRepository ingredientRepository;
 
+  public Recipe addRecipe(User user, String name, String description) {
+    Recipe recipe = new Recipe();
+    recipe.setUser(user);
+    recipe.setRecipeName(name);
+    recipe.setDescription(description);
+    recipeRepository.save(recipe);
+    return recipe;
+  }
+
   public Item addItem(String itemName, Recipe recipe) {
     Item item = new Item();
     item.setItemName(itemName);

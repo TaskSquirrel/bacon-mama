@@ -21,12 +21,6 @@ public class ResetController implements BaseApiController {
   @Autowired
   RecipeRepository recipeRepository;
   @Autowired
-  StepRepository stepRepository;
-  @Autowired
-  ItemRepository itemRepository;
-  @Autowired
-  IngredientRepository ingredientRepository;
-  @Autowired
   ModelUtils mu;
 
   @CrossOrigin
@@ -77,11 +71,7 @@ public class ResetController implements BaseApiController {
     User user = userRepository.findByUsername("test-username");
 
     // Make recipe and attach it to the user:
-    Recipe newRecipe = new Recipe();
-    newRecipe.setRecipeName("test-recipeName");
-    newRecipe.setDescription("test-recipeDescription");
-    newRecipe.setUser(user);
-    recipeRepository.save(newRecipe);
+    Recipe newRecipe = mu.addRecipe(user, "test-recipeName", "test-recipeDescription");
 
     // Add some items for test recipe:
     Item eggs = mu.addItem("eggs", newRecipe);

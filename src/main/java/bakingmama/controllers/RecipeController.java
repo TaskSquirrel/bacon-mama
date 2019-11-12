@@ -2,7 +2,9 @@ package bakingmama.controllers;
 
 import bakingmama.models.*;
 
+import bakingmama.util.JavaUtils;
 import bakingmama.util.JsonUtils;
+import bakingmama.util.ModelUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,6 +16,10 @@ public class RecipeController implements BaseApiController {
   private UserRepository userRepository;
   @Autowired
   private RecipeRepository recipeRepository;
+  @Autowired
+  private ItemRepository itemRepository;
+  @Autowired
+  ModelUtils mu;
 
   @CrossOrigin
   @PostMapping(
@@ -26,6 +32,7 @@ public class RecipeController implements BaseApiController {
 
     String username = (String) body.get("username");
     String recipeName = (String) body.get("recipeName");
+    String description = (String) body.get("description");
 
     // If user doesn't exist, don't allow recipe creation.
     User user = userRepository.findByUsername(username);
@@ -34,10 +41,8 @@ public class RecipeController implements BaseApiController {
       return returnMap;
     }
 
-    Recipe newRecipe = new Recipe();
-    newRecipe.setRecipeName(recipeName);
-    newRecipe.setUser(user);
-    recipeRepository.save(newRecipe);
+    Recipe newRecipe = mu.addRecipe(user, recipeName, description);
+    returnMap.put("id", newRecipe.getId());
 
     JsonUtils.setStatus(returnMap, JsonUtils.SUCCESS);
     return returnMap;
@@ -71,9 +76,39 @@ public class RecipeController implements BaseApiController {
     return returnMap;
   }
 
-  /**
-   * Gets all the steps of a recipe.
-   */
+  @CrossOrigin
+  @PostMapping(
+      path = "/addStep",
+      consumes = "application/json",
+      produces = "application/json"
+  )
+  Map<String, Object> addStep(@RequestBody Map<String, Object> body) {
+    Map<String, Object> returnMap = new HashMap<>();
+
+    // Grab Recipe ID
+    Long id = JsonUtils.parseId(body.get("id"));
+    // Grab Step Stuff
+    Map<String, Object> stepMap = JsonUtils.castMap(body.get("step"));
+    Map<String, Object> itemMap = JsonUtils.castMap(stepMap.get("item"));
+    Item item = JavaUtils.findAndUnpack(itemRepository, itemMap.get("id"));
+    String verb = (String) stepMap.get("verb");
+    Integer sequence = (Integer) stepMap.get("sequence");
+
+    // Check for recipe existence by ID.
+    Optional<Recipe> oRecipe = recipeRepository.findById(id);
+    if (oRecipe.isEmpty()) {
+      JsonUtils.setStatus(returnMap, JsonUtils.ERROR, "Recipe couldn't be found!");
+      return returnMap;
+    }
+
+    Recipe recipe = oRecipe.get();
+    Step newStep = mu.addStepNaive(recipe, item, verb, sequence);
+    returnMap.put("id", newStep.getId());
+
+    JsonUtils.setStatus(returnMap, JsonUtils.SUCCESS);
+    return returnMap;
+  }
+
   @CrossOrigin
   @PostMapping(
       path = "/getSteps",
