@@ -3,24 +3,25 @@ import classNames from "classnames";
 
 import styles from "./TextField.module.scss";
 
-export interface TextFieldProps extends React.DetailedHTMLProps<
-    React.InputHTMLAttributes<HTMLInputElement>, HTMLInputElement
+interface TextAreaProps extends React.DetailedHTMLProps<
+    React.TextareaHTMLAttributes<HTMLTextAreaElement>, HTMLTextAreaElement
 > {
 }
 
-const TextField: React.FC<TextFieldProps> = ({
+const TextArea: React.FC<TextAreaProps> = ({
     className,
     ...props
 }) => {
     return (
-        <input
+        <textarea
             { ...props }
             className={ classNames(
                 styles.textfield,
+                styles.textarea,
                 className
             ) }
         />
     );
 };
 
-export default TextField;
+export default TextArea;

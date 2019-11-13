@@ -8,3 +8,5 @@ export interface Response {
 export interface APIRecipeResponse extends Response {
     recipe: Recipe;
 }
+
+export type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>;

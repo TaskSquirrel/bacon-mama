@@ -5,6 +5,7 @@ export interface Metadata {
 }
 
 export interface Item {
+    id: string;
     name: string;
     description?: string;
     image?: string;
@@ -15,6 +16,7 @@ export interface Item {
  * an output item from a verb.
  */
 export interface Step {
+    id: string;
     name: string;
     description?: string;
     dependencies: string[];
