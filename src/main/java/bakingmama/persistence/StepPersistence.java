@@ -139,6 +139,30 @@ public class StepPersistence {
     return recipe;
   }
 
+  public Recipe deleteStep(Long stepId, Long recipeId)
+  {
+    Recipe recipe = recipeRepository.getOne(recipeId);
+    Step deleteStep = stepRepository.getOne(stepId);
+    Integer pivot = deleteStep.getSequence();
+    
+    stepRepository.deleteById(stepId);
+
+    Set<Step> recipeSteps = recipe.getSteps();
+    for(Step step : recipeSteps)
+    {
+      if(step.getSequence() >= pivot)
+      {
+        step.setSequence(step.getSequence() - 1);
+        stepRepository.save(step);
+      }
+    }
+
+    //adding step to list and setting it to the recipe
+    recipe.setSteps(recipeSteps);
+
+    return recipe;
+  }
+
   public Set<Ingredient> addIngredients(Step step, List<Map<String, Object>> ingredientsList) {
     Set<Ingredient> ingredientsSet = new HashSet<>();
     for (Map<String, Object> ingredientMap : ingredientsList) {
