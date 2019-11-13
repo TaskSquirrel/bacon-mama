@@ -29,6 +29,17 @@
     background-color: rgb(233, 233, 233);
 }
 
+.rightTop {
+    border-bottom: 1px solid $creation;
+}
+
+.rightBottom,
+.rightTop {
+    display: flex;
+    flex-direction: row;
+    height:37.5vh;
+}
+
 .bottom {
     display: flex;
     flex-direction: row;

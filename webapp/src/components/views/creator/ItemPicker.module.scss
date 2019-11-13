@@ -1,0 +1,27 @@
+.add {
+    display: flex;
+    margin:auto;
+    margin-top: 2rem;
+}
+
+.item {
+    display: flex;
+    margin:auto;
+}
+
+.items {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    margin-bottom:7rem;
+}
+
+.container {
+    display:flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+.save {
+
+}
