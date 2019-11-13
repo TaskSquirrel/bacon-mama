@@ -24,8 +24,10 @@ All steps related endpoints should look like:
 
 ```
 {
-    "step": {},
-    "recipe": {}
+    "step": { the whole step object },
+    "recipe": {
+        "id": 123
+    }
 }
 ```
 
