@@ -8,6 +8,7 @@ import Editor from "./Editor";
 import style from "./ContentCreatorView.module.scss";
 
 const CreateRecipe: React.FC = () => {
+    
     return (
         <div className={ style.container }>
             <div className={ style.top }>
@@ -17,11 +18,13 @@ const CreateRecipe: React.FC = () => {
                 <div className={ style.left }>
                     <Steps />
                 </div>
-                <div className={ style.center }>
-                    <ItemPicker />
-                </div>
-                <div className={ style.right }>
-                    <Editor />
+                <div className={style.editor}>
+                    <div className={ style.rightTop }>
+                        <ItemPicker />
+                    </div>
+                    <div className={ style.rightBottom }>
+                        <Editor />
+                    </div>
                 </div>
             </div>
             <div className={ style.bottom }>d</div>

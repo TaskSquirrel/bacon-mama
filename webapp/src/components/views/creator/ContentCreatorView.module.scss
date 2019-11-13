@@ -17,17 +17,29 @@
   cursor: pointer;
 }
 
-.right,
-.left,
-.center {
+
+.left {
   display: flex;
   flex-direction: column;
   width: 33.33%;
+  border-right: 1px solid $creation;
 }
 
-.left,
-.center {
-  border-right: 1px solid $creation;
+.rightTop {
+  border-bottom: 1px solid $creation;
+}
+
+.rightBottom, .rightTop {
+  display: flex; 
+  flex-direction: row;
+  height:37.5vh;
+}
+
+.editor {
+  display: flex;
+  flex-direction: column;
+  height: 75vh;
+  width:66.66%;
 }
 
 .bottom {
