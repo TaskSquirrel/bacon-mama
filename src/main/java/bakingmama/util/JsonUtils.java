@@ -21,6 +21,10 @@ public class JsonUtils {
 
   // Parses ID into Long for searching
   public static Long parseId(Object id) {
+    if (id instanceof String) {
+      id = Integer.parseInt((String) id);
+    }
+
     Long l;
     try {
       l = (Long) id;

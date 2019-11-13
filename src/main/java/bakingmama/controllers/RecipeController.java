@@ -55,13 +55,13 @@ public class RecipeController implements BaseApiController {
     String description = (String) body.get("description");
 
     // If user doesn't exist, don't allow recipe creation.
-    User user = userRepository.findByUsername(username);
-    if (user == null) {
-      JsonUtils.setStatus(returnMap, JsonUtils.ERROR, "User couldn't be found!");
-      return returnMap;
-    }
+//    User user = userRepository.findByUsername(username);
+//    if (user == null) {
+//      JsonUtils.setStatus(returnMap, JsonUtils.ERROR, "User couldn't be found!");
+//      return returnMap;
+//    }
 
-    Recipe newRecipe = mu.addRecipe(user, recipeName, description);
+    Recipe newRecipe = mu.addRecipe(null, recipeName, description);
     returnMap.put("id", newRecipe.getId());
 
     JsonUtils.setStatus(returnMap, JsonUtils.SUCCESS);
@@ -162,48 +162,13 @@ public class RecipeController implements BaseApiController {
     Map<String, Object> returnMap = new HashMap<>();
 
     // Grab Recipe ID
-    Long id = JsonUtils.parseId(body.get("id"));
+    Recipe recipe = rp.findRecipe(JsonUtils.castMap(body.get("recipe")));
     // Grab Item Stuff
     Map<String, Object> stepMap = JsonUtils.castMap(body.get("item"));
     String itemName = (String) stepMap.get("name");
 
-    // Check for recipe existence by ID.
-    Recipe recipe = unpackOptional(id);
-    if (recipe == null) {
-      JsonUtils.setStatus(returnMap, JsonUtils.ERROR, "Recipe couldn't be found!");
-      return returnMap;
-    }
-
     Item newItem = mu.addItem(itemName, recipe);
-    returnMap.put("id", newItem.getId());
-
-    JsonUtils.setStatus(returnMap, JsonUtils.SUCCESS);
-    return returnMap;
-  }
-
-  @CrossOrigin
-  @PostMapping(
-      path = "/getItems",
-      consumes = "application/json",
-      produces = "application/json"
-  )
-  Map<String, Object> getItems(@RequestBody Map<String, Object> body) {
-    Map<String, Object> returnMap = new HashMap<>();
-
-    Long id = JsonUtils.parseId(body.get("id"));
-
-    // Check for recipe existence by ID.
-    Recipe recipe = unpackOptional(id);
-    if (recipe == null) {
-      JsonUtils.setStatus(returnMap, JsonUtils.ERROR, "Recipe couldn't be found!");
-      return returnMap;
-    }
-
-    List<Map<String, Object>> items = new ArrayList<>();
-    returnMap.put("items", items);
-    for (Item item : recipe.getItems()) {
-      items.add(item.toMap());
-    }
+    returnMap.put("recipe", recipe.toMap());
 
     JsonUtils.setStatus(returnMap, JsonUtils.SUCCESS);
     return returnMap;
@@ -228,9 +193,8 @@ public class RecipeController implements BaseApiController {
   Map<String, Object> addSteps(@RequestBody Map<String, Object> json) {
     Map<String, Object> returnJson = new HashMap<>();
 
-    Long recipeID = JsonUtils.parseId(json.get("id"));
+    Long recipeID = JsonUtils.parseId(JsonUtils.castMap(json.get("recipe")).get("id"));
     Map<String, Object> newStep = JsonUtils.castMap(json.get("step"));
-
 
     Recipe recipe = sp.addStep(newStep, recipeRepository.getOne(recipeID), recipeID);
 
@@ -245,12 +209,11 @@ public class RecipeController implements BaseApiController {
   Map<String, Object> deleteStep(@RequestBody Map<String, Object> json) {
     Map<String, Object> returnJson = new HashMap<>();
 
-    Long recipeId = JsonUtils.parseId(json.get("id"));
+    Long recipeID = JsonUtils.parseId(JsonUtils.castMap(json.get("recipe")).get("id"));
     Map<String, Object> newStep = JsonUtils.castMap(json.get("step"));
     Long stepId = JsonUtils.parseId(newStep.get("id"));
 
-
-    Recipe recipe = sp.deleteStep(stepId, recipeId);
+    Recipe recipe = sp.deleteStep(stepId, recipeID);
 
     returnJson.put("recipe", recipe.toMap());
 

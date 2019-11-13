@@ -101,7 +101,7 @@ public class StepPersistence {
 
   public Recipe addStep(Map<String, Object> newStep, Recipe recipe, Long id){
     // Find Result Item
-    //Map<String, Object> resultItemJson = JsonUtils.castMap(newStep.get("result"));
+    // Map<String, Object> resultItemJson = JsonUtils.castMap(newStep.get("result"));
     
     // Get other Step properties
     Map<String, Object> resultItem = JsonUtils.castMap(newStep.get("result"));
@@ -109,14 +109,19 @@ public class StepPersistence {
     String verb = (String) newStep.get("verb");
     Integer sequence = (Integer) newStep.get("sequence");
 
-    //Creating New Step
+    // Creating New Step
+//    Step addedStep = new Step();
+//    addedStep.setRecipe(recipe);
+//    addedStep.edit(verb, sequence, resultItem2);
+//    stepRepository.save(addedStep);
+//    Long skipId = addedStep.getId();
+//    Set<Ingredient> ingredientsSet = this.addIngredients(addedStep, JsonUtils.castListMap(newStep.get("ingredients")));
+//    addedStep.setIngredients(ingredientsSet);
     Step addedStep = new Step();
-    addedStep.setRecipe(recipe);
-    addedStep.edit(verb, sequence, resultItem2);
+    addedStep.edit("", sequence, null);
     stepRepository.save(addedStep);
+    addedStep.setIngredients(new HashSet<Ingredient>());
     Long skipId = addedStep.getId();
-    Set<Ingredient> ingredientsSet = this.addIngredients(addedStep, JsonUtils.castListMap(newStep.get("ingredients")));
-    addedStep.setIngredients(ingredientsSet);
 
     //Incrementing steps in front of this step
     Set<Step> recipeSteps = recipe.getSteps();
