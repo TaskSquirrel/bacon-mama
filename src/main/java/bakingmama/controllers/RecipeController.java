@@ -55,13 +55,13 @@ public class RecipeController implements BaseApiController {
     String description = (String) body.get("description");
 
     // If user doesn't exist, don't allow recipe creation.
-    User user = userRepository.findByUsername(username);
-    if (user == null) {
-      JsonUtils.setStatus(returnMap, JsonUtils.ERROR, "User couldn't be found!");
-      return returnMap;
-    }
+//    User user = userRepository.findByUsername(username);
+//    if (user == null) {
+//      JsonUtils.setStatus(returnMap, JsonUtils.ERROR, "User couldn't be found!");
+//      return returnMap;
+//    }
 
-    Recipe newRecipe = mu.addRecipe(user, recipeName, description);
+    Recipe newRecipe = mu.addRecipe(null, recipeName, description);
     returnMap.put("id", newRecipe.getId());
 
     JsonUtils.setStatus(returnMap, JsonUtils.SUCCESS);
@@ -230,7 +230,6 @@ public class RecipeController implements BaseApiController {
 
     Long recipeID = JsonUtils.parseId(json.get("id"));
     Map<String, Object> newStep = JsonUtils.castMap(json.get("step"));
-
 
     Recipe recipe = sp.addStep(newStep, recipeRepository.getOne(recipeID), recipeID);
 
