@@ -1,16 +1,28 @@
-import React from "react";
+import React, { useContext } from "react";
 import NavBar from "../../controls/NavBar";
 
 import Steps from "./Steps";
 import ItemPicker from "./ItemPicker";
 
 import style from "./ContentCreatorView.module.scss";
+import ButtonBase from "../../controls/ButtonBase";
+import { ContentCreatorContext } from "./ContentCreatorProvider";
 
 const CreateRecipe: React.FC = () => {
+    const {
+        actions: {
+            openAddItem
+        }
+    } = useContext(ContentCreatorContext);
+
     return (
         <div className={ style.container }>
             <div className={ style.top }>
-                <NavBar className={ style.circle } userName={ "Ben" } />
+                <ButtonBase
+                    onClick={ openAddItem }
+                >
+                    Add item
+                </ButtonBase>
             </div>
             <div className={ style.content }>
                 <div className={ style.left }>

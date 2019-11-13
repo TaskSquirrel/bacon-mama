@@ -14,6 +14,8 @@ import EditStep from "./EditStep";
 import useAPI from "../../hooks/useAPI";
 
 import { noop } from "../../../utils";
+import { toRecipe } from "../../../utils/recipe";
+import AddItem from "./AddItem";
 
 export interface ContentCreatorContextShape {
     available: boolean;
@@ -22,6 +24,7 @@ export interface ContentCreatorContextShape {
     items: Item[];
     steps: Step[];
     actions: {
+        openAddItem: () => void,
         openEditStep: () => void,
         addItem: (name: string, description?: string) => Promise<void> | void,
         addStep: (step: Omit<Step, "id">) => Promise<void> | void,
@@ -37,18 +40,9 @@ export const DEFAULT_CONTENT_CREATOR_CONTEXT: ContentCreatorContextShape = {
         name: "Untitled recipe"
     },
     items: [],
-    steps: [
-        {
-            id: "",
-            name: "Bake cake",
-            description: "LOL",
-            dependencies: [],
-            creates: "",
-            verb: "LOL",
-            sequence: 0
-        }
-    ],
+    steps: [],
     actions: {
+        openAddItem: noop,
         openEditStep: noop,
         addItem: noop,
         addStep: noop,
@@ -62,6 +56,7 @@ export const ContentCreatorContext = React.createContext<
 
 const ContentCreatorProvider: React.FC = ({ children }) => {
     const [error, setError] = useState<string | null>(null);
+    const [addItemModal, setAddItemModal] = useState<boolean>(false);
     const [editStep, setEditStep] = useState<boolean>(false);
     const [recipe, setRecipe] = useState<Recipe | null>(null);
     const { id: recipeID, sequence: seq } = useParams();
@@ -76,6 +71,10 @@ const ContentCreatorProvider: React.FC = ({ children }) => {
         };
     };
 
+    const openAddItem = createModalStateSetter(
+        true, setAddItemModal
+    );
+
     const openEditStep = createModalStateSetter(
         true, setEditStep
     );
@@ -86,17 +85,17 @@ const ContentCreatorProvider: React.FC = ({ children }) => {
     ) => {
         try {
             const {
-                data: {
-                    status, message, recipe: recipeResponse
-                }
+                data
             } = await request<APIRecipeResponse>(
                 endpoint,
                 payload
             );
 
+            const { status, message } = data;
+
             if (status === "OK") {
                 setError(null);
-                setRecipe(recipeResponse);
+                setRecipe(toRecipe(data));
             } else {
                 throw new Error(message);
             }
@@ -114,9 +113,7 @@ const ContentCreatorProvider: React.FC = ({ children }) => {
             {
                 method: "POST",
                 data: {
-                    recipe: {
-                        id: recipeID,
-                    },
+                    id: Number(recipeID),
                     item: {
                         name,
                         description
@@ -132,13 +129,11 @@ const ContentCreatorProvider: React.FC = ({ children }) => {
         } = step;
 
         doRequest(
-            "/addStep",
+            "/addSteps",
             {
                 method: "POST",
                 data: {
-                    recipe: {
-                        id: recipeID
-                    },
+                    id: Number(recipeID),
                     step: {
                         name, verb, sequence, dependencies, creates,
                         description
@@ -171,10 +166,20 @@ const ContentCreatorProvider: React.FC = ({ children }) => {
         doRequest(
             "/getRecipe",
             {
+                method: "POST",
                 data: {
-                    id: recipeID
+                    id: Number(recipeID)
                 }
             }
+        );
+    };
+
+    const renderAddItemModal = () => {
+        return (
+            <AddItem
+                show={ addItemModal }
+                close={ createModalStateSetter(false, setAddItemModal) }
+            />
         );
     };
 
@@ -219,6 +224,7 @@ const ContentCreatorProvider: React.FC = ({ children }) => {
             items: recipe.items,
             steps: recipe.steps,
             actions: {
+                openAddItem,
                 openEditStep,
                 addItem, addStep, replaceStep
             }
@@ -234,6 +240,7 @@ const ContentCreatorProvider: React.FC = ({ children }) => {
                 value={ value }
             >
                 { children }
+                { renderAddItemModal() }
                 { renderEditStep() }
             </ContentCreatorContext.Provider>
         </>

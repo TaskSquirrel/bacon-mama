@@ -1,85 +1,70 @@
-import React, { useContext, useState } from "react";
+import React, { useState, useContext } from "react";
 
-import { Step } from "../../../models/recipe";
-
+import Modal from "../../shared/Modal";
 import TextField from "../../controls/TextField";
 import TextArea from "../../controls/TextArea";
 import ButtonBase from "../../controls/ButtonBase";
-import Modal from "../../shared/Modal";
-import { ContentCreatorContext } from "./ContentCreatorProvider";
 
 import { createChangeEventStateSetter } from "../../../utils";
 
 import styles from "./EditStep.module.scss";
+import { ContentCreatorContext } from "./ContentCreatorProvider";
 
-interface EditStepProps {
+interface AddItemProps {
     show: boolean;
-    step: Step;
     close: () => void;
 }
 
-const EditStep: React.FC<EditStepProps> = ({
-    show, step, close
+const AddItem: React.FC<AddItemProps> = ({
+    show,
+    close
 }) => {
     const {
         actions: {
-            replaceStep
+            addItem
         }
     } = useContext(ContentCreatorContext);
-    const [name, setName] = useState<string>(step.name);
-    const [description, setDescription] = useState<string>(
-        step.description || ""
-    );
+    const [name, setName] = useState<string>("");
+    const [description, setDescription] = useState<string>("");
 
-    const save = () => {
-        if (name === "" || description === "") {
-            return null;
-        }
-
-        replaceStep({
-            ...step,
-            name,
-            description
-        });
-    };
-
-    const onFormSubmit = (
-        event: React.FormEvent<HTMLFormElement>
-    ) => {
+    const submit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
 
-        save();
+        if (name === "" || description === "") {
+            return;
+        }
+
+        addItem(name, description);
+        close();
     };
 
     return (
         <Modal
             show={ show }
-            title="Edit step details"
+            title="Add item"
         >
             <form
-                onSubmit={ onFormSubmit }
+                onSubmit={ submit }
             >
                 <div
                     className={ styles.form }
                 >
                     <TextField
-                        required
-                        placeholder="Step name"
+                        placeholder="Item name"
                         value={ name }
                         onChange={ createChangeEventStateSetter(
                             setName
                         ) }
                     />
                     <TextArea
-                        required
-                        placeholder="Step description"
+                        placeholder="Item description"
                         value={ description }
                         onChange={ createChangeEventStateSetter(
                             setDescription
                         ) }
                     />
                     <div
-                        className={ styles.actions }
+                        className={ styles.action }
                     >
                         <ButtonBase
                             inverted
@@ -100,4 +85,4 @@ const EditStep: React.FC<EditStepProps> = ({
     );
 };
 
-export default EditStep;
+export default AddItem;

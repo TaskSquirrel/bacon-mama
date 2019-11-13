@@ -1,7 +1,8 @@
-import React, { useContext, useState } from "react";
+import React, { useContext } from "react";
 import { useHistory, useParams } from "react-router-dom";
 import classNames from "classnames";
 
+import ButtonBase from "../../controls/ButtonBase";
 import { ContentCreatorContext } from "./ContentCreatorProvider";
 
 import styles from "./Steps.module.scss";
@@ -11,11 +12,22 @@ const Steps: React.FC = () => {
         steps,
         metadata: { id: recipeID },
         actions: {
+            addStep,
             openEditStep
         }
     } = useContext(ContentCreatorContext);
     const { push } = useHistory();
     const { sequence: sequenceParam } = useParams();
+
+    const add = () => {
+        addStep({
+            name: "Untitled step",
+            dependencies: [],
+            creates: null,
+            verb: "mix",
+            sequence: steps.length
+        });
+    };
 
     const renderActions = () => {
         return (
@@ -88,7 +100,11 @@ const Steps: React.FC = () => {
             <div
                 className={ styles.empty }
             >
-                No steps!
+                <ButtonBase
+                    onClick={ add }
+                >
+                    Add step
+                </ButtonBase>
             </div>
         );
     }
@@ -98,6 +114,13 @@ const Steps: React.FC = () => {
             className={ styles.list }
         >
             { renderSteps() }
+            <li>
+                <ButtonBase
+                    onClick={ add }
+                >
+                    Add step
+                </ButtonBase>
+            </li>
         </ol>
     );
 };
