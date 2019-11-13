@@ -168,7 +168,7 @@ public class RecipeController implements BaseApiController {
     String itemName = (String) stepMap.get("name");
 
     Item newItem = mu.addItem(itemName, recipe);
-    returnMap.put("id", newItem.getId());
+    returnMap.put("recipe", recipe.toMap());
 
     JsonUtils.setStatus(returnMap, JsonUtils.SUCCESS);
     return returnMap;
@@ -193,7 +193,7 @@ public class RecipeController implements BaseApiController {
   Map<String, Object> addSteps(@RequestBody Map<String, Object> json) {
     Map<String, Object> returnJson = new HashMap<>();
 
-    Long recipeID = JsonUtils.parseId(json.get("id"));
+    Long recipeID = JsonUtils.parseId(JsonUtils.castMap(json.get("recipe")).get("id"));
     Map<String, Object> newStep = JsonUtils.castMap(json.get("step"));
 
     Recipe recipe = sp.addStep(newStep, recipeRepository.getOne(recipeID), recipeID);
@@ -209,12 +209,11 @@ public class RecipeController implements BaseApiController {
   Map<String, Object> deleteStep(@RequestBody Map<String, Object> json) {
     Map<String, Object> returnJson = new HashMap<>();
 
-    Long recipeId = JsonUtils.parseId(json.get("id"));
+    Long recipeID = JsonUtils.parseId(JsonUtils.castMap(json.get("recipe")).get("id"));
     Map<String, Object> newStep = JsonUtils.castMap(json.get("step"));
     Long stepId = JsonUtils.parseId(newStep.get("id"));
 
-
-    Recipe recipe = sp.deleteStep(stepId, recipeId);
+    Recipe recipe = sp.deleteStep(stepId, recipeID);
 
     returnJson.put("recipe", recipe.toMap());
 
