@@ -33,6 +33,6 @@ public class StepJson extends BaseJson {
 
   @Override
   public Step toModel() {
-    return sp.findStep(this.json);
+    return sp.findStep(this.json.get("id"));
   }
 }
