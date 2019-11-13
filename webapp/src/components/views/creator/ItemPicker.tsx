@@ -18,7 +18,7 @@ const ItemPicker: React.FC = () => {
 
     if(!step) {
         return null;
-    }    
+    }
 
     return (
         <div className={ styles.container }>
@@ -26,11 +26,10 @@ const ItemPicker: React.FC = () => {
                 {
                     step.dependencies.map((d,i) => {
                         return (
-                            <div 
+                            <div
                                 className={styles.item}
                                 key={i}
                             >
-                                {d.item.itemName}
                             </div>
                         )
                     })

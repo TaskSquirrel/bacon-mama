@@ -11,11 +11,13 @@ export interface Item {
     image?: string;
 }
 
-export interface Dependencies {
+export interface Dependency {
     id: string;
     unit: string;
-    amount: number;
-    item: Item;
+    amount: string | number;
+    item: {
+        id: string
+    };
 }
 
 /**
@@ -26,7 +28,7 @@ export interface Step {
     id: string;
     name: string;
     description?: string;
-    dependencies: Dependencies[];
+    dependencies: Dependency[];
     result: string | null;
     verb: string;
     sequence: number;
