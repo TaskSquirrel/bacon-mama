@@ -138,8 +138,6 @@ public class RecipeController implements BaseApiController {
       produces = "application/json"
   )
   Map<String, Object> addItem(@RequestBody Map<String, Object> body) {
-    Map<String, Object> returnMap = new HashMap<>();
-
     // Grab Recipe ID
     Recipe recipe = rp.findRecipe(JsonUtils.castMap(body.get("recipe")));
     // Grab Item Stuff
@@ -147,10 +145,7 @@ public class RecipeController implements BaseApiController {
     String itemName = (String) stepMap.get("name");
 
     Item newItem = mu.addItem(itemName, recipe);
-    returnMap.put("recipe", recipe.toMap());
-
-    JsonUtils.setStatus(returnMap, JsonUtils.SUCCESS);
-    return returnMap;
+    return this.recipeSuccess(body);
   }
 
   @CrossOrigin
@@ -161,35 +156,20 @@ public class RecipeController implements BaseApiController {
   }
 
   @CrossOrigin
-  @PostMapping(path = "/addSteps", consumes = "application/json", produces = "application/json")
-  Map<String, Object> addSteps(@RequestBody Map<String, Object> json) {
-    Map<String, Object> returnJson = new HashMap<>();
-
-    Long recipeID = JsonUtils.parseId(JsonUtils.castMap(json.get("recipe")).get("id"));
-    Map<String, Object> newStep = JsonUtils.castMap(json.get("step"));
-
-    Recipe recipe = sp.addStep(newStep, recipeRepository.getOne(recipeID), recipeID);
-    recipeRepository.save(recipe);
-    returnJson.put("recipe", recipe.toMap());
-
-    JsonUtils.setStatus(returnJson, JsonUtils.SUCCESS);
-    return returnJson;
+  @PostMapping(path = "/addStep", consumes = "application/json", produces = "application/json")
+  Map<String, Object> addStep(@RequestBody Map<String, Object> json) {
+    sp.addStep(json);
+    return this.recipeSuccess(json);
   }
 
   @CrossOrigin
   @PostMapping(path = "/deleteStep", consumes = "application/json", produces = "application/json")
   Map<String, Object> deleteStep(@RequestBody Map<String, Object> json) {
-    Map<String, Object> returnJson = new HashMap<>();
-
     Long recipeID = JsonUtils.parseId(JsonUtils.castMap(json.get("recipe")).get("id"));
     Map<String, Object> newStep = JsonUtils.castMap(json.get("step"));
     Long stepId = JsonUtils.parseId(newStep.get("id"));
 
     Recipe recipe = sp.deleteStep(stepId, recipeID);
-
-    returnJson.put("recipe", recipe.toMap());
-
-    JsonUtils.setStatus(returnJson, JsonUtils.SUCCESS);
-    return returnJson;
+    return this.recipeSuccess(json);
   }
 }
