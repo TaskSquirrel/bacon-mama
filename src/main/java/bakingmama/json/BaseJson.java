@@ -1,5 +1,6 @@
 package bakingmama.json;
 
+import java.util.List;
 import java.util.Map;
 
 public class BaseJson {
@@ -13,8 +14,10 @@ public class BaseJson {
   Map<String, Object> castJson(Object json) {
     return (Map<String, Object>) json;
   }
+  List<Map<String, Object>> castListJson(Object listMap) { return (List<Map<String, Object>>) listMap; }
 
   public Object toModel() {
     throw new UnsupportedOperationException("toModel() is not implemented for class!");
   }
+
 }

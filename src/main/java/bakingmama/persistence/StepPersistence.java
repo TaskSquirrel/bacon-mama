@@ -82,29 +82,18 @@ public class StepPersistence {
   /**
    * Given a JSON with all the step properties, edit and save the step.
    */
-  public boolean editStep(Map<String, Object> stepJson) {
-//    Map<String, Object> stepJson = JsonUtils.castMap(json.get("step"));
-    Step step = this.findStep(stepJson.get("id"));
+  public boolean editStep(Map<String, Object> json) {
+    StepJson stepJson = new StepJson(json, true);
+    beanFactory.autowireBean(stepJson);
 
-    // Find Result Item
-    Map<String, Object> resultItemJson = JsonUtils.castMap(stepJson.get("result"));
-    Item resultItem;
-    if (resultItemJson == null || !resultItemJson.containsKey("id")) {
-      resultItem = null;
-    } else {
-      resultItem = this.findItem(resultItemJson.get("id"));
-    }
-    // Get other Step properties
-    String verb = (String) stepJson.get("verb");
-    Integer sequence = (Integer) stepJson.get("sequence");
-
-    // Edit step, Delete ingredients, and save into DB
-    step.edit(verb, sequence, resultItem);
+    // Edit step and save into DB
+    Step step = stepJson.toModel();
+    step.edit(stepJson.getVerb(), stepJson.getSequence(), stepJson.getResult());
     stepRepository.save(step);
-    this.clearIngredients(step);
 
-    // Add ingredients associated with new Step
-    Set<Ingredient> ingredientsSet = this.addIngredients(step, JsonUtils.castListMap(stepJson.get("dependencies")));
+    // Delete old ingredients and add new ingredients with new Step
+    this.clearIngredients(step);
+    Set<Ingredient> ingredientsSet = this.addIngredients(step, stepJson.getIngredients());
     step.setIngredients(ingredientsSet);
     stepRepository.save(step);
 
@@ -117,10 +106,12 @@ public class StepPersistence {
     beanFactory.autowireBean(stepJson);
     beanFactory.autowireBean(recipeJson);
 
+    // Get associated Recipe and create new Step
     Recipe recipe = recipeJson.toModel();
     Step addedStep = mu.addStep(recipe, null, "", stepJson.getSequence(), new HashSet<>());
     Long addedStepId = addedStep.getId();
 
+    // Adjust order where necessary
     Set<Step> recipeSteps = recipe.getSteps();
     for (Step step : recipeSteps) {
       if (step.getSequence() >= addedStep.getSequence() && !(step.getId().equals(addedStepId))) {
@@ -129,6 +120,7 @@ public class StepPersistence {
       }
     }
 
+    // Save new step
     recipeSteps.add(addedStep);
     recipe.setSteps(recipeSteps);
     recipeRepository.save(recipe);

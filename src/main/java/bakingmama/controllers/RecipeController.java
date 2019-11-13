@@ -151,7 +151,7 @@ public class RecipeController implements BaseApiController {
   @CrossOrigin
   @PostMapping(path = "/editStep", consumes = "application/json", produces = "application/json")
   Map<String, Object> editStep(@RequestBody Map<String, Object> json) {
-    sp.editStep(JsonUtils.castMap(json.get("step")));
+    sp.editStep(json);
     return this.recipeSuccess(json);
   }
 
