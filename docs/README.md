@@ -16,3 +16,17 @@ All endpoints start with `/api`, and is `POST` unless specified otherwise.
 | `/getSteps` | JSON with `id`, which is the recipe ID | The entire recipe with steps | DEPRECATED
 | `/getItems` | JSON with `id`, which is still the recipe ID | The food items in the recipe in an array under `items` property |
 
+### Steps-related Endpoints
+
+All steps related endpoints should look like:
+
+* Input:
+
+```
+{
+    "step": {},
+    "recipe": {}
+}
+```
+
+This way all input looks like the same throughout and is consistent.
