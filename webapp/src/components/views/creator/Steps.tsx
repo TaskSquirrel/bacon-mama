@@ -23,7 +23,7 @@ const Steps: React.FC = () => {
         addStep({
             name: "Untitled step",
             dependencies: [],
-            creates: null,
+            result: null,
             verb: "mix",
             sequence: steps.length
         });
@@ -46,7 +46,7 @@ const Steps: React.FC = () => {
     const renderSteps = () => steps
         .sort(({ sequence: a }, { sequence: b }) => a - b)
         .map(({
-            name, description, sequence
+            name, description, sequence, verb
         }) => {
             const isActive = `${sequence}` === sequenceParam;
             const onStepClick = () => {
@@ -81,12 +81,12 @@ const Steps: React.FC = () => {
                             <div
                                 className={ styles.title }
                             >
-                                { name }
+                                { verb || "Untitled" }
                             </div>
                             <div
                                 className={ styles.description }
                             >
-                                { description }
+                                { description || "No description" }
                             </div>
                         </div>
                     </div>

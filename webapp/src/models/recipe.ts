@@ -20,7 +20,7 @@ export interface Step {
     name: string;
     description?: string;
     dependencies: string[];
-    creates: string | null;
+    result: string | null;
     verb: string;
     sequence: number;
 }

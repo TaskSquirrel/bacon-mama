@@ -113,7 +113,9 @@ const ContentCreatorProvider: React.FC = ({ children }) => {
             {
                 method: "POST",
                 data: {
-                    id: Number(recipeID),
+                    recipe: {
+                        id: recipeID
+                    },
                     item: {
                         name,
                         description
@@ -125,7 +127,7 @@ const ContentCreatorProvider: React.FC = ({ children }) => {
 
     const addStep = (step: Omit<Step, "id">) => {
         const {
-            name, verb, sequence, dependencies, creates, description
+            name, verb, sequence, dependencies, result, description
         } = step;
 
         doRequest(
@@ -133,9 +135,17 @@ const ContentCreatorProvider: React.FC = ({ children }) => {
             {
                 method: "POST",
                 data: {
-                    id: Number(recipeID),
+                    recipe: {
+                        id: recipeID
+                    },
                     step: {
-                        name, verb, sequence, dependencies, creates,
+                        itemName: name,
+                        verb,
+                        sequence,
+                        dependencies,
+                        result: result ? {
+                            id: result
+                        } : null,
                         description
                     }
                 }
@@ -144,7 +154,7 @@ const ContentCreatorProvider: React.FC = ({ children }) => {
     };
 
     const replaceStep = ({
-        id, name, verb, sequence, dependencies, creates, description
+        id, name, verb, sequence, dependencies, result: creates, description
     }: Step) => {
         doRequest(
             "/editStep",
@@ -168,7 +178,7 @@ const ContentCreatorProvider: React.FC = ({ children }) => {
             {
                 method: "POST",
                 data: {
-                    id: Number(recipeID)
+                    id: recipeID
                 }
             }
         );
@@ -184,11 +194,11 @@ const ContentCreatorProvider: React.FC = ({ children }) => {
     };
 
     const renderEditStep = () => {
-        if (!seq) {
+        if (!seq || !recipe) {
             return null;
         }
 
-        const step = DEFAULT_CONTENT_CREATOR_CONTEXT.steps
+        const step = recipe.steps
             .find(({ sequence }) => `${sequence}` === seq);
 
         if (!step) {
