@@ -20,11 +20,74 @@ All endpoints start with `/api`, and is `POST` unless specified otherwise.
 
 All steps related endpoints should look like:
 
-* Input:
+* Input: Add Step
 
 ```
 {
-    "step": { the whole step object },
+    "step": { 
+        "result": {
+                    "itemName": "bread",
+                    "id": 123
+                },
+                "sequence": 1,
+                "verb": "mix",
+                "ingredients": [
+                    {
+                        "item": {
+                            "itemName": "dough",
+                            "id": 271
+                        },
+                        "amount": 1000.90,
+                        "unit": "ounces",
+                        "id": 277
+                    }
+                ]
+		}
+    },
+    "recipe": {
+        "id": 123
+    }
+}
+```
+
+* Input: Edit Step
+
+```
+{
+    "step": { 
+        "result": {
+                    "itemName": "bread",
+                    "id": 123
+                },
+                "sequence": 1,
+                "verb": "mix",
+                "ingredients": [
+                    {
+                        "item": {
+                            "itemName": "dough",
+                            "id": 271
+                        },
+                        "amount": 1000.90,
+                        "unit": "ounces",
+                        "id": 277
+                    }
+                ]
+                "id" : 123;
+		}
+    },
+    "recipe": {
+        "id": 123
+    }
+}
+```
+
+* Input: Delete Step
+
+```
+{
+    "step": { 
+          "id" : 123;
+    },
     "recipe": {
         "id": 123
     }
