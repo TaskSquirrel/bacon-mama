@@ -41,7 +41,7 @@ public class Step {
     map.put("id", id);
     map.put("verb", verb);
     map.put("sequence", sequence);
-    map.put("result", resultItem.toMap());
+    map.put("result", resultItem == null ? new HashMap<>() : resultItem.toMap());
 
     List<Map<String, Object>> ingredientsList = new ArrayList<>();
     map.put("ingredients", ingredientsList);

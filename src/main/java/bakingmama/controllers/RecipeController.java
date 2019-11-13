@@ -197,7 +197,7 @@ public class RecipeController implements BaseApiController {
     Map<String, Object> newStep = JsonUtils.castMap(json.get("step"));
 
     Recipe recipe = sp.addStep(newStep, recipeRepository.getOne(recipeID), recipeID);
-
+    recipeRepository.save(recipe);
     returnJson.put("recipe", recipe.toMap());
 
     JsonUtils.setStatus(returnJson, JsonUtils.SUCCESS);
