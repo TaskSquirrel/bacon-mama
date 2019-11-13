@@ -1,5 +1,7 @@
 ## Teambuilding Project
 
+See `docs` folder for endpoint documentation.
+
 #### Directory Structure
 Backend:
 - `src/main/java/controllers` has all the endpoints for both the api and front-end 
