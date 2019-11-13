@@ -1,33 +1,40 @@
 import React, { useContext, useState } from "react";
 
 import { ContentCreatorContext } from "./ContentCreatorProvider";
-import { Item } from "../../../models/recipe";
 
 import styles from "./ItemPicker.module.scss";
+import { useParams } from "react-router";
 
 const ItemPicker: React.FC = () => {
     const {
-        items,
+        steps,
     } = useContext(ContentCreatorContext);
 
-    const [pickedItem, setItem] = useState<Item[]>([]);
+    const { sequence } = useParams();
+
+    const step = steps.find((step) => {
+        return `${step.sequence}` === sequence;
+    })
+
+    if(!step) {
+        return null;
+    }    
 
     return (
         <div className={ styles.container }>
-            <button className={ styles.add }>
-                +
-            </button>
             <div className={ styles.items }>
-                { pickedItem.map((item) => {
-                    return (
-                        <div
-                            key={ item.name }
-                            className={ styles.item }
-                        >
-                            { item.name }
-                        </div>
-                    );
-                }) }
+                {
+                    step.dependencies.map((d,i) => {
+                        return (
+                            <div 
+                                className={styles.item}
+                                key={i}
+                            >
+                                {d.item.itemName}
+                            </div>
+                        )
+                    })
+                }
             </div>
         </div>
     );

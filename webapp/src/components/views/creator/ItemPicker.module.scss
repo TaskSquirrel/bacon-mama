@@ -7,12 +7,15 @@
 .item {
     display: flex;
     margin:auto;
+    width: 20%;
+    height: 10%;
 }
 
 .items {
     display: flex;
     flex-direction: row;
     justify-content: space-around;
+    flex-wrap:wrap;
     margin-bottom:7rem;
 }
 
