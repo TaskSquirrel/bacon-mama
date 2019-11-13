@@ -1,22 +1,27 @@
 import React, { useContext, useState } from "react";
+import { useParams, Link } from "react-router-dom";
 
 import { ContentCreatorContext } from "./ContentCreatorProvider";
 
 import styles from "./ItemPicker.module.scss";
-import { useParams } from "react-router";
+import ButtonBase from "../../controls/ButtonBase";
 
 const ItemPicker: React.FC = () => {
     const {
+        metadata: {
+            id: recipeID
+        },
         steps,
+        items
     } = useContext(ContentCreatorContext);
 
     const { sequence } = useParams();
 
-    const step = steps.find((step) => {
-        return `${step.sequence}` === sequence;
-    })
+    const step = steps.find(({ sequence: seq }) => {
+        return `${seq}` === sequence;
+    });
 
-    if(!step) {
+    if (!step) {
         return null;
     }
 
@@ -24,16 +29,44 @@ const ItemPicker: React.FC = () => {
         <div className={ styles.container }>
             <div className={ styles.items }>
                 {
-                    step.dependencies.map((d,i) => {
+                    step.dependencies.map((
+                        {
+                            item: {
+                                id,
+                                itemName: name
+                            },
+                            amount,
+                            unit
+                        },
+                        index
+                    ) => {
                         return (
                             <div
-                                className={styles.item}
-                                key={i}
+                                key={ `${id}-${index}` }
+                                className={ styles.item }
                             >
+                                <h3
+                                    className={ styles.title }
+                                >
+                                    { name }
+                                </h3>
+                                <div>
+                                    { amount } { unit }
+                                </div>
                             </div>
-                        )
+                        );
                     })
                 }
+                <Link
+                    to={ `/items/${recipeID}/${sequence}` }
+                >
+                    <ButtonBase>
+                        Add
+                    </ButtonBase>
+                </Link>
+            </div>
+            <div>
+                Test
             </div>
         </div>
     );

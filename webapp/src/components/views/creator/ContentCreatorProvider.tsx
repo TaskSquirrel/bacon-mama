@@ -131,7 +131,7 @@ const ContentCreatorProvider: React.FC = ({ children }) => {
         } = step;
 
         doRequest(
-            "/addSteps",
+            "/addStep",
             {
                 method: "POST",
                 data: {
