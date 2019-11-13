@@ -121,9 +121,11 @@ public class StepPersistence {
     addedStep.edit("", sequence, null);
     stepRepository.save(addedStep);
     addedStep.setIngredients(new HashSet<Ingredient>());
+    addedStep.setRecipe(recipe);
+    stepRepository.save(addedStep);
     Long skipId = addedStep.getId();
 
-    //Incrementing steps in front of this step
+    // Incrementing steps in front of this step
     Set<Step> recipeSteps = recipe.getSteps();
     for(Step step : recipeSteps)
     {
@@ -137,6 +139,7 @@ public class StepPersistence {
     //adding step to list and setting it to the recipe
     recipeSteps.add(addedStep);
     recipe.setSteps(recipeSteps);
+    recipeRepository.save(recipe);
 
     //saving the step into respository
     stepRepository.save(addedStep);
