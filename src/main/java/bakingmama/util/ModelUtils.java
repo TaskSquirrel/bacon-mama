@@ -4,6 +4,8 @@ import bakingmama.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.Set;
+
 /**
  * Wrapper for all the repository objects --
  *
@@ -49,12 +51,13 @@ public class ModelUtils {
     return ingredient;
   }
 
-  public Step addStepNaive(Recipe recipe, Item result, String verb, Integer sequence) {
+  public Step addStep(Recipe recipe, Item result, String verb, Integer sequence, Set<Ingredient> ingredientSet) {
     Step step = new Step();
     step.setRecipe(recipe);
     step.setResultItem(result);
     step.setVerb(verb);
     step.setSequence(sequence);
+    step.setIngredients(ingredientSet);
     stepRepository.save(step);
     return step;
   }

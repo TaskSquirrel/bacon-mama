@@ -80,8 +80,8 @@ public class ResetController implements BaseApiController {
     Item bread = mu.addItem("bread", newRecipe);
 
     // Add steps
-    Step newStep1 = mu.addStepNaive(newRecipe, dough, "mix", 1);
-    Step newStep2 = mu.addStepNaive(newRecipe, bread, "bake", 2);
+    Step newStep1 = mu.addStep(newRecipe, dough, "mix", 1, new HashSet<>());
+    Step newStep2 = mu.addStep(newRecipe, bread, "bake", 2, new HashSet<>());
 
     // Add ingredients to the steps:
     mu.addIngredient(eggs, newStep1, 3d, "");

@@ -41,10 +41,10 @@ public class Step {
     map.put("id", id);
     map.put("verb", verb);
     map.put("sequence", sequence);
-    map.put("result", resultItem.toMap());
+    map.put("result", resultItem == null ? null : resultItem.toMap());
 
     List<Map<String, Object>> ingredientsList = new ArrayList<>();
-    map.put("ingredients", ingredientsList);
+    map.put("dependencies", ingredientsList);
     for (Ingredient ingredient : ingredients) {
       ingredientsList.add(ingredient.toMap());
     }

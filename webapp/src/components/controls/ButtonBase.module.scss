@@ -10,18 +10,34 @@
     text-align: center;
 
     background-color: $primary;
-    padding: 0.7rem 1.1rem;
+    padding: 0.6rem 1.1rem;
 
     border: 1px solid $primary;
     border-radius: 5px;
 
-    transition: background-color 150ms ease-in-out;
+    transition:
+        border-color 150ms ease-in-out,
+        background-color 150ms ease-in-out;
 
     &:hover {
-        background-color: darken($primary, 10%);
+        $darkened: darken($primary, 10%);
+
+        background-color: $darkened;
+        border-color: $darkened;
     }
 
     &:focus {
         outline: lightblue solid 1px;
+    }
+
+    &.inverted {
+        color: $primary;
+        background-color: transparent;
+
+        &:hover {
+            color: var(--white);
+            background-color: $primary;
+            border-color: $primary;
+        }
     }
 }

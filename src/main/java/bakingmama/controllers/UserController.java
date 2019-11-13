@@ -6,8 +6,9 @@ import bakingmama.models.UserRepository;
 import bakingmama.util.JsonUtils;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Collection;
 import java.util.HashMap;
+import java.util.Collection;
+
 import java.util.List;
 import java.util.Map;
 

@@ -1,18 +1,17 @@
 package bakingmama.controllers;
 
+import bakingmama.json.RecipeJson;
 import bakingmama.models.*;
 
 import bakingmama.persistence.RecipePersistence;
 import bakingmama.persistence.StepPersistence;
-import bakingmama.util.JavaUtils;
 import bakingmama.util.JsonUtils;
 import bakingmama.util.ModelUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.web.bind.annotation.*;
 
-import javax.persistence.Entity;
 import javax.persistence.EntityManager;
-import javax.transaction.Transactional;
 import java.util.*;
 
 @RestController
@@ -22,8 +21,6 @@ public class RecipeController implements BaseApiController {
   @Autowired
   private RecipeRepository recipeRepository;
   @Autowired
-  private ItemRepository itemRepository;
-  @Autowired
   ModelUtils mu;
   @Autowired
   StepPersistence sp;
@@ -31,6 +28,9 @@ public class RecipeController implements BaseApiController {
   RecipePersistence rp;
   @Autowired
   EntityManager em;
+  @Autowired
+  AutowireCapableBeanFactory beanFactory;
+
 
   Recipe unpackOptional(Long id) {
     Optional<Recipe> optional = recipeRepository.findById(id);
@@ -39,6 +39,17 @@ public class RecipeController implements BaseApiController {
     } else {
       return optional.get();
     }
+  }
+
+  private Map<String, Object> recipeSuccess(Map<String, Object> json) {
+    Map<String, Object> map = new HashMap<>();
+    RecipeJson rj = new RecipeJson(json, true);
+    beanFactory.autowireBean(rj);
+
+    Recipe recipe = rj.toModel();
+    map.put("recipe", recipe.toMap());
+    JsonUtils.setStatus(map, JsonUtils.SUCCESS);
+    return map;
   }
 
   @CrossOrigin
@@ -98,38 +109,6 @@ public class RecipeController implements BaseApiController {
 
   @CrossOrigin
   @PostMapping(
-      path = "/addStep",
-      consumes = "application/json",
-      produces = "application/json"
-  )
-  Map<String, Object> addStep(@RequestBody Map<String, Object> body) {
-    Map<String, Object> returnMap = new HashMap<>();
-
-    // Grab Recipe ID
-    Long id = JsonUtils.parseId(body.get("id"));
-    // Grab Step Stuff
-    Map<String, Object> stepMap = JsonUtils.castMap(body.get("step"));
-    Map<String, Object> itemMap = JsonUtils.castMap(stepMap.get("item"));
-    Item item = JavaUtils.findAndUnpack(itemRepository, itemMap.get("id"));
-    String verb = (String) stepMap.get("verb");
-    Integer sequence = (Integer) stepMap.get("sequence");
-
-    // Check for recipe existence by ID.
-    Recipe recipe = unpackOptional(id);
-    if (recipe == null) {
-      JsonUtils.setStatus(returnMap, JsonUtils.ERROR, "Recipe couldn't be found!");
-      return returnMap;
-    }
-
-    Step newStep = mu.addStepNaive(recipe, item, verb, sequence);
-    returnMap.put("id", newStep.getId());
-
-    JsonUtils.setStatus(returnMap, JsonUtils.SUCCESS);
-    return returnMap;
-  }
-
-  @CrossOrigin
-  @PostMapping(
       path = "/getRecipe",
       consumes = "application/json",
       produces = "application/json"
@@ -159,8 +138,6 @@ public class RecipeController implements BaseApiController {
       produces = "application/json"
   )
   Map<String, Object> addItem(@RequestBody Map<String, Object> body) {
-    Map<String, Object> returnMap = new HashMap<>();
-
     // Grab Recipe ID
     Recipe recipe = rp.findRecipe(JsonUtils.castMap(body.get("recipe")));
     // Grab Item Stuff
@@ -168,56 +145,31 @@ public class RecipeController implements BaseApiController {
     String itemName = (String) stepMap.get("name");
 
     Item newItem = mu.addItem(itemName, recipe);
-    returnMap.put("recipe", recipe.toMap());
-
-    JsonUtils.setStatus(returnMap, JsonUtils.SUCCESS);
-    return returnMap;
+    return this.recipeSuccess(body);
   }
 
   @CrossOrigin
   @PostMapping(path = "/editStep", consumes = "application/json", produces = "application/json")
   Map<String, Object> editStep(@RequestBody Map<String, Object> json) {
-    Map<String, Object> returnJson = new HashMap<>();
-
-    sp.editStep(JsonUtils.castMap(json.get("step")));
-
-    Recipe recipe = rp.findRecipe(JsonUtils.castMap(json.get("recipe")));
-    returnJson.put("recipe", recipe.toMap());
-
-    JsonUtils.setStatus(returnJson, JsonUtils.SUCCESS);
-    return returnJson;
+    sp.editStep(json);
+    return this.recipeSuccess(json);
   }
 
   @CrossOrigin
-  @PostMapping(path = "/addSteps", consumes = "application/json", produces = "application/json")
-  Map<String, Object> addSteps(@RequestBody Map<String, Object> json) {
-    Map<String, Object> returnJson = new HashMap<>();
-
-    Long recipeID = JsonUtils.parseId(JsonUtils.castMap(json.get("recipe")).get("id"));
-    Map<String, Object> newStep = JsonUtils.castMap(json.get("step"));
-
-    Recipe recipe = sp.addStep(newStep, recipeRepository.getOne(recipeID), recipeID);
-
-    returnJson.put("recipe", recipe.toMap());
-
-    JsonUtils.setStatus(returnJson, JsonUtils.SUCCESS);
-    return returnJson;
+  @PostMapping(path = "/addStep", consumes = "application/json", produces = "application/json")
+  Map<String, Object> addStep(@RequestBody Map<String, Object> json) {
+    sp.addStep(json);
+    return this.recipeSuccess(json);
   }
 
   @CrossOrigin
   @PostMapping(path = "/deleteStep", consumes = "application/json", produces = "application/json")
   Map<String, Object> deleteStep(@RequestBody Map<String, Object> json) {
-    Map<String, Object> returnJson = new HashMap<>();
-
     Long recipeID = JsonUtils.parseId(JsonUtils.castMap(json.get("recipe")).get("id"));
     Map<String, Object> newStep = JsonUtils.castMap(json.get("step"));
     Long stepId = JsonUtils.parseId(newStep.get("id"));
 
     Recipe recipe = sp.deleteStep(stepId, recipeID);
-
-    returnJson.put("recipe", recipe.toMap());
-
-    JsonUtils.setStatus(returnJson, JsonUtils.SUCCESS);
-    return returnJson;
+    return this.recipeSuccess(json);
   }
 }

@@ -22,5 +22,7 @@ code {
 :root {
     --black: #000000;
     --white: #ffffff;
-    --primary: #000000;
+    --gray: #9c9c9c;
+    --primary: #ff6138;
+    --secondary: #3873ff;
 }
