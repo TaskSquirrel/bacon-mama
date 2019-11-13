@@ -17,6 +17,8 @@ public class StepPersistence {
   ItemRepository itemRepository;
   @Autowired
   IngredientRepository ingredientRepository;
+  @Autowired
+  RecipeRepository recipeRepository;
 
   public <T> T unpackOptional(Optional<T> op) {
     if (op.isEmpty()) {
@@ -95,6 +97,46 @@ public class StepPersistence {
     stepRepository.save(step);
 
     return true;
+  }
+
+  public Recipe addStep(Map<String, Object> newStep, Recipe recipe, Long id){
+    // Find Result Item
+    //Map<String, Object> resultItemJson = JsonUtils.castMap(newStep.get("result"));
+    
+    // Get other Step properties
+    Map<String, Object> resultItem = JsonUtils.castMap(newStep.get("result"));
+    Item resultItem2 = this.findItem(resultItem.get("id"));
+    String verb = (String) newStep.get("verb");
+    Integer sequence = (Integer) newStep.get("sequence");
+
+    //Creating New Step
+    Step addedStep = new Step();
+    addedStep.setRecipe(recipe);
+    addedStep.edit(verb, sequence, resultItem2);
+    stepRepository.save(addedStep);
+    Long skipId = addedStep.getId();
+    Set<Ingredient> ingredientsSet = this.addIngredients(addedStep, JsonUtils.castListMap(newStep.get("ingredients")));
+    addedStep.setIngredients(ingredientsSet);
+
+    //Incrementing steps in front of this step
+    Set<Step> recipeSteps = recipe.getSteps();
+    for(Step step : recipeSteps)
+    {
+      if(step.getSequence() >= sequence && !(step.getId().equals(skipId)))
+      {
+        step.setSequence(step.getSequence() + 1);
+        stepRepository.save(step);
+      }
+    }
+
+    //adding step to list and setting it to the recipe
+    recipeSteps.add(addedStep);
+    recipe.setSteps(recipeSteps);
+
+    //saving the step into respository
+    stepRepository.save(addedStep);
+
+    return recipe;
   }
 
   public Set<Ingredient> addIngredients(Step step, List<Map<String, Object>> ingredientsList) {

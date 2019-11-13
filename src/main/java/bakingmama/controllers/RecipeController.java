@@ -222,4 +222,21 @@ public class RecipeController implements BaseApiController {
     JsonUtils.setStatus(returnJson, JsonUtils.SUCCESS);
     return returnJson;
   }
+
+  @CrossOrigin
+  @PostMapping(path = "/addSteps", consumes = "application/json", produces = "application/json")
+  Map<String, Object> addSteps(@RequestBody Map<String, Object> json) {
+    Map<String, Object> returnJson = new HashMap<>();
+
+    Long recipeID = JsonUtils.parseId(json.get("id"));
+    Map<String, Object> newStep = JsonUtils.castMap(json.get("step"));
+
+
+    Recipe recipe = sp.addStep(newStep, recipeRepository.getOne(recipeID), recipeID);
+
+    returnJson.put("recipe", recipe.toMap());
+
+    JsonUtils.setStatus(returnJson, JsonUtils.SUCCESS);
+    return returnJson;
+  }
 }
