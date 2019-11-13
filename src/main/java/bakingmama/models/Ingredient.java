@@ -20,14 +20,16 @@ public class Ingredient {
   private Double amount;
   private String unit;
 
-  @OneToOne(cascade = CascadeType.PERSIST)
+  @OneToOne()
   private Item item;
 
-  @ManyToOne(cascade = CascadeType.PERSIST)
+  @ManyToOne()
   private Step step;
 
   public Map<String, Object> toMap() {
-    Map<String, Object> map = item.toMap();
+    Map<String, Object> map = new HashMap<>();
+    map.put("id", id);
+    map.put("item", item.toMap());
     map.put("amount", amount);
     map.put("unit", unit);
     return map;

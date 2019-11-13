@@ -20,18 +20,21 @@ public class Step {
   // Order in the recipe -- order is keyword so can't use
   private Integer sequence;
 
-  @ManyToOne(cascade = CascadeType.PERSIST)
+  @ManyToOne()
   private Recipe recipe;
 
-  @OneToOne(cascade = CascadeType.PERSIST)
+  @OneToOne()
   private Item resultItem;
 
-  @OneToMany(
-      cascade = CascadeType.PERSIST,
-      mappedBy = "step"
-  )
+  @OneToMany(mappedBy = "step")
   private Set<Ingredient> ingredients;
 
+  public boolean edit(String verb, Integer sequence, Item resultItem) {
+    this.verb = verb;
+    this.sequence = sequence;
+    this.resultItem = resultItem;
+    return true;
+  }
 
   public Map<String, Object> toMap() {
     Map<String, Object> map = new HashMap<>();

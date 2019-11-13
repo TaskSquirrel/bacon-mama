@@ -1,5 +1,6 @@
 package bakingmama.util;
 
+import java.util.List;
 import java.util.Map;
 
 public class JsonUtils {
@@ -32,4 +33,6 @@ public class JsonUtils {
   public static Map<String, Object> castMap(Object map) {
     return (Map<String, Object>) map;
   }
+
+  public static List<Map<String, Object>> castListMap(Object listMap) { return (List<Map<String, Object>>) listMap; }
 }

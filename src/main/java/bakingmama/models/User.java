@@ -17,9 +17,6 @@ public class User {
   private String username;
   private String password;
 
-  @OneToMany(
-      cascade = CascadeType.PERSIST,
-      mappedBy = "user"
-  )
+  @OneToMany(mappedBy = "user")
   private Set<Recipe> recipes;
 }

@@ -17,19 +17,13 @@ public class Recipe {
   private String recipeName;
   private String description;
 
-  @ManyToOne(cascade = CascadeType.PERSIST)
+  @ManyToOne()
   private User user;
 
-  @OneToMany(
-      cascade = CascadeType.PERSIST,
-      mappedBy = "recipe"
-  )
+  @OneToMany(mappedBy = "recipe")
   private Set<Step> steps;
 
-  @OneToMany(
-      cascade = CascadeType.PERSIST,
-      mappedBy = "recipe"
-  )
+  @OneToMany(mappedBy = "recipe")
   private Set<Item> items;
 
   public Map<String, Object> toMapOverview() {

@@ -2,12 +2,17 @@ package bakingmama.controllers;
 
 import bakingmama.models.*;
 
+import bakingmama.persistence.RecipePersistence;
+import bakingmama.persistence.StepPersistence;
 import bakingmama.util.JavaUtils;
 import bakingmama.util.JsonUtils;
 import bakingmama.util.ModelUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.persistence.Entity;
+import javax.persistence.EntityManager;
+import javax.transaction.Transactional;
 import java.util.*;
 
 @RestController
@@ -20,6 +25,12 @@ public class RecipeController implements BaseApiController {
   private ItemRepository itemRepository;
   @Autowired
   ModelUtils mu;
+  @Autowired
+  StepPersistence sp;
+  @Autowired
+  RecipePersistence rp;
+  @Autowired
+  EntityManager em;
 
   Recipe unpackOptional(Long id) {
     Optional<Recipe> optional = recipeRepository.findById(id);
@@ -196,5 +207,19 @@ public class RecipeController implements BaseApiController {
 
     JsonUtils.setStatus(returnMap, JsonUtils.SUCCESS);
     return returnMap;
+  }
+
+  @CrossOrigin
+  @PostMapping(path = "/editStep", consumes = "application/json", produces = "application/json")
+  Map<String, Object> editStep(@RequestBody Map<String, Object> json) {
+    Map<String, Object> returnJson = new HashMap<>();
+
+    sp.editStep(JsonUtils.castMap(json.get("step")));
+
+    Recipe recipe = rp.findRecipe(JsonUtils.castMap(json.get("recipe")));
+    returnJson.put("recipe", recipe.toMap());
+
+    JsonUtils.setStatus(returnJson, JsonUtils.SUCCESS);
+    return returnJson;
   }
 }

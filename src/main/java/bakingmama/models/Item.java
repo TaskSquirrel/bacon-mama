@@ -24,7 +24,7 @@ public class Item {
   // Image related stuff (future support)
   private String imageUrl;
 
-  @ManyToOne(cascade = CascadeType.PERSIST)
+  @ManyToOne()
   private Recipe recipe;
 
   public Map<String, Object> toMap() {
