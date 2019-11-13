@@ -3,6 +3,7 @@ package bakingmama.controllers;
 import bakingmama.models.User;
 import bakingmama.models.UserRepository;
 
+import bakingmama.util.JsonUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Collection;
@@ -11,7 +12,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-public class UserController extends BaseApiController {
+public class UserController implements BaseApiController {
   private UserRepository userRepository;
 
   public UserController(UserRepository userRepository) {
@@ -27,26 +28,22 @@ public class UserController extends BaseApiController {
   Map<String, Object> login(@RequestBody Map<String, Object> body) {
     Map<String, Object> returnMap = new HashMap<>();
 
-    String name = (String) body.get("username");
+    String username = (String) body.get("username");
     String password = (String) body.get("password");
 
-    List<User> list = userRepository.findByName(name);
-
-    if (list.size() != 1) {
-      returnMap.put("status", "error");
-      returnMap.put("message", "Failed to login!");
-      return returnMap;
-    }
-
-    User user = list.get(0);
-    if (user.getPassword().equals(password)) {
-      returnMap.put("status", "OK");
-      return returnMap;
+    // 1) Check if user can be found
+    // 2) If found, check if passwords are NOT equal
+    // 3) Otherwise, return success
+    User user = userRepository.findByUsername(username);
+    if (user == null) {
+      JsonUtils.setStatus(returnMap, JsonUtils.ERROR, "Username couldn't be found!");
+    } else if (!user.getPassword().equals(password)) {
+      JsonUtils.setStatus(returnMap, JsonUtils.ERROR, "Incorrect password for user~");
     } else {
-      returnMap.put("status", "error");
-      returnMap.put("message", "Failed to login (2)");
-      return returnMap;
+      JsonUtils.setStatus(returnMap, JsonUtils.SUCCESS);
     }
+
+    return returnMap;
   }
 
   @CrossOrigin
@@ -58,18 +55,18 @@ public class UserController extends BaseApiController {
   Map<String, Object> addUser(@RequestBody Map<String, Object> body) {
     Map<String, Object> returnMap = new HashMap<>();
 
-    String name = (String) body.get("username");
+    String username = (String) body.get("username");
     String password = (String) body.get("password");
 
-    if (userRepository.existsByName(name)) {
-      returnMap.put("error", true);
-      returnMap.put("message", "Username already taken.");
+    if (userRepository.existsByUsername(username)) {
+      JsonUtils.setStatus(returnMap, JsonUtils.ERROR, "Username already taken.");
     } else {
       User newUser = new User();
-      newUser.setName(name);
+      newUser.setUsername(username);
       newUser.setPassword(password);
       userRepository.save(newUser);
-      returnMap.put("success", true);
+
+      JsonUtils.setStatus(returnMap, JsonUtils.SUCCESS);
     }
     return returnMap;
   }
