@@ -1,16 +1,21 @@
 package bakingmama.persistence;
 
+import bakingmama.json.RecipeJson;
+import bakingmama.json.StepJson;
 import bakingmama.models.*;
 import bakingmama.util.JsonUtils;
+import bakingmama.util.ModelUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Propagation;
 
-import javax.transaction.Transactional;
 import java.util.*;
 
 @Component
 public class StepPersistence {
+  @Autowired
+  AutowireCapableBeanFactory beanFactory;
+
   @Autowired
   StepRepository stepRepository;
   @Autowired
@@ -19,6 +24,8 @@ public class StepPersistence {
   IngredientRepository ingredientRepository;
   @Autowired
   RecipeRepository recipeRepository;
+  @Autowired
+  ModelUtils mu;
 
   public <T> T unpackOptional(Optional<T> op) {
     if (op.isEmpty()) {
@@ -75,81 +82,50 @@ public class StepPersistence {
   /**
    * Given a JSON with all the step properties, edit and save the step.
    */
-  public boolean editStep(Map<String, Object> stepJson) {
-//    Map<String, Object> stepJson = JsonUtils.castMap(json.get("step"));
-    Step step = this.findStep(stepJson.get("id"));
+  public boolean editStep(Map<String, Object> json) {
+    StepJson stepJson = new StepJson(json, true);
+    beanFactory.autowireBean(stepJson);
 
-    // Find Result Item
-    Map<String, Object> resultItemJson = JsonUtils.castMap(stepJson.get("result"));
-    Item resultItem;
-    if (resultItemJson == null || !resultItemJson.containsKey("id")) {
-      resultItem = null;
-    } else {
-      resultItem = this.findItem(resultItemJson.get("id"));
-    }
-    // Get other Step properties
-    String verb = (String) stepJson.get("verb");
-    Integer sequence = (Integer) stepJson.get("sequence");
-
-    // Edit step, Delete ingredients, and save into DB
-    step.edit(verb, sequence, resultItem);
+    // Edit step and save into DB
+    Step step = stepJson.toModel();
+    step.edit(stepJson.getVerb(), stepJson.getSequence(), stepJson.getResult());
     stepRepository.save(step);
-    this.clearIngredients(step);
 
-    // Add ingredients associated with new Step
-    Set<Ingredient> ingredientsSet = this.addIngredients(step, JsonUtils.castListMap(stepJson.get("dependencies")));
+    // Delete old ingredients and add new ingredients with new Step
+    this.clearIngredients(step);
+    Set<Ingredient> ingredientsSet = this.addIngredients(step, stepJson.getIngredients());
     step.setIngredients(ingredientsSet);
     stepRepository.save(step);
 
     return true;
   }
 
-  public Recipe addStep(Map<String, Object> newStep, Recipe recipe, Long id){
-    // Find Result Item
-    // Map<String, Object> resultItemJson = JsonUtils.castMap(newStep.get("result"));
-    
-    // Get other Step properties
-    // Map<String, Object> resultItem = JsonUtils.castMap(newStep.get("result"));
-    // Item resultItem2 = this.findItem(resultItem.get("id"));
-    // String verb = (String) newStep.get("verb");
-    Integer sequence = (Integer) newStep.get("sequence");
+  public boolean addStep(Map<String, Object> json) {
+    StepJson stepJson = new StepJson(json, true);
+    RecipeJson recipeJson = new RecipeJson(json, true);
+    beanFactory.autowireBean(stepJson);
+    beanFactory.autowireBean(recipeJson);
 
-    // Creating New Step
-//    Step addedStep = new Step();
-//    addedStep.setRecipe(recipe);
-//    addedStep.edit(verb, sequence, resultItem2);
-//    stepRepository.save(addedStep);
-//    Long skipId = addedStep.getId();
-//    Set<Ingredient> ingredientsSet = this.addIngredients(addedStep, JsonUtils.castListMap(newStep.get("ingredients")));
-//    addedStep.setIngredients(ingredientsSet);
-    Step addedStep = new Step();
-    addedStep.edit("", sequence, null);
-    stepRepository.save(addedStep);
-    addedStep.setIngredients(new HashSet<Ingredient>());
-    addedStep.setRecipe(recipe);
-    stepRepository.save(addedStep);
-    Long skipId = addedStep.getId();
+    // Get associated Recipe and create new Step
+    Recipe recipe = recipeJson.toModel();
+    Step addedStep = mu.addStep(recipe, null, "", stepJson.getSequence(), new HashSet<>());
+    Long addedStepId = addedStep.getId();
 
-    // Incrementing steps in front of this step
+    // Adjust order where necessary
     Set<Step> recipeSteps = recipe.getSteps();
-    for(Step step : recipeSteps)
-    {
-      if(step.getSequence() >= sequence && !(step.getId().equals(skipId)))
-      {
+    for (Step step : recipeSteps) {
+      if (step.getSequence() >= addedStep.getSequence() && !(step.getId().equals(addedStepId))) {
         step.setSequence(step.getSequence() + 1);
         stepRepository.save(step);
       }
     }
 
-    //adding step to list and setting it to the recipe
+    // Save new step
     recipeSteps.add(addedStep);
     recipe.setSteps(recipeSteps);
     recipeRepository.save(recipe);
 
-    //saving the step into respository
-    stepRepository.save(addedStep);
-
-    return recipe;
+    return true;
   }
 
   public Recipe deleteStep(Long stepId, Long recipeId)
