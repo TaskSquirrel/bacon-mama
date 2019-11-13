@@ -6,6 +6,7 @@ import ItemPicker from "./ItemPicker";
 import Editor from "./Editor";
 
 import style from "./ContentCreatorView.module.scss";
+import EditStep from "./EditStep";
 
 const CreateRecipe: React.FC = () => {
     return (
@@ -19,9 +20,6 @@ const CreateRecipe: React.FC = () => {
                 </div>
                 <div className={ style.center }>
                     <ItemPicker />
-                </div>
-                <div className={ style.right }>
-                    <Editor />
                 </div>
             </div>
             <div className={ style.bottom }>d</div>

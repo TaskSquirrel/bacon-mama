@@ -22,6 +22,11 @@ const routes: Route[] = [
         component: ContentCreator
     },
     {
+        to: "/edit/:id/:sequence",
+        exact: true,
+        component: ContentCreator
+    },
+    {
         to: "/dashboard",
         exact: true,
         component: Dashboard

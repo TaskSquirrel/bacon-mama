@@ -1,0 +1,50 @@
+.list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.step {
+    cursor: pointer;
+    user-select: none;
+
+    padding: 1rem 2rem;
+
+    transition: color 150ms ease-in-out;
+
+    &.active {
+        color: var(--secondary);
+    }
+}
+
+.metadata {
+    display: flex;
+}
+
+.sequence {
+    position: relative;
+
+    display: flex;
+    justify-content: start;
+    align-items: center;
+
+    font-size: 2rem;
+    font-weight: bold;
+
+    width: 3.5rem;
+}
+
+.title {
+    font-size: 1.1rem;
+    font-weight: bold;
+}
+
+.description {
+    color: var(--gray);
+}
+
+.actions {
+    display: flex;
+
+    width: 100%;
+}
