@@ -38,9 +38,10 @@ const EditStep: React.FC<EditStepProps> = ({
 
         replaceStep({
             ...step,
-            name,
+            verb: name,
             description
         });
+        close();
     };
 
     const onFormSubmit = (

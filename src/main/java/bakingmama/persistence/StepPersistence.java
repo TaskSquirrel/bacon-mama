@@ -81,7 +81,12 @@ public class StepPersistence {
 
     // Find Result Item
     Map<String, Object> resultItemJson = JsonUtils.castMap(stepJson.get("result"));
-    Item resultItem = this.findItem(resultItemJson.get("id"));
+    Item resultItem;
+    if (resultItemJson == null || !resultItemJson.containsKey("id")) {
+      resultItem = null;
+    } else {
+      resultItem = this.findItem(resultItemJson.get("id"));
+    }
     // Get other Step properties
     String verb = (String) stepJson.get("verb");
     Integer sequence = (Integer) stepJson.get("sequence");
@@ -92,7 +97,7 @@ public class StepPersistence {
     this.clearIngredients(step);
 
     // Add ingredients associated with new Step
-    Set<Ingredient> ingredientsSet = this.addIngredients(step, JsonUtils.castListMap(stepJson.get("ingredients")));
+    Set<Ingredient> ingredientsSet = this.addIngredients(step, JsonUtils.castListMap(stepJson.get("dependencies")));
     step.setIngredients(ingredientsSet);
     stepRepository.save(step);
 
@@ -104,9 +109,9 @@ public class StepPersistence {
     // Map<String, Object> resultItemJson = JsonUtils.castMap(newStep.get("result"));
     
     // Get other Step properties
-    Map<String, Object> resultItem = JsonUtils.castMap(newStep.get("result"));
-    Item resultItem2 = this.findItem(resultItem.get("id"));
-    String verb = (String) newStep.get("verb");
+    // Map<String, Object> resultItem = JsonUtils.castMap(newStep.get("result"));
+    // Item resultItem2 = this.findItem(resultItem.get("id"));
+    // String verb = (String) newStep.get("verb");
     Integer sequence = (Integer) newStep.get("sequence");
 
     // Creating New Step

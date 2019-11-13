@@ -154,17 +154,22 @@ const ContentCreatorProvider: React.FC = ({ children }) => {
     };
 
     const replaceStep = ({
-        id, name, verb, sequence, dependencies, result: creates, description
+        id, name, verb, sequence, dependencies, result, description
     }: Step) => {
         doRequest(
             "/editStep",
             {
+                method: "POST",
                 data: {
                     recipe: {
                         id: recipeID
                     },
                     step: {
-                        id, name, verb, sequence, dependencies, creates,
+                        id, name, verb, sequence,
+                        dependencies,
+                        result: result ? {
+                            id: result
+                        } : null,
                         description
                     }
                 }
