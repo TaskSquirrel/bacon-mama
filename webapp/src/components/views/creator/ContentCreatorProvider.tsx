@@ -10,12 +10,12 @@ import {
 } from "../../../models/recipe";
 import { APIRecipeResponse, Omit } from "../../../models/API";
 
+import AddItem from "./AddItem";
 import EditStep from "./EditStep";
 import useAPI from "../../hooks/useAPI";
 
+import { fromAPIRecipe } from "../../../api/mappings";
 import { noop } from "../../../utils";
-import { toRecipe } from "../../../utils/recipe";
-import AddItem from "./AddItem";
 
 export interface ContentCreatorContextShape {
     available: boolean;
@@ -91,11 +91,11 @@ const ContentCreatorProvider: React.FC = ({ children }) => {
                 payload
             );
 
-            const { status, message } = data;
+            const { status, message, recipe: responseRecipe } = data;
 
             if (status === "OK") {
                 setError(null);
-                setRecipe(toRecipe(data));
+                setRecipe(fromAPIRecipe(responseRecipe));
             } else {
                 throw new Error(message);
             }
@@ -244,10 +244,7 @@ const ContentCreatorProvider: React.FC = ({ children }) => {
                 addItem, addStep, replaceStep
             }
         }
-        : { ...DEFAULT_CONTENT_CREATOR_CONTEXT, actions: {
-            ...DEFAULT_CONTENT_CREATOR_CONTEXT.actions,
-            openEditStep
-        } };
+        : DEFAULT_CONTENT_CREATOR_CONTEXT;
 
     return (
         <>

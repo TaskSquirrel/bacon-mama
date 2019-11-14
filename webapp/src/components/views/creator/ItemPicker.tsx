@@ -33,7 +33,7 @@ const ItemPicker: React.FC = () => {
                         {
                             item: {
                                 id,
-                                itemName: name
+                                name
                             },
                             amount,
                             unit

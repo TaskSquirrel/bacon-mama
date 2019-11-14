@@ -74,7 +74,7 @@ const ItemsViewer: React.FC = () => {
         }
 
         return items
-            .map(({ id: itemID, itemName }) => {
+            .map(({ id: itemID, name: itemName }) => {
                 return (
                     <div
                         key={ itemID }

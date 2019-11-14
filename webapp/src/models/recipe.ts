@@ -6,18 +6,17 @@ export interface Metadata {
 
 export interface Item {
     id: string;
-    itemName: string;
+    name: string;
     description?: string;
     image?: string;
 }
 
 export interface Dependency {
-    id: string;
     unit: string;
     amount: string | number;
     item: {
         id: string,
-        itemName: string
+        name: string
     };
 }
 
@@ -30,7 +29,7 @@ export interface Step {
     name: string;
     description?: string;
     dependencies: Dependency[];
-    result: string | null;
+    result: Dependency | null;
     verb: string;
     sequence: number;
 }
