@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext } from "react";
 import { useParams, Link } from "react-router-dom";
 
 import { ContentCreatorContext } from "./ContentCreatorProvider";
@@ -12,7 +12,6 @@ const ItemPicker: React.FC = () => {
             id: recipeID
         },
         steps,
-        items
     } = useContext(ContentCreatorContext);
 
     const { sequence } = useParams();

@@ -1,4 +1,3 @@
-import { useParams } from "react-router";
 import { AxiosRequestConfig } from "axios";
 
 import { Response } from "../../models/API";

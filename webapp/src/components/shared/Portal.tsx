@@ -11,7 +11,7 @@ const Portal: React.FC = ({ children }) => {
         return () => {
             body.removeChild(current);
         };
-    }, []);
+    }, [body, current]);
 
     return ReactDOM.createPortal(
         children,

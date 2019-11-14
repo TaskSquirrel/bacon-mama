@@ -19,7 +19,6 @@ import { noop } from "../../../utils";
 
 export interface ContentCreatorContextShape {
     available: boolean;
-    error: string | null;
     metadata: Metadata;
     items: Item[];
     steps: Step[];
@@ -34,7 +33,6 @@ export interface ContentCreatorContextShape {
 
 export const DEFAULT_CONTENT_CREATOR_CONTEXT: ContentCreatorContextShape = {
     available: false,
-    error: null,
     metadata: {
         id: "content_creator",
         name: "Untitled recipe"
@@ -55,7 +53,6 @@ export const ContentCreatorContext = React.createContext<
 >(DEFAULT_CONTENT_CREATOR_CONTEXT);
 
 const ContentCreatorProvider: React.FC = ({ children }) => {
-    const [error, setError] = useState<string | null>(null);
     const [addItemModal, setAddItemModal] = useState<boolean>(false);
     const [editStep, setEditStep] = useState<boolean>(false);
     const [recipe, setRecipe] = useState<Recipe | null>(null);
@@ -94,13 +91,16 @@ const ContentCreatorProvider: React.FC = ({ children }) => {
             const { status, message, recipe: responseRecipe } = data;
 
             if (status === "OK") {
-                setError(null);
                 setRecipe(fromAPIRecipe(responseRecipe));
             } else {
                 throw new Error(message);
             }
         } catch (e) {
-            setError(e.message);
+            if (!e.message) {
+                throw new Error("Network request failed!");
+            } else {
+                throw e;
+            }
         }
     };
 
@@ -225,12 +225,11 @@ const ContentCreatorProvider: React.FC = ({ children }) => {
         if (!recipe) {
             updateRecipe();
         }
-    }, []);
+    }, [recipe, updateRecipe]);
 
     const value: ContentCreatorContextShape = recipe
         ? {
             available: true,
-            error,
             metadata: {
                 id: recipe.id,
                 name: recipe.name,
