@@ -13,9 +13,11 @@ const CreateRecipe: React.FC = () => {
     const {
         available,
         actions: {
-            openAddItem
+            setAddItemModal
         }
     } = useContext(ContentCreatorContext);
+
+    const openAddItemModal = () => setAddItemModal(true);
 
     if (!available) {
         return null;
@@ -25,7 +27,7 @@ const CreateRecipe: React.FC = () => {
         <div className={ styles.container }>
             <div className={ styles.top }>
                 <ButtonBase
-                    onClick={ openAddItem }
+                    onClick={ openAddItemModal }
                 >
                     Add item
                 </ButtonBase>

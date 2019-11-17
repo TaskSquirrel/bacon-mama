@@ -22,10 +22,6 @@ const TopLevelLoadingIndicator: React.FC = ({
     const [visible, setVisible] = useState<boolean>(false);
 
     const setStatus = (status: boolean) => {
-        if (status) {
-            setVisible(true);
-        }
-
         setLoading(status);
     };
 
@@ -41,11 +37,19 @@ const TopLevelLoadingIndicator: React.FC = ({
     };
 
     useEffect(() => {
+        let timeout: number;
+
         if (!loading) {
-            setTimeout(() => {
+            timeout = window.setTimeout(() => {
                 setVisible(false);
             }, 300);
+        } else {
+            setVisible(true);
         }
+
+        return () => {
+            clearTimeout(timeout);
+        };
     }, [loading]);
 
     const value: TopLevelLoadingIndicatorContextShape = {

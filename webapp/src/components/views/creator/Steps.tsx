@@ -13,11 +13,13 @@ const Steps: React.FC = () => {
         metadata: { id: recipeID },
         actions: {
             addStep,
-            openEditStep
+            setEditStepModal
         }
     } = useContext(ContentCreatorContext);
     const { push } = useHistory();
     const { sequence: sequenceParam } = useParams();
+
+    const openEditStepModal = () => setEditStepModal(true);
 
     const add = () => {
         addStep({
@@ -35,7 +37,7 @@ const Steps: React.FC = () => {
                 className={ styles.actions }
             >
                 <button
-                    onClick={ openEditStep }
+                    onClick={ openEditStepModal }
                 >
                     Edit
                 </button>

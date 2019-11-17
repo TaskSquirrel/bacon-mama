@@ -16,6 +16,9 @@ const ItemPicker: React.FC = () => {
             id: recipeID
         },
         steps,
+        actions: {
+            setSelectItemModal
+        }
     } = useContext(ContentCreatorContext);
 
     const { sequence } = useParams();
@@ -23,6 +26,10 @@ const ItemPicker: React.FC = () => {
     const step = steps.find(({ sequence: seq }) => {
         return `${seq}` === sequence;
     });
+
+    const createItemPickerStateSetter = (
+        state: boolean
+    ) => () => setSelectItemModal(state);
 
     const renderItems = (currentStep: Step) => {
         const { dependencies } = currentStep;
@@ -59,6 +66,7 @@ const ItemPicker: React.FC = () => {
                 <AuraButton
                     shadow
                     size="large"
+                    onClick={ createItemPickerStateSetter(true) }
                 >
                     <i
                         className="fas fa-plus"
@@ -99,15 +107,13 @@ const ItemPicker: React.FC = () => {
                     className={ styles.dependencies }
                 >
                     { renderItems(step) }
-                    <Link
-                        to={ `/items/${recipeID}/${sequence}` }
+                    <AuraButton
+                        onClick={ createItemPickerStateSetter(true) }
                     >
-                        <AuraButton>
-                            <i
-                                className="fas fa-plus"
-                            />
-                        </AuraButton>
-                    </Link>
+                        <i
+                            className="fas fa-plus"
+                        />
+                    </AuraButton>
                 </div>
             </div>
             <div

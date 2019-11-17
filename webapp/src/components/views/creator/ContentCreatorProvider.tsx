@@ -10,6 +10,7 @@ import {
 } from "../../../models/recipe";
 import { APIRecipeResponse, Omit } from "../../../models/API";
 
+import ItemPickerModal from "./items/ItemPickerModal";
 import AddItem from "./AddItem";
 import EditStep from "./EditStep";
 import useLoadingIndicator from "../../hooks/useLoadingIndicator";
@@ -25,8 +26,9 @@ export interface ContentCreatorContextShape {
     items: Item[];
     steps: Step[];
     actions: {
-        openAddItem: () => void,
-        openEditStep: () => void,
+        setSelectItemModal: (state: boolean) => void,
+        setAddItemModal: (state: boolean) => void,
+        setEditStepModal: (state: boolean) => void,
         addItem: (name: string, description?: string) => Promise<void> | void,
         addStep: (step: Omit<Step, "id">) => Promise<void> | void,
         replaceStep: (step: Step) => Promise<void> | void
@@ -43,8 +45,9 @@ export const DEFAULT_CONTENT_CREATOR_CONTEXT: ContentCreatorContextShape = {
     items: [],
     steps: [],
     actions: {
-        openAddItem: noop,
-        openEditStep: noop,
+        setSelectItemModal: noop,
+        setAddItemModal: noop,
+        setEditStepModal: noop,
         addItem: noop,
         addStep: noop,
         replaceStep: noop
@@ -56,8 +59,9 @@ export const ContentCreatorContext = React.createContext<
 >(DEFAULT_CONTENT_CREATOR_CONTEXT);
 
 const ContentCreatorProvider: React.FC = ({ children }) => {
+    const [selectedItemModal, setSelectedItemModal] = useState<boolean>(false);
     const [addItemModal, setAddItemModal] = useState<boolean>(false);
-    const [editStep, setEditStep] = useState<boolean>(false);
+    const [editStepModal, setEditStepModal] = useState<boolean>(false);
     const [recipe, setRecipe] = useState<Recipe | null>(null);
     const { id: recipeID, sequence: seq } = useParams();
     const request = useAPI();
@@ -69,21 +73,12 @@ const ContentCreatorProvider: React.FC = ({ children }) => {
         : null;
 
     const createModalStateSetter = (
-        state: boolean,
         setter: React.Dispatch<React.SetStateAction<boolean>>
     ) => {
-        return () => {
+        return (state: boolean) => {
             setter(state);
         };
     };
-
-    const openAddItem = createModalStateSetter(
-        true, setAddItemModal
-    );
-
-    const openEditStep = createModalStateSetter(
-        true, setEditStep
-    );
 
     const doRequest = async (
         endpoint: string,
@@ -202,25 +197,40 @@ const ContentCreatorProvider: React.FC = ({ children }) => {
         );
     };
 
+    const renderSelectItemModal = () => {
+        if (!selectedItemModal || !currentStep || !recipe) {
+            return null;
+        }
+
+        return (
+            <ItemPickerModal
+                items={ recipe.items }
+                control={ createModalStateSetter(setSelectedItemModal) }
+            />
+        );
+    };
+
     const renderAddItemModal = () => {
+        if (!addItemModal) {
+            return null;
+        }
+
         return (
             <AddItem
-                show={ addItemModal }
-                close={ createModalStateSetter(false, setAddItemModal) }
+                control={ createModalStateSetter(setAddItemModal) }
             />
         );
     };
 
     const renderEditStep = () => {
-        if (!currentStep || !editStep) {
+        if (!currentStep || !editStepModal) {
             return null;
         }
 
         return (
             <EditStep
-                show
-                step={ currentStep || null }
-                close={ createModalStateSetter(false, setEditStep) }
+                step={ currentStep }
+                control={ createModalStateSetter(setEditStepModal) }
             />
         );
     };
@@ -245,8 +255,9 @@ const ContentCreatorProvider: React.FC = ({ children }) => {
             items: recipe.items,
             steps: recipe.steps,
             actions: {
-                openAddItem,
-                openEditStep,
+                setSelectItemModal: createModalStateSetter(setSelectedItemModal),
+                setAddItemModal: createModalStateSetter(setAddItemModal),
+                setEditStepModal: createModalStateSetter(setEditStepModal),
                 addItem, addStep, replaceStep
             }
         }
@@ -258,6 +269,7 @@ const ContentCreatorProvider: React.FC = ({ children }) => {
                 value={ value }
             >
                 { children }
+                { renderSelectItemModal() }
                 { renderAddItemModal() }
                 { renderEditStep() }
             </ContentCreatorContext.Provider>
