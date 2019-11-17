@@ -13,7 +13,7 @@ export interface Item {
 
 export interface Dependency {
     unit: string;
-    amount: string | number;
+    amount: number;
     item: {
         id: string,
         name: string

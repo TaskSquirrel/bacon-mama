@@ -1,6 +1,7 @@
 import React from "react";
 import { BrowserRouter } from "react-router-dom";
 
+import TopLevelLoadingIndicator from "./components/shared/TopLevelLoadingIndicator";
 import StorageProvider from "./components/Storage/StorageProvider";
 import UserProvider from "./components/User/UserProvider";
 import AppRouter from "./components/shared/AppRouter";
@@ -17,9 +18,11 @@ const App: React.FC = () => {
                 store="APP_DATA"
             >
                 <UserProvider>
-                    <AppRouter
-                        routes={ routes }
-                    />
+                    <TopLevelLoadingIndicator>
+                        <AppRouter
+                            routes={ routes }
+                        />
+                    </TopLevelLoadingIndicator>
                 </UserProvider>
             </StorageProvider>
         </BrowserRouter>

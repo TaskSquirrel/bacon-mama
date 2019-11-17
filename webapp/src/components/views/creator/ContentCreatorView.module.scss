@@ -1,11 +1,12 @@
 @import "../../../styles/colors";
 
 .top {
-    width: 100%;
     display: flex;
     flex-direction: row;
     justify-content: flex-end;
-    padding: 1rem 0rem;
+
+    padding: 0.5rem 0rem;
+    width: 100%;
 
     border-bottom: 1px solid #e0e0e0;
 }
@@ -23,25 +24,14 @@
 
     width: 20%;
     height: 100%;
-
-    border-right: 1px solid #e0e0e0;
 }
 
 .center {
     flex: 1;
 
-    background-color: rgb(247, 247, 247);
-}
+    width: 80%;
 
-.rightTop {
-    border-bottom: 1px solid $creation;
-}
-
-.rightBottom,
-.rightTop {
-    display: flex;
-    flex-direction: row;
-    height:37.5vh;
+    background-color: rgba(0, 0, 0, 0.05);
 }
 
 .bottom {

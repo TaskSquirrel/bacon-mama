@@ -72,7 +72,6 @@ const EditStep: React.FC<EditStepProps> = ({
                         ) }
                     />
                     <TextArea
-                        required
                         placeholder="Step description"
                         value={ description }
                         onChange={ createChangeEventStateSetter(

@@ -1,0 +1,45 @@
+.card {
+    position: relative;
+    overflow: hidden;
+
+    display: flex;
+    flex-direction: column;
+
+    box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+
+    width: 15rem;
+
+    &:not(:last-child) {
+        margin-right: 1rem;
+    }
+
+    &:first-child {
+        margin-left: 4rem;
+    }
+
+    &:last-child {
+        margin-right: 4rem;
+    }
+}
+
+.image {
+    display: flex;
+
+    height: 8rem;
+
+    background-color: rgba(0, 0, 0, 0.2);
+}
+
+.title {
+    font-size: 1.1rem;
+    font-weight: bold;
+}
+
+.measurement {
+    color: var(--gray);
+}
+
+.details {
+    padding: 0.5rem;
+}

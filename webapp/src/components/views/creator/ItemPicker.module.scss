@@ -22,16 +22,25 @@
     margin: 0;
 }
 
-.items {
-    padding: 0 2rem;
+.scroller {
+    overflow-x: auto;
 
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    grid-template-rows: auto;
-    justify-items: center;
-    align-content: center;
-    row-gap: 2rem;
-    column-gap: 2rem;
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: center;
+
+    &::-webkit-scrollbar {
+        display: none;
+    }
+
+    &.center {
+        justify-content: center;
+    }
+}
+
+.dependencies {
+    display: flex;
+    align-items: center;
 }
 
 .container {
@@ -41,8 +50,4 @@
     display: grid;
     grid-template-rows: 1fr 1fr;
     grid-template-columns: 1fr;
-}
-
-.save {
-
 }

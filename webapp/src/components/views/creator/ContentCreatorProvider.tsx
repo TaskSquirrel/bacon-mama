@@ -12,6 +12,7 @@ import { APIRecipeResponse, Omit } from "../../../models/API";
 
 import AddItem from "./AddItem";
 import EditStep from "./EditStep";
+import useLoadingIndicator from "../../hooks/useLoadingIndicator";
 import useAPI from "../../hooks/useAPI";
 
 import { fromAPIRecipe } from "../../../api/mappings";
@@ -20,6 +21,7 @@ import { noop } from "../../../utils";
 export interface ContentCreatorContextShape {
     available: boolean;
     metadata: Metadata;
+    currentStep: Step | null;
     items: Item[];
     steps: Step[];
     actions: {
@@ -37,6 +39,7 @@ export const DEFAULT_CONTENT_CREATOR_CONTEXT: ContentCreatorContextShape = {
         id: "content_creator",
         name: "Untitled recipe"
     },
+    currentStep: null,
     items: [],
     steps: [],
     actions: {
@@ -58,6 +61,12 @@ const ContentCreatorProvider: React.FC = ({ children }) => {
     const [recipe, setRecipe] = useState<Recipe | null>(null);
     const { id: recipeID, sequence: seq } = useParams();
     const request = useAPI();
+    const { setStatus } = useLoadingIndicator();
+    const currentStep = recipe && seq
+        ? recipe.steps.find(
+            ({ sequence: recipeStepSeq }) => seq === `${recipeStepSeq}`
+        )
+        : null;
 
     const createModalStateSetter = (
         state: boolean,
@@ -81,6 +90,8 @@ const ContentCreatorProvider: React.FC = ({ children }) => {
         payload: AxiosRequestConfig
     ) => {
         try {
+            setStatus(true);
+
             const {
                 data
             } = await request<APIRecipeResponse>(
@@ -101,6 +112,8 @@ const ContentCreatorProvider: React.FC = ({ children }) => {
             } else {
                 throw e;
             }
+        } finally {
+            setStatus(false);
         }
     };
 
@@ -199,21 +212,14 @@ const ContentCreatorProvider: React.FC = ({ children }) => {
     };
 
     const renderEditStep = () => {
-        if (!seq || !recipe) {
-            return null;
-        }
-
-        const step = recipe.steps
-            .find(({ sequence }) => `${sequence}` === seq);
-
-        if (!step) {
+        if (!currentStep || !editStep) {
             return null;
         }
 
         return (
             <EditStep
-                show={ editStep }
-                step={ step }
+                show
+                step={ currentStep || null }
                 close={ createModalStateSetter(false, setEditStep) }
             />
         );
@@ -235,6 +241,7 @@ const ContentCreatorProvider: React.FC = ({ children }) => {
                 name: recipe.name,
                 description: recipe.description
             },
+            currentStep: currentStep || null,
             items: recipe.items,
             steps: recipe.steps,
             actions: {

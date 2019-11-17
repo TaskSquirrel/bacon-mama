@@ -58,13 +58,15 @@ const Steps: React.FC = () => {
                     key={ sequence }
                     role="button"
                     className={ classNames(
-                        styles.step,
-                        isActive && styles.active
+                        styles.step
                     ) }
                     onClick={ onStepClick }
                 >
                     <div
-                        className={ styles.metadata }
+                        className={ classNames(
+                            styles.metadata,
+                            isActive && styles.active
+                        ) }
                     >
                         <div
                             className={ styles.sequence }
@@ -113,13 +115,25 @@ const Steps: React.FC = () => {
         <ol
             className={ styles.list }
         >
-            { renderSteps() }
             <li>
-                <ButtonBase
+                <h1
+                    className={ styles.heading }
+                >
+                    Steps
+                </h1>
+            </li>
+            { renderSteps() }
+            <li
+                className={ styles.button }
+            >
+                <button
+                    className={ styles.add }
                     onClick={ add }
                 >
-                    Add step
-                </ButtonBase>
+                    <i
+                        className="fas fa-plus"
+                    />
+                </button>
             </li>
         </ol>
     );

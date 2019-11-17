@@ -2,6 +2,7 @@ import React, { useContext } from "react";
 
 import Steps from "./Steps";
 import ItemPicker from "./ItemPicker";
+import ItemsList from "./items/ItemsList";
 
 import { ContentCreatorContext } from "./ContentCreatorProvider";
 import ButtonBase from "../../controls/ButtonBase";
@@ -37,7 +38,6 @@ const CreateRecipe: React.FC = () => {
                     <ItemPicker />
                 </div>
             </div>
-            <div className={ styles.bottom }>d</div>
         </div>
     );
 };
