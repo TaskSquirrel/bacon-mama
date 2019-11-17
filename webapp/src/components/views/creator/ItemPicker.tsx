@@ -40,6 +40,7 @@ const ItemPicker: React.FC = () => {
         ) => {
             return (
                 <ItemCard
+                    showButton
                     key={ `${id}-${index}` }
                     name={ name }
                     quantity={ {
@@ -56,9 +57,12 @@ const ItemPicker: React.FC = () => {
         if (!result) {
             return (
                 <AuraButton
-                    onClick={}
+                    shadow
+                    size="large"
                 >
-                    +
+                    <i
+                        className="fas fa-plus"
+                    />
                 </AuraButton>
             );
         }
@@ -99,7 +103,9 @@ const ItemPicker: React.FC = () => {
                         to={ `/items/${recipeID}/${sequence}` }
                     >
                         <AuraButton>
-                            Hey
+                            <i
+                                className="fas fa-plus"
+                            />
                         </AuraButton>
                     </Link>
                 </div>

@@ -1,6 +1,5 @@
 .card {
     position: relative;
-    overflow: hidden;
 
     display: flex;
     flex-direction: column;
@@ -10,16 +9,36 @@
 
     width: 15rem;
 
+    transition: transform 150ms ease-in-out;
+
     &:not(:last-child) {
-        margin-right: 1rem;
+        margin-right: 2rem;
     }
 
     &:first-child {
-        margin-left: 4rem;
+        margin-left: 5rem;
     }
 
     &:last-child {
-        margin-right: 4rem;
+        margin-right: 5rem;
+    }
+
+    &:hover {
+        transform: scale(1.05);
+    }
+}
+
+.button {
+    position: absolute;
+    top: 0;
+    right: 0;
+
+    transform: translate(50%, -50%) scale(0);
+
+    transition: transform 150ms ease-in-out;
+
+    &.hovering {
+        transform: translate(50%, -50%) scale(1);
     }
 }
 
@@ -27,6 +46,8 @@
     display: flex;
 
     height: 8rem;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
 
     background-color: rgba(0, 0, 0, 0.2);
 }

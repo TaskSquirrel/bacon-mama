@@ -44,7 +44,7 @@ const TopLevelLoadingIndicator: React.FC = ({
         if (!loading) {
             setTimeout(() => {
                 setVisible(false);
-            }, 500);
+            }, 300);
         }
     }, [loading]);
 
