@@ -66,6 +66,7 @@ const ItemPicker: React.FC = () => {
                 <AuraButton
                     shadow
                     size="large"
+                    className={ styles.button }
                     onClick={ createItemPickerStateSetter(true) }
                 >
                     <i
@@ -107,13 +108,19 @@ const ItemPicker: React.FC = () => {
                     className={ styles.dependencies }
                 >
                     { renderItems(step) }
-                    <AuraButton
-                        onClick={ createItemPickerStateSetter(true) }
+                    <div
+                        className={ styles["add-container"] }
                     >
-                        <i
-                            className="fas fa-plus"
-                        />
-                    </AuraButton>
+                        <AuraButton
+                            size="large"
+                            className={ styles.button }
+                            onClick={ createItemPickerStateSetter(true) }
+                        >
+                            <i
+                                className="fas fa-plus"
+                            />
+                        </AuraButton>
+                    </div>
                 </div>
             </div>
             <div

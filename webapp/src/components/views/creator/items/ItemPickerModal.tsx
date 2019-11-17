@@ -16,11 +16,15 @@ interface ItemPickerModalProps {
 const ItemPickerModal: React.FC<ItemPickerModalProps> = ({
     items, control
 }) => {
-    const [selected, setSelected] = useState<Item | null>(null);
+    const [selected, setSelected] = useState<string | null>(null);
     const [amount, setAmount] = useState<string>("");
     const [unit, setUnit] = useState<string>("");
 
+    const createControlSetter = (state: boolean) => () => control(state);
+
     const onSubmit = () => {};
+
+    const createSelectItem = (id: string) => () => setSelected(id);
 
     const renderItems = () => {
         return items.map(({
@@ -30,8 +34,10 @@ const ItemPickerModal: React.FC<ItemPickerModalProps> = ({
                 <div
                     key={ id }
                     className={ classNames(
-                        styles.item
+                        styles.item,
+                        selected === id && styles.selected
                     ) }
+                    onClick={ createSelectItem(id) }
                 >
                     { name }
                 </div>
@@ -43,6 +49,7 @@ const ItemPickerModal: React.FC<ItemPickerModalProps> = ({
         <Modal
             show
             title="Pick item"
+            onBackdropClick={ createControlSetter(false) }
         >
             <form
                 onSubmit={ onSubmit }
@@ -50,7 +57,9 @@ const ItemPickerModal: React.FC<ItemPickerModalProps> = ({
                 <div
                     className={ modalStyles.form }
                 >
-                    <div>
+                    <div
+                        className={ styles.items }
+                    >
                         { renderItems() }
                     </div>
                 </div>
