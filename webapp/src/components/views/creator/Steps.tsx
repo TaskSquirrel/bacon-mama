@@ -13,11 +13,13 @@ const Steps: React.FC = () => {
         metadata: { id: recipeID },
         actions: {
             addStep,
-            openEditStep
+            setEditStepModal
         }
     } = useContext(ContentCreatorContext);
     const { push } = useHistory();
     const { sequence: sequenceParam } = useParams();
+
+    const openEditStepModal = () => setEditStepModal(true);
 
     const add = () => {
         addStep({
@@ -35,7 +37,7 @@ const Steps: React.FC = () => {
                 className={ styles.actions }
             >
                 <button
-                    onClick={ openEditStep }
+                    onClick={ openEditStepModal }
                 >
                     Edit
                 </button>
@@ -58,13 +60,15 @@ const Steps: React.FC = () => {
                     key={ sequence }
                     role="button"
                     className={ classNames(
-                        styles.step,
-                        isActive && styles.active
+                        styles.step
                     ) }
                     onClick={ onStepClick }
                 >
                     <div
-                        className={ styles.metadata }
+                        className={ classNames(
+                            styles.metadata,
+                            isActive && styles.active
+                        ) }
                     >
                         <div
                             className={ styles.sequence }
@@ -113,13 +117,25 @@ const Steps: React.FC = () => {
         <ol
             className={ styles.list }
         >
-            { renderSteps() }
             <li>
-                <ButtonBase
+                <h1
+                    className={ styles.heading }
+                >
+                    Steps
+                </h1>
+            </li>
+            { renderSteps() }
+            <li
+                className={ styles.button }
+            >
+                <button
+                    className={ styles.add }
                     onClick={ add }
                 >
-                    Add step
-                </ButtonBase>
+                    <i
+                        className="fas fa-plus"
+                    />
+                </button>
             </li>
         </ol>
     );

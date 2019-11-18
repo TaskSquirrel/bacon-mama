@@ -1,3 +1,12 @@
+@import "../../../styles/colors";
+
+.button {
+    color: $primary;
+
+    background-color: rgba($primary, 0.25);
+    box-shadow: none;
+}
+
 .add {
     display: flex;
     margin:auto;
@@ -22,16 +31,32 @@
     margin: 0;
 }
 
-.items {
-    padding: 0 2rem;
+.scroller {
+    overflow-x: auto;
 
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    grid-template-rows: auto;
-    justify-items: center;
-    align-content: center;
-    row-gap: 2rem;
-    column-gap: 2rem;
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: center;
+
+    &::-webkit-scrollbar {
+        display: none;
+    }
+
+    &.center {
+        justify-content: center;
+    }
+}
+
+.dependencies {
+    display: flex;
+    align-items: center;
+
+    .add-container {
+        display: flex;
+        justify-content: center;
+
+        width: 15rem;
+    }
 }
 
 .container {
@@ -41,8 +66,4 @@
     display: grid;
     grid-template-rows: 1fr 1fr;
     grid-template-columns: 1fr;
-}
-
-.save {
-
 }

@@ -28,7 +28,9 @@ const ItemsViewer: React.FC = () => {
     const [selected, setSelected] = useState<string>("");
 
     const goToRecipeEditor = () => {
-        push(`/edit/${id}`);
+        const seq = sequence || "";
+
+        push(`/edit/${id}/${seq}`);
     };
 
     const createItemSelector = (itemID: string) => () => {
