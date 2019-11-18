@@ -44,6 +44,8 @@ public class StepPersistence {
     return this.findStep(JsonUtils.parseId(stepId));
   }
 
+  public Step findStep(Map<String, Object> stepJson) { return this.findStep(stepJson.get("id")); }
+
   public Item findItem(Long itemId) {
     Optional<Item> optional = itemRepository.findById(itemId);
     return unpackOptional(optional);
