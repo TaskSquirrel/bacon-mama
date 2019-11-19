@@ -23,7 +23,7 @@ public class Step {
   @ManyToOne()
   private Recipe recipe;
 
-  @OneToOne()
+  @OneToOne(mappedBy = "resultStep")
   private Ingredient resultIngredient;
 
   @OneToMany(mappedBy = "step")

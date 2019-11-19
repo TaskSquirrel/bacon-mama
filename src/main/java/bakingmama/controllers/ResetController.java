@@ -21,6 +21,8 @@ public class ResetController implements BaseApiController {
   @Autowired
   RecipeRepository recipeRepository;
   @Autowired
+  IngredientRepository ingredientRepository;
+  @Autowired
   ModelUtils mu;
 
   @CrossOrigin
@@ -79,9 +81,17 @@ public class ResetController implements BaseApiController {
     Item dough = mu.addItem("dough", newRecipe);
     Item bread = mu.addItem("bread", newRecipe);
 
+    Ingredient doughIng = mu.addIngredient(dough, null, 10d, "ounces");
+    Ingredient breadIng = mu.addIngredient(bread, null, 100d, "pieces");
+
     // Add steps
-    Step newStep1 = mu.addStep(newRecipe, dough, "mix", 1, new HashSet<>());
-    Step newStep2 = mu.addStep(newRecipe, bread, "bake", 2, new HashSet<>());
+    Step newStep1 = mu.addStep(newRecipe, doughIng, "mix", 1, new HashSet<>());
+    Step newStep2 = mu.addStep(newRecipe, breadIng, "bake", 2, new HashSet<>());
+
+    doughIng.setResultStep(newStep1);
+    breadIng.setResultStep(newStep2);
+    ingredientRepository.save(doughIng);
+    ingredientRepository.save(breadIng);
 
     // Add ingredients to the steps:
     mu.addIngredient(eggs, newStep1, 3d, "");

@@ -59,8 +59,12 @@ public class StepPersistence {
     return true;
   }
 
-  public Ingredient addIngredient(IngredientJson ij) {
-    return this.addIngredient(ij, null);
+  public Ingredient addResultIngredient(IngredientJson ij, Step resultStep) {
+    ingredientRepository.delete(resultStep.getResultIngredient());
+    Ingredient ing = this.addIngredient(ij, null);
+    ing.setResultStep(resultStep);
+    ingredientRepository.save(ing);
+    return ing;
   }
 
   public Ingredient addIngredient(IngredientJson ij, Step step) {
@@ -78,7 +82,7 @@ public class StepPersistence {
 
     // Edit step and save into DB
     Step step = stepJson.toModel();
-    step.edit(stepJson.getVerb(), stepJson.getSequence(), addIngredient(ingredientJson));
+    step.edit(stepJson.getVerb(), stepJson.getSequence(), addResultIngredient(ingredientJson, step));
     stepRepository.save(step);
 
     // Delete old ingredients and add new ingredients with new Step
@@ -145,6 +149,7 @@ public class StepPersistence {
     Set<Ingredient> ingredientsSet = new HashSet<>();
     for (Map<String, Object> ingredientMap : ingredientsList) {
       IngredientJson ij = new IngredientJson(ingredientMap);
+      beanFactory.autowireBean(ij);
       Ingredient ingredient = this.addIngredient(ij, step);
       ingredientsSet.add(ingredient);
     }
