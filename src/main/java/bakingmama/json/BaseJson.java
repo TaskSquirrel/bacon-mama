@@ -34,4 +34,5 @@ public class BaseJson {
     throw new UnsupportedOperationException("toModel() is not implemented for class!");
   }
 
+  public boolean isNull() { return this.json == null; }
 }

@@ -24,7 +24,18 @@ public class IngredientJson extends BaseJson {
     return resultItem;
   }
 
-  public Double getAmount() { return (Double) this.json.get("amount"); }
+  public Double getAmount() {
+    Double d;
+    Object amount = this.json.get("amount");
+    try {
+      d = (Double) amount;
+    } catch (Exception e) {
+      Integer i = (Integer) amount;
+      d = i.doubleValue();
+    }
+
+    return d;
+  }
 
   public String getUnit() { return (String) this.json.get("unit"); }
 }
