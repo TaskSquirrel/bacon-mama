@@ -72,8 +72,6 @@ const ItemPickerModal: React.FC<ItemPickerModalProps> = ({
                 ]
             });
         } else {
-            console.log("Picking result...");
-
             replaceStep({
                 ...currentStep,
                 result: {

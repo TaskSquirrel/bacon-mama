@@ -8,8 +8,19 @@
     height: 100%;
 }
 
+.top {
+    z-index: 9998;
+
+    position: sticky;
+    top: 0;
+
+    padding: 1rem;
+
+    background-color: var(--dark);
+}
+
 .heading {
-    margin: 1rem;
+    margin: 0;
 }
 
 .step {
@@ -27,8 +38,13 @@
     border-radius: 5px;
 
     transition:
+        transform 150ms ease-in-out,
         color 150ms ease-in-out,
         background-color 150ms ease-in-out;
+
+    &:not(.active):hover {
+        transform: translateX(0.5rem);
+    }
 
     &.active {
         color: var(--white);

@@ -117,11 +117,15 @@ const Steps: React.FC = () => {
         <div
             className={ styles.container }
         >
-            <h1
-                className={ styles.heading }
+            <div
+                className={ styles.top }
             >
-                Steps
-            </h1>
+                <h1
+                    className={ styles.heading }
+                >
+                    Steps
+                </h1>
+            </div>
             <ol
                 className={ styles.list }
             >

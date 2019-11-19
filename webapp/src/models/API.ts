@@ -6,6 +6,7 @@ export interface Response {
 }
 
 export interface APIDependency {
+    id: number;
     amount: number;
     unit: string;
     item: APIItem;

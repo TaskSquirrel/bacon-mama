@@ -15,17 +15,14 @@ const ItemPicker: React.FC = () => {
         metadata: {
             id: recipeID
         },
-        steps,
+        currentStep: step,
         actions: {
+            replaceStep
         }
     } = useContext(ContentCreatorContext);
     const { push } = useHistory();
 
     const { sequence } = useParams();
-
-    const step = steps.find(({ sequence: seq }) => {
-        return `${seq}` === sequence;
-    });
 
     const openDependencyPicker = () => {
         push(`/edit/${recipeID}/${sequence}/deps`);
@@ -35,11 +32,36 @@ const ItemPicker: React.FC = () => {
         push(`/edit/${recipeID}/${sequence}/creates`);
     };
 
+    const createOnItemCloseClick = (
+        type: "dependency" | "result",
+        dependencyID: string,
+    ) => () => {
+        if (!step) {
+            return;
+        }
+
+        const { dependencies } = step;
+
+        if (type === "dependency") {
+            replaceStep({
+                ...step,
+                dependencies: dependencies
+                    .filter(({ id }) => id !== dependencyID)
+            });
+        } else if (type === "result") {
+            replaceStep({
+                ...step,
+                result: null
+            });
+        }
+    };
+
     const renderItems = (currentStep: Step) => {
         const { dependencies } = currentStep;
 
         return dependencies.map((
             {
+                id: dependencyID,
                 item: {
                     id,
                     name
@@ -57,6 +79,10 @@ const ItemPicker: React.FC = () => {
                     quantity={ {
                         amount, unit
                     } }
+                    onCloseClick={ createOnItemCloseClick(
+                        "dependency",
+                        dependencyID
+                    ) }
                 />
             );
         });
@@ -81,6 +107,7 @@ const ItemPicker: React.FC = () => {
         }
 
         const {
+            id: dependencyID,
             item: { name },
             amount,
             unit
@@ -88,14 +115,24 @@ const ItemPicker: React.FC = () => {
 
         return (
             <ItemCard
+                showButton
                 name={ name }
                 quantity={ { amount, unit } }
+                onCloseClick={ createOnItemCloseClick(
+                    "result", dependencyID
+                ) }
             />
         );
     };
 
     if (!step) {
-        return null;
+        return (
+            <div
+                className={ styles.empty }
+            >
+                Choose a step on the left to edit!
+            </div>
+        );
     }
 
     return (
@@ -127,6 +164,9 @@ const ItemPicker: React.FC = () => {
                     </div>
                 </div>
             </div>
+            <div
+                className={ styles.divider }
+            />
             <div
                 className={ classNames(
                     styles.scroller,

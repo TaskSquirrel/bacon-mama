@@ -42,7 +42,11 @@ const FullModal: React.FC<FullModalProps> = ({
                 appear
                 mountOnEnter
                 unmountOnExit
-                timeout={ 150 }
+                timeout={ {
+                    appear: 0,
+                    enter: 150,
+                    exit: 150
+                } }
                 classNames={ {
                     enterActive: styles.show,
                     enterDone: styles.show

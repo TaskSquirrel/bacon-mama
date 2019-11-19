@@ -9,8 +9,6 @@
 
     width: 15rem;
 
-    transition: transform 150ms ease-in-out;
-
     &:not(:last-child) {
         margin-right: 1.5rem;
     }
@@ -21,10 +19,6 @@
 
     &:last-child {
         margin-right: 4rem;
-    }
-
-    &:hover {
-        transform: scale(1.05);
     }
 }
 

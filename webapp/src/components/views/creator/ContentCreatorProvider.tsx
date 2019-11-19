@@ -206,10 +206,6 @@ const ContentCreatorProvider: React.FC = ({ children }) => {
             return null;
         }
 
-        if (!showResultPicker && !showDependencyPicker) {
-            return null;
-        }
-
         const pick = showDependencyPicker
             ? "dependencies"
             : "result";

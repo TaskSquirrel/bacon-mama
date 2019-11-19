@@ -12,10 +12,11 @@ export interface ItemCardProps {
         amount: number,
         unit: string
     };
+    onCloseClick?: () => void;
 }
 
 const ItemCard: React.FC<ItemCardProps> = ({
-    name, showButton, quantity
+    name, showButton, quantity, onCloseClick
 }) => {
     const [hovering, setHovering] = useState<boolean>(false);
 
@@ -30,6 +31,7 @@ const ItemCard: React.FC<ItemCardProps> = ({
                     styles.button,
                     hovering && styles.hovering
                 ) }
+                onClick={ onCloseClick }
             >
                 <i
                     className="fas fa-times"
