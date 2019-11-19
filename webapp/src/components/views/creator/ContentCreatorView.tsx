@@ -24,19 +24,29 @@ const CreateRecipe: React.FC = () => {
     }
 
     return (
-        <div className={ styles.container }>
-            <div className={ styles.top }>
-                <ButtonBase
-                    onClick={ openAddItemModal }
-                >
-                    Add item
-                </ButtonBase>
+        <div
+            className={ styles.container }
+        >
+            <div
+                className={ styles.left }
+            >
+                <Steps />
             </div>
-            <div className={ styles.content }>
-                <div className={ styles.left }>
-                    <Steps />
+            <div
+                className={ styles.content }
+            >
+                <div
+                    className={ styles.top }
+                >
+                    <ButtonBase
+                        onClick={ openAddItemModal }
+                    >
+                        Add item
+                    </ButtonBase>
                 </div>
-                <div className={ styles.center }>
+                <div
+                    className={ styles.center }
+                >
                     <ItemPicker />
                 </div>
             </div>

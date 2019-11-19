@@ -1,5 +1,5 @@
 import React, { useContext } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useHistory } from "react-router-dom";
 import classNames from "classnames";
 
 import { Step } from "../../../models/recipe";
@@ -17,9 +17,9 @@ const ItemPicker: React.FC = () => {
         },
         steps,
         actions: {
-            setSelectItemModal
         }
     } = useContext(ContentCreatorContext);
+    const { push } = useHistory();
 
     const { sequence } = useParams();
 
@@ -27,9 +27,13 @@ const ItemPicker: React.FC = () => {
         return `${seq}` === sequence;
     });
 
-    const createItemPickerStateSetter = (
-        state: boolean
-    ) => () => setSelectItemModal(state);
+    const openDependencyPicker = () => {
+        push(`/edit/${recipeID}/${sequence}/deps`);
+    };
+
+    const openResultPicker = () => {
+        push(`/edit/${recipeID}/${sequence}/creates`);
+    };
 
     const renderItems = (currentStep: Step) => {
         const { dependencies } = currentStep;
@@ -67,7 +71,7 @@ const ItemPicker: React.FC = () => {
                     shadow
                     size="large"
                     className={ styles.button }
-                    onClick={ createItemPickerStateSetter(true) }
+                    onClick={ openResultPicker }
                 >
                     <i
                         className="fas fa-plus"
@@ -114,7 +118,7 @@ const ItemPicker: React.FC = () => {
                         <AuraButton
                             size="large"
                             className={ styles.button }
-                            onClick={ createItemPickerStateSetter(true) }
+                            onClick={ openDependencyPicker }
                         >
                             <i
                                 className="fas fa-plus"

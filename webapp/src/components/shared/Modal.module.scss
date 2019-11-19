@@ -21,6 +21,17 @@
     border-radius: 10px;
 
     min-width: 35%;
+
+    opacity: 0;
+
+    transition:
+        transform 150ms ease-in-out,
+        opacity 150ms ease-in-out;
+
+    &.appear {
+        opacity: 1;
+        transform: scale(1);
+    }
 }
 
 .heading {

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router";
+import { useParams, useRouteMatch } from "react-router";
 import { AxiosRequestConfig } from "axios";
 
 import {
@@ -26,7 +26,6 @@ export interface ContentCreatorContextShape {
     items: Item[];
     steps: Step[];
     actions: {
-        setSelectItemModal: (state: boolean) => void,
         setAddItemModal: (state: boolean) => void,
         setEditStepModal: (state: boolean) => void,
         addItem: (name: string, description?: string) => Promise<void> | void,
@@ -45,7 +44,6 @@ export const DEFAULT_CONTENT_CREATOR_CONTEXT: ContentCreatorContextShape = {
     items: [],
     steps: [],
     actions: {
-        setSelectItemModal: noop,
         setAddItemModal: noop,
         setEditStepModal: noop,
         addItem: noop,
@@ -59,13 +57,21 @@ export const ContentCreatorContext = React.createContext<
 >(DEFAULT_CONTENT_CREATOR_CONTEXT);
 
 const ContentCreatorProvider: React.FC = ({ children }) => {
-    const [selectedItemModal, setSelectedItemModal] = useState<boolean>(false);
     const [addItemModal, setAddItemModal] = useState<boolean>(false);
     const [editStepModal, setEditStepModal] = useState<boolean>(false);
     const [recipe, setRecipe] = useState<Recipe | null>(null);
     const { id: recipeID, sequence: seq } = useParams();
     const request = useAPI();
     const { setStatus } = useLoadingIndicator();
+    const showDependencyPicker = useRouteMatch({
+        path: "/edit/:id/:sequence/deps",
+        exact: true
+    });
+    const showResultPicker = useRouteMatch({
+        path: "/edit/:id/:sequence/creates",
+        exact: true
+    });
+
     const currentStep = recipe && seq
         ? recipe.steps.find(
             ({ sequence: recipeStepSeq }) => seq === `${recipeStepSeq}`
@@ -175,9 +181,7 @@ const ContentCreatorProvider: React.FC = ({ children }) => {
                     step: {
                         id, name, verb, sequence,
                         dependencies,
-                        result: result ? {
-                            id: result
-                        } : null,
+                        result: result || null,
                         description
                     }
                 }
@@ -198,14 +202,24 @@ const ContentCreatorProvider: React.FC = ({ children }) => {
     };
 
     const renderSelectItemModal = () => {
-        if (!selectedItemModal || !currentStep || !recipe) {
+        if (!recipe || !currentStep) {
             return null;
         }
 
+        if (!showResultPicker && !showDependencyPicker) {
+            return null;
+        }
+
+        const pick = showDependencyPicker
+            ? "dependencies"
+            : "result";
+
         return (
             <ItemPickerModal
+                pick={ pick }
+                show={ !!showDependencyPicker || !!showResultPicker }
                 items={ recipe.items }
-                control={ createModalStateSetter(setSelectedItemModal) }
+                currentStep={ currentStep }
             />
         );
     };
@@ -255,7 +269,6 @@ const ContentCreatorProvider: React.FC = ({ children }) => {
             items: recipe.items,
             steps: recipe.steps,
             actions: {
-                setSelectItemModal: createModalStateSetter(setSelectedItemModal),
                 setAddItemModal: createModalStateSetter(setAddItemModal),
                 setEditStepModal: createModalStateSetter(setEditStepModal),
                 addItem, addStep, replaceStep

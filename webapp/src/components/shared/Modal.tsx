@@ -1,4 +1,5 @@
-import React, { MouseEvent } from "react";
+import React from "react";
+import { CSSTransition } from "react-transition-group";
 
 import Portal from "./Portal";
 
@@ -34,18 +35,34 @@ const Modal: React.FC<ModalProps> = ({
                 className={ styles.backdrop }
                 onClick={ backdropClick }
             >
-                <div
-                    className={ styles.dialog }
+                <CSSTransition
+                    in={ show }
+                    appear
+                    mountOnEnter
+                    unmountOnExit
+                    timeout={ {
+                        appear: 0,
+                        enter: 150,
+                        exit: 150
+                    } }
+                    classNames={ {
+                        enterActive: styles.appear,
+                        enterDone: styles.appear
+                    } }
                 >
-                    <h2
-                        className={ styles.heading }
+                    <div
+                        className={ styles.dialog }
                     >
-                        { title || "Modal" }
-                    </h2>
-                    <div>
-                        { children }
+                        <h2
+                            className={ styles.heading }
+                        >
+                            { title || "Modal" }
+                        </h2>
+                        <div>
+                            { children }
+                        </div>
                     </div>
-                </div>
+                </CSSTransition>
             </div>
         </Portal>
     );

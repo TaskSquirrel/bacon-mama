@@ -24,7 +24,7 @@ const routes: Route[] = [
     },
     {
         to: "/edit/:id/:sequence",
-        exact: true,
+        exact: false,
         component: ContentCreator
     },
     {

@@ -114,30 +114,28 @@ const Steps: React.FC = () => {
     }
 
     return (
-        <ol
-            className={ styles.list }
+        <div
+            className={ styles.container }
         >
-            <li>
-                <h1
-                    className={ styles.heading }
-                >
-                    Steps
-                </h1>
-            </li>
-            { renderSteps() }
-            <li
-                className={ styles.button }
+            <h1
+                className={ styles.heading }
             >
-                <button
-                    className={ styles.add }
-                    onClick={ add }
-                >
-                    <i
-                        className="fas fa-plus"
-                    />
-                </button>
-            </li>
-        </ol>
+                Steps
+            </h1>
+            <ol
+                className={ styles.list }
+            >
+                { renderSteps() }
+            </ol>
+            <button
+                className={ styles.add }
+                onClick={ add }
+            >
+                <i
+                    className="fas fa-plus"
+                />
+            </button>
+        </div>
     );
 };
 
