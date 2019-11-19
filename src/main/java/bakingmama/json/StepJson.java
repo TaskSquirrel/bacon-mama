@@ -20,13 +20,8 @@ public class StepJson extends BaseJson {
 
   public String getVerb() { return (String) this.json.get("verb"); }
 
-  public Item getResult() {
-    Item resultItem = null;
-    Object itemJson = this.json.get("item");
-    if (itemJson != null && this.castJson(itemJson).containsKey("id")) {
-      resultItem = sp.findItem(this.castJson(itemJson).get("id"));
-    }
-    return resultItem;
+  public IngredientJson getResultJson() {
+    return new IngredientJson(this.json.get("result"));
   }
 
   public List<Map<String, Object>> getIngredients() { return this.castListJson(this.json.get("dependencies")); }

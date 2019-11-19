@@ -23,6 +23,9 @@ public class Ingredient {
   @OneToOne()
   private Item item;
 
+  @OneToOne()
+  private Step resultStep;
+
   @ManyToOne()
   private Step step;
 
