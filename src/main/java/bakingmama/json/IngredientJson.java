@@ -15,9 +15,11 @@ public class IngredientJson extends BaseJson {
 
   public Item getItem() {
     Item resultItem = null;
-    Object itemJson = this.json.get("item");
-    if (itemJson != null && this.castJson(itemJson).containsKey("id")) {
-      resultItem = sp.findItem(this.castJson(itemJson).get("id"));
+    Object itemObj = this.json.get("item");
+    if (itemObj != null) {
+      Map<String, Object> itemJson = this.castJson(itemObj);
+      Long itemID = this.parseId(itemJson.get("id"));
+      resultItem = sp.findItem(itemID);
     }
     return resultItem;
   }

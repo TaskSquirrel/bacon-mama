@@ -52,12 +52,6 @@ public class StepPersistence {
     return unpackOptional(optional);
   }
 
-  public Item findItem(Object itemId) { return this.findItem(JsonUtils.parseId(itemId)); }
-
-  public Item findItem(Map<String, Object> itemJson) {
-    return this.findItem(itemJson.get("id"));
-  }
-
   public boolean clearIngredients(Step step) {
     for (Ingredient ingredient : step.getIngredients()) {
       ingredientRepository.delete(ingredient);
@@ -65,15 +59,12 @@ public class StepPersistence {
     return true;
   }
 
-  public Ingredient addIngredient(Step step, Map<String, Object> ingredientMap) {
-    Item item = this.findItem(JsonUtils.castMap(ingredientMap.get("item")));
-    Double amount = (Double) ingredientMap.get("amount");
-    String unit = (String) ingredientMap.get("unit");
-    return mu.addIngredient(item, step, amount, unit);
+  public Ingredient addIngredient(IngredientJson ij) {
+    return this.addIngredient(ij, null);
   }
 
-  public Ingredient addIngredient(IngredientJson ij) {
-    return mu.addIngredient(ij.getItem(), null, ij.getAmount(), ij.getUnit());
+  public Ingredient addIngredient(IngredientJson ij, Step step) {
+    return mu.addIngredient(ij.getItem(), step, ij.getAmount(), ij.getUnit());
   }
 
   /**
@@ -153,7 +144,8 @@ public class StepPersistence {
   public Set<Ingredient> addIngredients(Step step, List<Map<String, Object>> ingredientsList) {
     Set<Ingredient> ingredientsSet = new HashSet<>();
     for (Map<String, Object> ingredientMap : ingredientsList) {
-      Ingredient ingredient = this.addIngredient(step, ingredientMap);
+      IngredientJson ij = new IngredientJson(ingredientMap);
+      Ingredient ingredient = this.addIngredient(ij, step);
       ingredientsSet.add(ingredient);
     }
     return ingredientsSet;

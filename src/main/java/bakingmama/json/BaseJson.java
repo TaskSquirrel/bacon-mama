@@ -16,6 +16,20 @@ public class BaseJson {
   }
   List<Map<String, Object>> castListJson(Object listMap) { return (List<Map<String, Object>>) listMap; }
 
+  public Long parseId(Object id) {
+    if (id instanceof String) {
+      id = Integer.parseInt((String) id);
+    }
+
+    Long l;
+    try {
+      l = (Long) id;
+    } catch (ClassCastException cce) {
+      l = (Long) ((Integer) id).longValue();
+    }
+    return l;
+  }
+
   public Object toModel() {
     throw new UnsupportedOperationException("toModel() is not implemented for class!");
   }
