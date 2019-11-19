@@ -51,10 +51,10 @@ public class ModelUtils {
     return ingredient;
   }
 
-  public Step addStep(Recipe recipe, Item result, String verb, Integer sequence, Set<Ingredient> ingredientSet) {
+  public Step addStep(Recipe recipe, Ingredient result, String verb, Integer sequence, Set<Ingredient> ingredientSet) {
     Step step = new Step();
     step.setRecipe(recipe);
-    step.setResultItem(result);
+    step.setResultIngredient(result);
     step.setVerb(verb);
     step.setSequence(sequence);
     step.setIngredients(ingredientSet);

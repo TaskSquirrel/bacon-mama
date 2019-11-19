@@ -1,5 +1,6 @@
 package bakingmama.persistence;
 
+import bakingmama.json.IngredientJson;
 import bakingmama.json.RecipeJson;
 import bakingmama.json.StepJson;
 import bakingmama.models.*;
@@ -44,15 +45,11 @@ public class StepPersistence {
     return this.findStep(JsonUtils.parseId(stepId));
   }
 
+  public Step findStep(Map<String, Object> stepJson) { return this.findStep(stepJson.get("id")); }
+
   public Item findItem(Long itemId) {
     Optional<Item> optional = itemRepository.findById(itemId);
     return unpackOptional(optional);
-  }
-
-  public Item findItem(Object itemId) { return this.findItem(JsonUtils.parseId(itemId)); }
-
-  public Item findItem(Map<String, Object> itemJson) {
-    return this.findItem(itemJson.get("id"));
   }
 
   public boolean clearIngredients(Step step) {
@@ -62,21 +59,16 @@ public class StepPersistence {
     return true;
   }
 
-  public Ingredient addIngredient(Step step, Item item, Double amount, String unit) {
-    Ingredient ingredient = new Ingredient();
-    ingredient.setStep(step);
-    ingredient.setItem(item);
-    ingredient.setAmount(amount);
-    ingredient.setUnit(unit);
-    ingredientRepository.save(ingredient);
-    return ingredient;
+  public Ingredient addResultIngredient(IngredientJson ij, Step resultStep) {
+    ingredientRepository.delete(resultStep.getResultIngredient());
+    Ingredient ing = this.addIngredient(ij, null);
+    ing.setResultStep(resultStep);
+    ingredientRepository.save(ing);
+    return ing;
   }
 
-  public Ingredient addIngredient(Step step, Map<String, Object> ingredientMap) {
-    Item item = this.findItem(JsonUtils.castMap(ingredientMap.get("item")));
-    Double amount = (Double) ingredientMap.get("amount");
-    String unit = (String) ingredientMap.get("unit");
-    return this.addIngredient(step, item, amount, unit);
+  public Ingredient addIngredient(IngredientJson ij, Step step) {
+    return mu.addIngredient(ij.getItem(), step, ij.getAmount(), ij.getUnit());
   }
 
   /**
@@ -84,11 +76,13 @@ public class StepPersistence {
    */
   public boolean editStep(Map<String, Object> json) {
     StepJson stepJson = new StepJson(json, true);
+    IngredientJson ingredientJson = stepJson.getResultJson();
     beanFactory.autowireBean(stepJson);
+    beanFactory.autowireBean(ingredientJson);
 
     // Edit step and save into DB
     Step step = stepJson.toModel();
-    step.edit(stepJson.getVerb(), stepJson.getSequence(), stepJson.getResult());
+    step.edit(stepJson.getVerb(), stepJson.getSequence(), addResultIngredient(ingredientJson, step));
     stepRepository.save(step);
 
     // Delete old ingredients and add new ingredients with new Step
@@ -128,8 +122,7 @@ public class StepPersistence {
     return true;
   }
 
-  public Recipe deleteStep(Long stepId, Long recipeId)
-  {
+  public Recipe deleteStep(Long stepId, Long recipeId) {
     Recipe recipe = recipeRepository.getOne(recipeId);
     Step deleteStep = stepRepository.getOne(stepId);
     Integer pivot = deleteStep.getSequence();
@@ -155,7 +148,9 @@ public class StepPersistence {
   public Set<Ingredient> addIngredients(Step step, List<Map<String, Object>> ingredientsList) {
     Set<Ingredient> ingredientsSet = new HashSet<>();
     for (Map<String, Object> ingredientMap : ingredientsList) {
-      Ingredient ingredient = this.addIngredient(step, ingredientMap);
+      IngredientJson ij = new IngredientJson(ingredientMap);
+      beanFactory.autowireBean(ij);
+      Ingredient ingredient = this.addIngredient(ij, step);
       ingredientsSet.add(ingredient);
     }
     return ingredientsSet;
