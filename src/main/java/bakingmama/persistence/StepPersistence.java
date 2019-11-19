@@ -65,7 +65,7 @@ public class StepPersistence {
       ingredientRepository.delete(resultStep.getResultIngredient());
     }
     // If no ingredient was passed in:
-    if (ij == null) {
+    if (ij == null || ij.isNull()) {
       return null;
     }
     Ingredient ing = this.addIngredient(ij, null);
