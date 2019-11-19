@@ -60,8 +60,13 @@ public class StepPersistence {
   }
 
   public Ingredient addResultIngredient(IngredientJson ij, Step resultStep) {
+    // If the current step has no ingredient...
     if (resultStep.getResultIngredient() != null) {
       ingredientRepository.delete(resultStep.getResultIngredient());
+    }
+    // If no ingredient was passed in:
+    if (ij == null) {
+      return null;
     }
     Ingredient ing = this.addIngredient(ij, null);
     ing.setResultStep(resultStep);
