@@ -1,5 +1,6 @@
 package bakingmama.persistence;
 
+import bakingmama.json.IngredientJson;
 import bakingmama.json.RecipeJson;
 import bakingmama.json.StepJson;
 import bakingmama.models.*;
@@ -64,21 +65,15 @@ public class StepPersistence {
     return true;
   }
 
-  public Ingredient addIngredient(Step step, Item item, Double amount, String unit) {
-    Ingredient ingredient = new Ingredient();
-    ingredient.setStep(step);
-    ingredient.setItem(item);
-    ingredient.setAmount(amount);
-    ingredient.setUnit(unit);
-    ingredientRepository.save(ingredient);
-    return ingredient;
-  }
-
   public Ingredient addIngredient(Step step, Map<String, Object> ingredientMap) {
     Item item = this.findItem(JsonUtils.castMap(ingredientMap.get("item")));
     Double amount = (Double) ingredientMap.get("amount");
     String unit = (String) ingredientMap.get("unit");
-    return this.addIngredient(step, item, amount, unit);
+    return mu.addIngredient(item, step, amount, unit);
+  }
+
+  public Ingredient addIngredient(IngredientJson ij) {
+    return mu.addIngredient(ij.getItem(), null, ij.getAmount(), ij.getUnit());
   }
 
   /**
@@ -86,11 +81,13 @@ public class StepPersistence {
    */
   public boolean editStep(Map<String, Object> json) {
     StepJson stepJson = new StepJson(json, true);
+    IngredientJson ingredientJson = stepJson.getResultJson();
     beanFactory.autowireBean(stepJson);
+    beanFactory.autowireBean(ingredientJson);
 
     // Edit step and save into DB
     Step step = stepJson.toModel();
-    step.edit(stepJson.getVerb(), stepJson.getSequence(), stepJson.getResult());
+    step.edit(stepJson.getVerb(), stepJson.getSequence(), addIngredient(ingredientJson));
     stepRepository.save(step);
 
     // Delete old ingredients and add new ingredients with new Step
@@ -130,8 +127,7 @@ public class StepPersistence {
     return true;
   }
 
-  public Recipe deleteStep(Long stepId, Long recipeId)
-  {
+  public Recipe deleteStep(Long stepId, Long recipeId) {
     Recipe recipe = recipeRepository.getOne(recipeId);
     Step deleteStep = stepRepository.getOne(stepId);
     Integer pivot = deleteStep.getSequence();

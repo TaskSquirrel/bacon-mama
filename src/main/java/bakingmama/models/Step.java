@@ -24,15 +24,15 @@ public class Step {
   private Recipe recipe;
 
   @OneToOne()
-  private Item resultItem;
+  private Ingredient resultIngredient;
 
   @OneToMany(mappedBy = "step")
   private Set<Ingredient> ingredients;
 
-  public boolean edit(String verb, Integer sequence, Item resultItem) {
+  public boolean edit(String verb, Integer sequence, Ingredient resultIngredient) {
     this.verb = verb;
     this.sequence = sequence;
-    this.resultItem = resultItem;
+    this.resultIngredient = resultIngredient;
     return true;
   }
 
@@ -41,7 +41,7 @@ public class Step {
     map.put("id", id);
     map.put("verb", verb);
     map.put("sequence", sequence);
-    map.put("result", resultItem == null ? null : resultItem.toMap());
+    map.put("result", resultIngredient == null ? null : resultIngredient.toMap());
 
     List<Map<String, Object>> ingredientsList = new ArrayList<>();
     map.put("dependencies", ingredientsList);
