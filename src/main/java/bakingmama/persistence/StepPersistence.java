@@ -60,7 +60,9 @@ public class StepPersistence {
   }
 
   public Ingredient addResultIngredient(IngredientJson ij, Step resultStep) {
-    ingredientRepository.delete(resultStep.getResultIngredient());
+    if (resultStep.getResultIngredient() != null) {
+      ingredientRepository.delete(resultStep.getResultIngredient());
+    }
     Ingredient ing = this.addIngredient(ij, null);
     ing.setResultStep(resultStep);
     ingredientRepository.save(ing);
