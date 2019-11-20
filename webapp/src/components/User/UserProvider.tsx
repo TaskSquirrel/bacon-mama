@@ -25,6 +25,7 @@ const UserProvider: React.FC = ({ children }) => {
     const signIn = (
         name: string, password: string
     ) => {
+        
     };
 
     const signOut = () => {
