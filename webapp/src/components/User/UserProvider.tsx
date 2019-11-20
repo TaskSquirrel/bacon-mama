@@ -1,10 +1,16 @@
 import React, { useState, useEffect } from "react";
 
+import { APIUserLogin } from "../../models/API";
+
 import UserContext from "./UserContext";
+import APIClient from "../../api/APIClient";
+
 import useStorage from "../hooks/useStorage";
 
 interface UserData {
     token: string | null;
+    name: string;
+    userID: string;
 }
 
 /**
@@ -20,24 +26,80 @@ const UserProvider: React.FC = ({ children }) => {
         set,
         remove
     } = useStorage<UserData>("USER");
-    const [pre, setPre] = useState<boolean>(false);
+    const [
+        preflightRequestCompleted,
+        setPreflightRequestCompleted
+    ] = useState<boolean>(false);
 
-    const signIn = (
+    const signIn = async (
         name: string, password: string
     ) => {
+        try {
+            const { data: {
+                status,
+                message,
+                token,
+                userID,
+                name: userName
+            } } = await APIClient.request<APIUserLogin>(
+                "/login",
+                {
+                    method: "POST",
+                    data: {
+                        username: name,
+                        password
+                    }
+                }
+            );
+
+            if (status === "error") {
+                throw new Error(message);
+            } else {
+                set({ token, userID, name: userName });
+            }
+        } catch (e) {
+            throw e;
+        }
     };
 
-    const signOut = () => {
-        remove();
-    };
+    const signOut = async () => remove();
 
     useEffect(() => {
-        if (!pre && value && value.token) {
-            const { token } = value;
+        if (preflightRequestCompleted || !ready || !value) {
+            // Do not need to validate user (not logged in).
+            // Or if storage hasn't loaded yet.
 
-            signOut();
+            return;
         }
-    }, [pre, value]);
+
+        const dispatchPreflightValidation = async () => {
+            try {
+                const { data: {
+                    status
+                } } = await APIClient.request(
+                    "/validate",
+                    {
+                        method: "POST",
+                        headers: {
+                            Authorization: `Bearer ${value.token}`
+                        }
+                    }
+                );
+
+                if (status === "error") {
+                    throw new Error();
+                }
+            } catch (e) {
+                console.warn(`[UserProvider] Validation request failed! Invalidated token.`);
+
+                remove();
+            } finally {
+                setPreflightRequestCompleted(true);
+            }
+        };
+
+        dispatchPreflightValidation();
+    }, [remove, ready, value, preflightRequestCompleted]);
 
     if (!ready) {
         return null;
