@@ -81,6 +81,28 @@ public class RecipeController implements BaseApiController {
 
   @CrossOrigin
   @PostMapping(
+      path = "/editRecipe",
+      consumes = "application/json",
+      produces = "application/json"
+  )
+  Map<String, Object> editRecipe(@RequestBody Map<String, Object> body) {
+    Map<String, Object> returnMap = new HashMap<>();
+
+    Recipe recipe = rp.findRecipe(JsonUtils.castMap(body.get("recipe")));
+
+    Map<String, Object> newRecipe = JsonUtils.castMap(body.get("editRecipe"));
+    String recipeName = (String) newRecipe.get("recipeName");
+    String description = (String) newRecipe.get("description");
+
+    recipe = mu.editRecipe(recipe, recipeName, description);
+    returnMap.put("recipe", recipe.toMap());
+
+    JsonUtils.setStatus(returnMap, JsonUtils.SUCCESS);
+    return returnMap;
+  }
+
+  @CrossOrigin
+  @PostMapping(
       path = "/getRecipes",
       consumes = "application/json",
       produces = "application/json"

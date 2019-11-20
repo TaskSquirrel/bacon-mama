@@ -33,6 +33,14 @@ public class ModelUtils {
     return recipe;
   }
 
+  public Recipe editRecipe(Recipe recipe, String name, String description)
+  {
+    recipe.setRecipeName(name);
+    recipe.setDescription(description);
+    recipeRepository.save(recipe);
+    return recipe;
+  }
+
   public Item addItem(String itemName, Recipe recipe) {
     Item item = new Item();
     item.setItemName(itemName);
