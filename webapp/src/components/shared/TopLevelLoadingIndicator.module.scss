@@ -1,0 +1,42 @@
+.indicator {
+    z-index: 9999;
+
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+
+    height: 3px;
+
+    background-color: #fee140;
+    background-image: radial-gradient(circle farthest-corner at -0.4% 112%, rgba(102,51,204,1) 0%, rgba(244,111,111,1) 92.7%);
+    background-size: 300% 300%;
+
+    opacity: 0;
+
+    animation-name: Indicator;
+    animation-duration: 3000ms;
+    animation-iteration-count: infinite;
+    animation-timing-function: ease;
+
+    transition:
+        opacity 300ms ease-in-out;
+
+    &.active {
+        opacity: 1;
+    }
+}
+
+@keyframes Indicator {
+    0% {
+        background-position: 0% 50%;
+    }
+
+    50% {
+        background-position: 100% 50%;
+    }
+
+    100% {
+        background-position: 0% 50%;
+    }
+}

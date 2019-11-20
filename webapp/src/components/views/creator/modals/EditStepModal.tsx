@@ -1,25 +1,24 @@
 import React, { useContext, useState } from "react";
 
-import { Step } from "../../../models/recipe";
+import { Step } from "../../../../models/recipe";
 
-import TextField from "../../controls/TextField";
-import TextArea from "../../controls/TextArea";
-import ButtonBase from "../../controls/ButtonBase";
-import Modal from "../../shared/Modal";
-import { ContentCreatorContext } from "./ContentCreatorProvider";
+import TextField from "../../../controls/TextField";
+import TextArea from "../../../controls/TextArea";
+import ButtonBase from "../../../controls/ButtonBase";
+import Modal from "../../../shared/Modal";
+import { ContentCreatorContext } from "../ContentCreatorProvider";
 
-import { createChangeEventStateSetter } from "../../../utils";
+import { createChangeEventStateSetter } from "../../../../utils";
 
-import styles from "./EditStep.module.scss";
+import styles from "./modals.module.scss";
 
 interface EditStepProps {
-    show: boolean;
     step: Step;
-    close: () => void;
+    control: (state: boolean) => void;
 }
 
 const EditStep: React.FC<EditStepProps> = ({
-    show, step, close
+    step, control
 }) => {
     const {
         actions: {
@@ -31,6 +30,8 @@ const EditStep: React.FC<EditStepProps> = ({
         step.description || ""
     );
 
+    const close = () => control(false);
+
     const save = () => {
         if (name === "" || description === "") {
             return null;
@@ -41,7 +42,7 @@ const EditStep: React.FC<EditStepProps> = ({
             verb: name,
             description
         });
-        close();
+        control(false);
     };
 
     const onFormSubmit = (
@@ -54,7 +55,7 @@ const EditStep: React.FC<EditStepProps> = ({
 
     return (
         <Modal
-            show={ show }
+            show
             title="Edit step details"
         >
             <form
@@ -72,7 +73,6 @@ const EditStep: React.FC<EditStepProps> = ({
                         ) }
                     />
                     <TextArea
-                        required
                         placeholder="Step description"
                         value={ description }
                         onChange={ createChangeEventStateSetter(

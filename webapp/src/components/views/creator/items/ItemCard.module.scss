@@ -1,0 +1,60 @@
+.card {
+    position: relative;
+
+    display: flex;
+    flex-direction: column;
+
+    box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+
+    width: 15rem;
+
+    &:not(:last-child) {
+        margin-right: 1.5rem;
+    }
+
+    &:first-child {
+        margin-left: 4rem;
+    }
+
+    &:last-child {
+        margin-right: 4rem;
+    }
+}
+
+.button {
+    position: absolute;
+    top: 0;
+    right: 0;
+
+    transform: translate(50%, -50%) scale(0);
+
+    transition: transform 150ms ease-in-out;
+
+    &.hovering {
+        transform: translate(50%, -50%) scale(1);
+    }
+}
+
+.image {
+    display: flex;
+
+    height: 8rem;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+
+    background-color: rgba(0, 0, 0, 0.2);
+}
+
+.title {
+    font-size: 1.1rem;
+    font-weight: bold;
+}
+
+.measurement {
+    color: var(--gray);
+}
+
+.details {
+    padding: 0.5rem;
+}

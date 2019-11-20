@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router";
+import { useParams, useRouteMatch } from "react-router";
 import { AxiosRequestConfig } from "axios";
 
 import {
@@ -10,43 +10,47 @@ import {
 } from "../../../models/recipe";
 import { APIRecipeResponse, Omit } from "../../../models/API";
 
-import EditStep from "./EditStep";
+import ItemPickerModal from "./modals/ItemPickerModal";
+import AddItemModal from "./modals/AddItemModal";
+import EditStepModal from "./modals/EditStepModal";
+import useLoadingIndicator from "../../hooks/useLoadingIndicator";
 import useAPI from "../../hooks/useAPI";
 
+import { fromAPIRecipe } from "../../../api/mappings";
 import { noop } from "../../../utils";
-import { toRecipe } from "../../../utils/recipe";
-import AddItem from "./AddItem";
 
 export interface ContentCreatorContextShape {
     available: boolean;
-    error: string | null;
     metadata: Metadata;
+    currentStep: Step | null;
     items: Item[];
     steps: Step[];
     actions: {
-        openAddItem: () => void,
-        openEditStep: () => void,
+        setAddItemModal: (state: boolean) => void,
+        setEditStepModal: (state: boolean) => void,
         addItem: (name: string, description?: string) => Promise<void> | void,
         addStep: (step: Omit<Step, "id">) => Promise<void> | void,
-        replaceStep: (step: Step) => Promise<void> | void
+        replaceStep: (step: Step) => Promise<void> | void,
+        deleteStep: (stepID: string) => Promise<void> | void
     };
 }
 
 export const DEFAULT_CONTENT_CREATOR_CONTEXT: ContentCreatorContextShape = {
     available: false,
-    error: null,
     metadata: {
         id: "content_creator",
         name: "Untitled recipe"
     },
+    currentStep: null,
     items: [],
     steps: [],
     actions: {
-        openAddItem: noop,
-        openEditStep: noop,
+        setAddItemModal: noop,
+        setEditStepModal: noop,
         addItem: noop,
         addStep: noop,
-        replaceStep: noop
+        replaceStep: noop,
+        deleteStep: noop,
     }
 };
 
@@ -55,35 +59,42 @@ export const ContentCreatorContext = React.createContext<
 >(DEFAULT_CONTENT_CREATOR_CONTEXT);
 
 const ContentCreatorProvider: React.FC = ({ children }) => {
-    const [error, setError] = useState<string | null>(null);
     const [addItemModal, setAddItemModal] = useState<boolean>(false);
-    const [editStep, setEditStep] = useState<boolean>(false);
+    const [editStepModal, setEditStepModal] = useState<boolean>(false);
     const [recipe, setRecipe] = useState<Recipe | null>(null);
     const { id: recipeID, sequence: seq } = useParams();
     const request = useAPI();
+    const { setStatus } = useLoadingIndicator();
+    const showDependencyPicker = useRouteMatch({
+        path: "/edit/:id/:sequence/deps",
+        exact: true
+    });
+    const showResultPicker = useRouteMatch({
+        path: "/edit/:id/:sequence/creates",
+        exact: true
+    });
+
+    const currentStep = recipe && seq
+        ? recipe.steps.find(
+            ({ sequence: recipeStepSeq }) => seq === `${recipeStepSeq}`
+        )
+        : null;
 
     const createModalStateSetter = (
-        state: boolean,
         setter: React.Dispatch<React.SetStateAction<boolean>>
     ) => {
-        return () => {
+        return (state: boolean) => {
             setter(state);
         };
     };
-
-    const openAddItem = createModalStateSetter(
-        true, setAddItemModal
-    );
-
-    const openEditStep = createModalStateSetter(
-        true, setEditStep
-    );
 
     const doRequest = async (
         endpoint: string,
         payload: AxiosRequestConfig
     ) => {
         try {
+            setStatus(true);
+
             const {
                 data
             } = await request<APIRecipeResponse>(
@@ -91,16 +102,21 @@ const ContentCreatorProvider: React.FC = ({ children }) => {
                 payload
             );
 
-            const { status, message } = data;
+            const { status, message, recipe: responseRecipe } = data;
 
             if (status === "OK") {
-                setError(null);
-                setRecipe(toRecipe(data));
+                setRecipe(fromAPIRecipe(responseRecipe));
             } else {
                 throw new Error(message);
             }
         } catch (e) {
-            setError(e.message);
+            if (!e.message) {
+                throw new Error("Network request failed!");
+            } else {
+                throw e;
+            }
+        } finally {
+            setStatus(false);
         }
     };
 
@@ -167,10 +183,25 @@ const ContentCreatorProvider: React.FC = ({ children }) => {
                     step: {
                         id, name, verb, sequence,
                         dependencies,
-                        result: result ? {
-                            id: result
-                        } : null,
+                        result: result || null,
                         description
+                    }
+                }
+            }
+        );
+    };
+
+    const deleteStep = (stepID: string) => {
+        doRequest(
+            "/deleteStep",
+            {
+                method: "POST",
+                data: {
+                    recipe: {
+                        id: recipeID
+                    },
+                    step: {
+                        id: stepID
                     }
                 }
             }
@@ -189,32 +220,46 @@ const ContentCreatorProvider: React.FC = ({ children }) => {
         );
     };
 
-    const renderAddItemModal = () => {
+    const renderSelectItemModal = () => {
+        if (!recipe || !currentStep) {
+            return null;
+        }
+
+        const pick = showDependencyPicker
+            ? "dependencies"
+            : "result";
+
         return (
-            <AddItem
-                show={ addItemModal }
-                close={ createModalStateSetter(false, setAddItemModal) }
+            <ItemPickerModal
+                pick={ pick }
+                show={ !!showDependencyPicker || !!showResultPicker }
+                items={ recipe.items }
+                currentStep={ currentStep }
+            />
+        );
+    };
+
+    const renderAddItemModal = () => {
+        if (!addItemModal) {
+            return null;
+        }
+
+        return (
+            <AddItemModal
+                control={ createModalStateSetter(setAddItemModal) }
             />
         );
     };
 
     const renderEditStep = () => {
-        if (!seq || !recipe) {
-            return null;
-        }
-
-        const step = recipe.steps
-            .find(({ sequence }) => `${sequence}` === seq);
-
-        if (!step) {
+        if (!currentStep || !editStepModal) {
             return null;
         }
 
         return (
-            <EditStep
-                show={ editStep }
-                step={ step }
-                close={ createModalStateSetter(false, setEditStep) }
+            <EditStepModal
+                step={ currentStep }
+                control={ createModalStateSetter(setEditStepModal) }
             />
         );
     };
@@ -225,29 +270,26 @@ const ContentCreatorProvider: React.FC = ({ children }) => {
         if (!recipe) {
             updateRecipe();
         }
-    }, []);
+    }, [recipe, updateRecipe]);
 
     const value: ContentCreatorContextShape = recipe
         ? {
             available: true,
-            error,
             metadata: {
                 id: recipe.id,
                 name: recipe.name,
                 description: recipe.description
             },
+            currentStep: currentStep || null,
             items: recipe.items,
             steps: recipe.steps,
             actions: {
-                openAddItem,
-                openEditStep,
-                addItem, addStep, replaceStep
+                setAddItemModal: createModalStateSetter(setAddItemModal),
+                setEditStepModal: createModalStateSetter(setEditStepModal),
+                addItem, addStep, replaceStep, deleteStep
             }
         }
-        : { ...DEFAULT_CONTENT_CREATOR_CONTEXT, actions: {
-            ...DEFAULT_CONTENT_CREATOR_CONTEXT.actions,
-            openEditStep
-        } };
+        : DEFAULT_CONTENT_CREATOR_CONTEXT;
 
     return (
         <>
@@ -255,6 +297,7 @@ const ContentCreatorProvider: React.FC = ({ children }) => {
                 value={ value }
             >
                 { children }
+                { renderSelectItemModal() }
                 { renderAddItemModal() }
                 { renderEditStep() }
             </ContentCreatorContext.Provider>

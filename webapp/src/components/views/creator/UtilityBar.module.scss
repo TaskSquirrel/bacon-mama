@@ -1,0 +1,14 @@
+.bar {
+    box-sizing: border-box;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    height: 4rem;
+    padding: 0.5rem 1rem;
+}
+
+.name {
+    margin: 0;
+}

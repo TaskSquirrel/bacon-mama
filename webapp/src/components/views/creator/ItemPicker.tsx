@@ -1,72 +1,179 @@
-import React, { useContext, useState } from "react";
-import { useParams, Link } from "react-router-dom";
+import React, { useContext } from "react";
+import { useParams, Link, useHistory } from "react-router-dom";
+import classNames from "classnames";
+
+import { Step } from "../../../models/recipe";
 
 import { ContentCreatorContext } from "./ContentCreatorProvider";
+import AuraButton from "../../controls/AuraButton";
+import ItemCard from "./items/ItemCard";
 
 import styles from "./ItemPicker.module.scss";
-import ButtonBase from "../../controls/ButtonBase";
 
 const ItemPicker: React.FC = () => {
     const {
         metadata: {
             id: recipeID
         },
-        steps,
-        items
+        currentStep: step,
+        actions: {
+            replaceStep
+        }
     } = useContext(ContentCreatorContext);
+    const { push } = useHistory();
 
     const { sequence } = useParams();
 
-    const step = steps.find(({ sequence: seq }) => {
-        return `${seq}` === sequence;
-    });
+    const openDependencyPicker = () => {
+        push(`/edit/${recipeID}/${sequence}/deps`);
+    };
+
+    const openResultPicker = () => {
+        push(`/edit/${recipeID}/${sequence}/creates`);
+    };
+
+    const createOnItemCloseClick = (
+        type: "dependency" | "result",
+        dependencyID: string,
+    ) => () => {
+        if (!step) {
+            return;
+        }
+
+        const { dependencies } = step;
+
+        if (type === "dependency") {
+            replaceStep({
+                ...step,
+                dependencies: dependencies
+                    .filter(({ id }) => id !== dependencyID)
+            });
+        } else if (type === "result") {
+            replaceStep({
+                ...step,
+                result: null
+            });
+        }
+    };
+
+    const renderItems = (currentStep: Step) => {
+        const { dependencies } = currentStep;
+
+        return dependencies.map((
+            {
+                id: dependencyID,
+                item: {
+                    id,
+                    name
+                },
+                amount,
+                unit
+            },
+            index
+        ) => {
+            return (
+                <ItemCard
+                    showButton
+                    key={ `${id}-${index}` }
+                    name={ name }
+                    quantity={ {
+                        amount, unit
+                    } }
+                    onCloseClick={ createOnItemCloseClick(
+                        "dependency",
+                        dependencyID
+                    ) }
+                />
+            );
+        });
+    };
+
+    const renderResult = (currentStep: Step) => {
+        const { result } = currentStep;
+
+        if (!result) {
+            return (
+                <AuraButton
+                    shadow
+                    size="large"
+                    className={ styles.button }
+                    onClick={ openResultPicker }
+                >
+                    <i
+                        className="fas fa-plus"
+                    />
+                </AuraButton>
+            );
+        }
+
+        const {
+            id: dependencyID,
+            item: { name },
+            amount,
+            unit
+        } = result;
+
+        return (
+            <ItemCard
+                showButton
+                name={ name }
+                quantity={ { amount, unit } }
+                onCloseClick={ createOnItemCloseClick(
+                    "result", dependencyID
+                ) }
+            />
+        );
+    };
 
     if (!step) {
-        return null;
+        return (
+            <div
+                className={ styles.empty }
+            >
+                Choose a step on the left to edit!
+            </div>
+        );
     }
 
     return (
-        <div className={ styles.container }>
-            <div className={ styles.items }>
-                {
-                    step.dependencies.map((
-                        {
-                            item: {
-                                id,
-                                itemName: name
-                            },
-                            amount,
-                            unit
-                        },
-                        index
-                    ) => {
-                        return (
-                            <div
-                                key={ `${id}-${index}` }
-                                className={ styles.item }
-                            >
-                                <h3
-                                    className={ styles.title }
-                                >
-                                    { name }
-                                </h3>
-                                <div>
-                                    { amount } { unit }
-                                </div>
-                            </div>
-                        );
-                    })
-                }
-                <Link
-                    to={ `/items/${recipeID}/${sequence}` }
+        <div
+            className={ styles.container }
+        >
+            <div
+                className={ classNames(
+                    styles.scroller,
+                    step.dependencies.length <= 2 && styles.center
+                ) }
+            >
+                <div
+                    className={ styles.dependencies }
                 >
-                    <ButtonBase>
-                        Add
-                    </ButtonBase>
-                </Link>
+                    { renderItems(step) }
+                    <div
+                        className={ styles["add-container"] }
+                    >
+                        <AuraButton
+                            size="large"
+                            className={ styles.button }
+                            onClick={ openDependencyPicker }
+                        >
+                            <i
+                                className="fas fa-plus"
+                            />
+                        </AuraButton>
+                    </div>
+                </div>
             </div>
-            <div>
-                Test
+            <div
+                className={ styles.divider }
+            />
+            <div
+                className={ classNames(
+                    styles.scroller,
+                    styles.center
+                ) }
+            >
+                { renderResult(step) }
             </div>
         </div>
     );

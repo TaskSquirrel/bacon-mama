@@ -1,23 +1,21 @@
 import React, { useState, useContext } from "react";
 
-import Modal from "../../shared/Modal";
-import TextField from "../../controls/TextField";
-import TextArea from "../../controls/TextArea";
-import ButtonBase from "../../controls/ButtonBase";
+import { ContentCreatorContext } from "../ContentCreatorProvider";
+import Modal from "../../../shared/Modal";
+import TextField from "../../../controls/TextField";
+import TextArea from "../../../controls/TextArea";
+import ButtonBase from "../../../controls/ButtonBase";
 
-import { createChangeEventStateSetter } from "../../../utils";
+import { createChangeEventStateSetter } from "../../../../utils";
 
-import styles from "./EditStep.module.scss";
-import { ContentCreatorContext } from "./ContentCreatorProvider";
+import styles from "./modals.module.scss";
 
 interface AddItemProps {
-    show: boolean;
-    close: () => void;
+    control: (state: boolean) => void;
 }
 
 const AddItem: React.FC<AddItemProps> = ({
-    show,
-    close
+    control
 }) => {
     const {
         actions: {
@@ -27,6 +25,8 @@ const AddItem: React.FC<AddItemProps> = ({
     const [name, setName] = useState<string>("");
     const [description, setDescription] = useState<string>("");
 
+    const close = () => control(false);
+
     const submit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
 
@@ -35,12 +35,12 @@ const AddItem: React.FC<AddItemProps> = ({
         }
 
         addItem(name, description);
-        close();
+        control(false);
     };
 
     return (
         <Modal
-            show={ show }
+            show
             title="Add item"
         >
             <form

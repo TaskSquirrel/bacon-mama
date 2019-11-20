@@ -28,7 +28,9 @@ const ItemsViewer: React.FC = () => {
     const [selected, setSelected] = useState<string>("");
 
     const goToRecipeEditor = () => {
-        push(`/edit/${id}`);
+        const seq = sequence || "";
+
+        push(`/edit/${id}/${seq}`);
     };
 
     const createItemSelector = (itemID: string) => () => {
@@ -74,7 +76,7 @@ const ItemsViewer: React.FC = () => {
         }
 
         return items
-            .map(({ id: itemID, itemName }) => {
+            .map(({ id: itemID, name: itemName }) => {
                 return (
                     <div
                         key={ itemID }
