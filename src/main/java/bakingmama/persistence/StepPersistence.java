@@ -78,6 +78,28 @@ public class StepPersistence {
     return mu.addIngredient(ij.getItem(), step, ij.getAmount(), ij.getUnit());
   }
 
+  public boolean shiftSequences(Step step, Integer oldSequence, Integer newSequence) {
+    if (oldSequence.equals(newSequence)) { return true; }
+
+    Recipe recipe = step.getRecipe();
+    Set<Step> recipeSteps = recipe.getSteps();
+    for (Step s : recipeSteps) {
+      // Same ID
+      if (s.getId().equals(step.getId())) { continue; }
+
+      // Shifted the step up: move things in between it down
+      if (newSequence > oldSequence && s.getSequence() > oldSequence && s.getSequence() <= newSequence) {
+        step.setSequence(step.getSequence() - 1);
+      // Shifted the step down
+      } else if (newSequence < oldSequence && s.getSequence() < oldSequence && s.getSequence() >= newSequence) {
+        step.setSequence(step.getSequence() + 1);
+      }
+      stepRepository.save(step);
+    }
+
+    return true;
+  }
+
   /**
    * Given a JSON with all the step properties, edit and save the step.
    */
@@ -89,8 +111,12 @@ public class StepPersistence {
 
     // Edit step and save into DB
     Step step = stepJson.toModel();
+    Integer oldSequence = step.getSequence();
     step.edit(stepJson.getVerb(), stepJson.getSequence(), addResultIngredient(ingredientJson, step));
     stepRepository.save(step);
+
+    // Shift sequences if necessary
+    this.shiftSequences(step, oldSequence, step.getSequence());
 
     // Delete old ingredients and add new ingredients with new Step
     this.clearIngredients(step);
