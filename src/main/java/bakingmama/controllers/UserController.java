@@ -48,6 +48,11 @@ public class UserController implements BaseApiController {
     } else if (!user.getPassword().equals(password)) {
       JsonUtils.setStatus(returnMap, JsonUtils.ERROR, "Incorrect password for user~");
     } else {
+      String token = JWT.create()
+        .withClaim("username", username)
+        .sign(TokenUtils.getAlgorithm());
+
+      returnMap.put("token", token);
       JsonUtils.setStatus(returnMap, JsonUtils.SUCCESS);
     }
 
@@ -75,6 +80,12 @@ public class UserController implements BaseApiController {
       userRepository.save(newUser);
 
       JsonUtils.setStatus(returnMap, JsonUtils.SUCCESS);
+
+      String token = JWT.create()
+        .withClaim("username", newUser.getUsername())
+        .sign(TokenUtils.getAlgorithm());
+
+      returnMap.put("token", token);
     }
     return returnMap;
   }
