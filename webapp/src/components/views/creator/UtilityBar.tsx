@@ -28,7 +28,14 @@ const UtilityBar: React.FC = () => {
             </div>
             <div>
                 <ButtonBase>
-                    Add item
+                    <span>
+                        <i
+                            className="fas fa-plus"
+                        />
+                    </span>
+                    <span>
+                        Add item
+                    </span>
                 </ButtonBase>
             </div>
         </div>

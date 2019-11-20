@@ -14,7 +14,8 @@ const Steps: React.FC = () => {
         metadata: { id: recipeID },
         actions: {
             addStep,
-            setEditStepModal
+            deleteStep,
+            setEditStepModal,
         }
     } = useContext(ContentCreatorContext);
     const { push } = useHistory();
@@ -30,6 +31,10 @@ const Steps: React.FC = () => {
             verb: "mix",
             sequence: steps.length
         });
+    };
+
+    const createDeleteStep = (id: string) => () => {
+        deleteStep(id);
     };
 
     const renderAddStepAction = () => {
@@ -49,7 +54,7 @@ const Steps: React.FC = () => {
         );
     };
 
-    const renderActions = () => {
+    const renderActions = (stepID: string) => {
         return (
             <div
                 className={ styles.actions }
@@ -76,6 +81,7 @@ const Steps: React.FC = () => {
                 </IconButton>
                 <IconButton
                     className={ styles.delete }
+                    onClick={ createDeleteStep(stepID) }
                 >
                     <i
                         className="fas fa-times"
@@ -88,7 +94,7 @@ const Steps: React.FC = () => {
     const renderStepsList = () => steps
         .sort(({ sequence: a }, { sequence: b }) => a - b)
         .map(({
-            name, description, sequence, verb
+            id, name, description, sequence, verb
         }) => {
             const isActive = `${sequence}` === sequenceParam;
             const onStepClick = () => {
@@ -134,7 +140,7 @@ const Steps: React.FC = () => {
                             </div>
                         </div>
                     </div>
-                    { isActive && renderActions() }
+                    { isActive && renderActions(id) }
                 </li>
             );
         });
@@ -173,7 +179,6 @@ const Steps: React.FC = () => {
 
                 if (next < steps.length) {
                     push(`/edit/${recipeID}/${next}`);
-                    console.log(`Pushing to ${next} from ${sequence}`);
                 }
             }
         };

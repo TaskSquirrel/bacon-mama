@@ -30,7 +30,8 @@ export interface ContentCreatorContextShape {
         setEditStepModal: (state: boolean) => void,
         addItem: (name: string, description?: string) => Promise<void> | void,
         addStep: (step: Omit<Step, "id">) => Promise<void> | void,
-        replaceStep: (step: Step) => Promise<void> | void
+        replaceStep: (step: Step) => Promise<void> | void,
+        deleteStep: (stepID: string) => Promise<void> | void
     };
 }
 
@@ -48,7 +49,8 @@ export const DEFAULT_CONTENT_CREATOR_CONTEXT: ContentCreatorContextShape = {
         setEditStepModal: noop,
         addItem: noop,
         addStep: noop,
-        replaceStep: noop
+        replaceStep: noop,
+        deleteStep: noop,
     }
 };
 
@@ -189,6 +191,23 @@ const ContentCreatorProvider: React.FC = ({ children }) => {
         );
     };
 
+    const deleteStep = (stepID: string) => {
+        doRequest(
+            "/deleteStep",
+            {
+                method: "POST",
+                data: {
+                    recipe: {
+                        id: recipeID
+                    },
+                    step: {
+                        id: stepID
+                    }
+                }
+            }
+        );
+    };
+
     const updateRecipe = () => {
         doRequest(
             "/getRecipe",
@@ -267,7 +286,7 @@ const ContentCreatorProvider: React.FC = ({ children }) => {
             actions: {
                 setAddItemModal: createModalStateSetter(setAddItemModal),
                 setEditStepModal: createModalStateSetter(setEditStepModal),
-                addItem, addStep, replaceStep
+                addItem, addStep, replaceStep, deleteStep
             }
         }
         : DEFAULT_CONTENT_CREATOR_CONTEXT;

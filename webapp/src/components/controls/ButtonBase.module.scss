@@ -7,10 +7,14 @@
 
     color: var(--white);
     font: inherit;
+    line-height: 1;
     text-align: center;
 
+    display: flex;
+    align-items: center;
+
     background-color: $primary;
-    padding: 0.6rem 1.1rem;
+    padding: 0.75rem 1rem;
 
     border: 1px solid $primary;
     border-radius: 5px;
@@ -27,7 +31,7 @@
     }
 
     &:focus {
-        outline: lightblue solid 1px;
+        outline: -webkit-focus-ring-color auto 5px;
     }
 
     &.inverted {
@@ -39,5 +43,9 @@
             background-color: $primary;
             border-color: $primary;
         }
+    }
+
+    & > span:first-child {
+        margin-right: 0.5rem;
     }
 }
