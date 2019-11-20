@@ -1,0 +1,27 @@
+Web Apps:
+- Create Labs
+- Edit Labs
+- Clone/Copy/Extend Labs
+- Search Labs
+- Publish Labs
+- Delete Labs
+- View/Doing Labs
+
+- Create Course
+- Add Students to Course
+- Add Professor to Course
+- Add/Assign Labs
+- Verification of work
+- Viewing of all  
+
+- Accounts
+
+- Labs
+-- Select Equipment
+-- Sequential/ Branching
+-- Simulating Instructions
+-- Imagery
+
+- Equipment
+-- Users provide equipment
+-- Find Equip
