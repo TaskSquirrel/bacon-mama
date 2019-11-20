@@ -30,4 +30,6 @@ public class StepJson extends BaseJson {
   public Step toModel() {
     return sp.findStep(this.json.get("id"));
   }
+
+  public String getDescription() { return (String) this.json.get("description"); }
 }

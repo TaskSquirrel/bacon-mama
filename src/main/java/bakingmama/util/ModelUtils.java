@@ -33,6 +33,39 @@ public class ModelUtils {
     return recipe;
   }
 
+  public Recipe editRecipe(Recipe recipe, String name, String description)
+  {
+    recipe.setRecipeName(name);
+    recipe.setDescription(description);
+    recipeRepository.save(recipe);
+    return recipe;
+  }
+
+  public boolean deleteRecipe(Recipe recipe)
+  {
+    Set<Step> steps = recipe.getSteps();
+    Set<Item> items = recipe.getItems();
+    for(Step step : steps)
+    {
+      Set<Ingredient> ingredients= step.getIngredients();
+      Ingredient result = step.getResultIngredient();
+      if(result != null)
+      {
+        ingredientRepository.delete(result);
+      }
+      for(Ingredient ingredient : ingredients)
+      {
+        ingredientRepository.delete(ingredient);
+      }
+    }
+    for(Item item : items)
+    {
+      itemRepository.delete(item);
+    }
+    recipeRepository.delete(recipe);
+    return true;
+  }
+
   public Item addItem(String itemName, Recipe recipe) {
     Item item = new Item();
     item.setItemName(itemName);
@@ -51,12 +84,13 @@ public class ModelUtils {
     return ingredient;
   }
 
-  public Step addStep(Recipe recipe, Ingredient result, String verb, Integer sequence, Set<Ingredient> ingredientSet) {
+  public Step addStep(Recipe recipe, Ingredient result, String verb, Integer sequence, String description, Set<Ingredient> ingredientSet) {
     Step step = new Step();
     step.setRecipe(recipe);
     step.setResultIngredient(result);
     step.setVerb(verb);
     step.setSequence(sequence);
+    step.setDescription(description);
     step.setIngredients(ingredientSet);
     stepRepository.save(step);
     return step;

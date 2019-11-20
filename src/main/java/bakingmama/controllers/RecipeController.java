@@ -66,14 +66,36 @@ public class RecipeController implements BaseApiController {
     String description = (String) body.get("description");
 
     // If user doesn't exist, don't allow recipe creation.
-//    User user = userRepository.findByUsername(username);
-//    if (user == null) {
-//      JsonUtils.setStatus(returnMap, JsonUtils.ERROR, "User couldn't be found!");
-//      return returnMap;
-//    }
+    User user = userRepository.findByUsername(username);
+    if (user == null) {
+      JsonUtils.setStatus(returnMap, JsonUtils.ERROR, "User couldn't be found!");
+      return returnMap;
+    }
 
-    Recipe newRecipe = mu.addRecipe(null, recipeName, description);
+    Recipe newRecipe = mu.addRecipe(user, recipeName, description);
     returnMap.put("id", newRecipe.getId());
+
+    JsonUtils.setStatus(returnMap, JsonUtils.SUCCESS);
+    return returnMap;
+  }
+
+  @CrossOrigin
+  @PostMapping(
+      path = "/editRecipe",
+      consumes = "application/json",
+      produces = "application/json"
+  )
+  Map<String, Object> editRecipe(@RequestBody Map<String, Object> body) {
+    Map<String, Object> returnMap = new HashMap<>();
+
+    Recipe recipe = rp.findRecipe(JsonUtils.castMap(body.get("recipe")));
+
+    Map<String, Object> newRecipe = JsonUtils.castMap(body.get("editRecipe"));
+    String recipeName = (String) newRecipe.get("recipeName");
+    String description = (String) newRecipe.get("description");
+
+    recipe = mu.editRecipe(recipe, recipeName, description);
+    returnMap.put("recipe", recipe.toMap());
 
     JsonUtils.setStatus(returnMap, JsonUtils.SUCCESS);
     return returnMap;
@@ -128,6 +150,32 @@ public class RecipeController implements BaseApiController {
     returnMap.put("recipe", recipe.toMap());
 
     JsonUtils.setStatus(returnMap, JsonUtils.SUCCESS);
+    return returnMap;
+  }
+
+  @CrossOrigin
+  @PostMapping(
+      path = "/deleteRecipe",
+      consumes = "application/json",
+      produces = "application/json"
+  )
+  Map<String, Object> deleteRecipe(@RequestBody Map<String, Object> body) {
+    Map<String, Object> returnMap = new HashMap<>();
+    
+    Recipe recipe = rp.findRecipe(JsonUtils.castMap(body.get("recipe")));
+    if(recipe == null)
+    {
+      JsonUtils.setStatus(returnMap, JsonUtils.ERROR, "Recipe does not exist");
+      return returnMap;
+    }
+
+    if(mu.deleteRecipe(recipe))
+    {
+      JsonUtils.setStatus(returnMap, JsonUtils.SUCCESS);
+    }
+    else{
+      JsonUtils.setStatus(returnMap, JsonUtils.ERROR, "Can't Delete Recipe");
+    }
     return returnMap;
   }
 
