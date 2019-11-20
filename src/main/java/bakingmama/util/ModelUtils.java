@@ -41,6 +41,31 @@ public class ModelUtils {
     return recipe;
   }
 
+  public boolean deleteRecipe(Recipe recipe)
+  {
+    Set<Step> steps = recipe.getSteps();
+    Set<Item> items = recipe.getItems();
+    for(Step step : steps)
+    {
+      Set<Ingredient> ingredients= step.getIngredients();
+      Ingredient result = step.getResultIngredient();
+      if(result != null)
+      {
+        ingredientRepository.delete(result);
+      }
+      for(Ingredient ingredient : ingredients)
+      {
+        ingredientRepository.delete(ingredient);
+      }
+    }
+    for(Item item : items)
+    {
+      itemRepository.delete(item);
+    }
+    recipeRepository.delete(recipe);
+    return true;
+  }
+
   public Item addItem(String itemName, Recipe recipe) {
     Item item = new Item();
     item.setItemName(itemName);

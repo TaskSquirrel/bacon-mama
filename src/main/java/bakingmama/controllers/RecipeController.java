@@ -155,6 +155,32 @@ public class RecipeController implements BaseApiController {
 
   @CrossOrigin
   @PostMapping(
+      path = "/deleteRecipe",
+      consumes = "application/json",
+      produces = "application/json"
+  )
+  Map<String, Object> deleteRecipe(@RequestBody Map<String, Object> body) {
+    Map<String, Object> returnMap = new HashMap<>();
+    
+    Recipe recipe = rp.findRecipe(JsonUtils.castMap(body.get("recipe")));
+    if(recipe == null)
+    {
+      JsonUtils.setStatus(returnMap, JsonUtils.ERROR, "Recipe does not exist");
+      return returnMap;
+    }
+
+    if(mu.deleteRecipe(recipe))
+    {
+      JsonUtils.setStatus(returnMap, JsonUtils.SUCCESS);
+    }
+    else{
+      JsonUtils.setStatus(returnMap, JsonUtils.ERROR, "Can't Delete Recipe");
+    }
+    return returnMap;
+  }
+
+  @CrossOrigin
+  @PostMapping(
       path = "/addItem",
       consumes = "application/json",
       produces = "application/json"
