@@ -10,9 +10,9 @@ import {
 } from "../../../models/recipe";
 import { APIRecipeResponse, Omit } from "../../../models/API";
 
-import ItemPickerModal from "./items/ItemPickerModal";
-import AddItem from "./AddItem";
-import EditStep from "./EditStep";
+import ItemPickerModal from "./modals/ItemPickerModal";
+import AddItemModal from "./modals/AddItemModal";
+import EditStepModal from "./modals/EditStepModal";
 import useLoadingIndicator from "../../hooks/useLoadingIndicator";
 import useAPI from "../../hooks/useAPI";
 
@@ -226,7 +226,7 @@ const ContentCreatorProvider: React.FC = ({ children }) => {
         }
 
         return (
-            <AddItem
+            <AddItemModal
                 control={ createModalStateSetter(setAddItemModal) }
             />
         );
@@ -238,7 +238,7 @@ const ContentCreatorProvider: React.FC = ({ children }) => {
         }
 
         return (
-            <EditStep
+            <EditStepModal
                 step={ currentStep }
                 control={ createModalStateSetter(setEditStepModal) }
             />

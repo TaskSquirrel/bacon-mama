@@ -1,14 +1,14 @@
 import React, { useState, useContext } from "react";
 
-import { ContentCreatorContext } from "./ContentCreatorProvider";
-import Modal from "../../shared/Modal";
-import TextField from "../../controls/TextField";
-import TextArea from "../../controls/TextArea";
-import ButtonBase from "../../controls/ButtonBase";
+import { ContentCreatorContext } from "../ContentCreatorProvider";
+import Modal from "../../../shared/Modal";
+import TextField from "../../../controls/TextField";
+import TextArea from "../../../controls/TextArea";
+import ButtonBase from "../../../controls/ButtonBase";
 
-import { createChangeEventStateSetter } from "../../../utils";
+import { createChangeEventStateSetter } from "../../../../utils";
 
-import styles from "./EditStep.module.scss";
+import styles from "./modals.module.scss";
 
 interface AddItemProps {
     control: (state: boolean) => void;

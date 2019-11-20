@@ -1,16 +1,16 @@
 import React, { useContext, useState } from "react";
 
-import { Step } from "../../../models/recipe";
+import { Step } from "../../../../models/recipe";
 
-import TextField from "../../controls/TextField";
-import TextArea from "../../controls/TextArea";
-import ButtonBase from "../../controls/ButtonBase";
-import Modal from "../../shared/Modal";
-import { ContentCreatorContext } from "./ContentCreatorProvider";
+import TextField from "../../../controls/TextField";
+import TextArea from "../../../controls/TextArea";
+import ButtonBase from "../../../controls/ButtonBase";
+import Modal from "../../../shared/Modal";
+import { ContentCreatorContext } from "../ContentCreatorProvider";
 
-import { createChangeEventStateSetter } from "../../../utils";
+import { createChangeEventStateSetter } from "../../../../utils";
 
-import styles from "./EditStep.module.scss";
+import styles from "./modals.module.scss";
 
 interface EditStepProps {
     step: Step;

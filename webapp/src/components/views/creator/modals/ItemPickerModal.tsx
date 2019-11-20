@@ -11,7 +11,7 @@ import FullModal from "../../../shared/FullModal";
 import Responsive from "../../../shared/Responsive";
 
 import styles from "./ItemPickerModal.module.scss";
-import modalStyles from "../EditStep.module.scss";
+import modalStyles from "./modals.module.scss";
 
 interface ItemPickerModalProps {
     show: boolean;
