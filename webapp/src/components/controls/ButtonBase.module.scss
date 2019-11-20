@@ -19,7 +19,7 @@
         border-color 150ms ease-in-out,
         background-color 150ms ease-in-out;
 
-    &:hover {
+    &:not(.no-hover):hover {
         $darkened: darken($primary, 10%);
 
         background-color: $darkened;
@@ -34,7 +34,7 @@
         color: $primary;
         background-color: transparent;
 
-        &:hover {
+        &:not(.no-hover):hover {
             color: var(--white);
             background-color: $primary;
             border-color: $primary;

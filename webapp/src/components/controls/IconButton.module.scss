@@ -1,0 +1,23 @@
+.button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    width: 2rem;
+    height: 2rem;
+    padding: 0.3rem;
+
+    transition: transform 150ms ease-in-out;
+
+    &.no-border {
+        border-color: transparent;
+    }
+
+    &:hover {
+        transform: scale(1.25);
+    }
+
+    &:focus {
+        outline: none;
+    }
+}

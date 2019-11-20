@@ -1,14 +1,15 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 import { useHistory, useParams } from "react-router-dom";
 import classNames from "classnames";
 
-import ButtonBase from "../../controls/ButtonBase";
 import { ContentCreatorContext } from "./ContentCreatorProvider";
 
 import styles from "./Steps.module.scss";
+import IconButton from "../../controls/IconButton";
 
 const Steps: React.FC = () => {
     const {
+        currentStep,
         steps,
         metadata: { id: recipeID },
         actions: {
@@ -31,21 +32,60 @@ const Steps: React.FC = () => {
         });
     };
 
-    const renderActions = () => {
+    const renderAddStepAction = () => {
         return (
             <div
-                className={ styles.actions }
+                className={ styles.action }
             >
                 <button
-                    onClick={ openEditStepModal }
+                    className={ styles.add }
+                    onClick={ add }
                 >
-                    Edit
+                    <i
+                        className="fas fa-plus"
+                    />
                 </button>
             </div>
         );
     };
 
-    const renderSteps = () => steps
+    const renderActions = () => {
+        return (
+            <div
+                className={ styles.actions }
+            >
+                <IconButton
+                    className={ styles.edit }
+                    onClick={ openEditStepModal }
+                >
+                    <i
+                        className="fas fa-pen"
+                    />
+                </IconButton>
+                <IconButton
+                    className={ styles.up }
+                >
+                    <i
+                        className="fas fa-arrow-up"
+                    />
+                </IconButton>
+                <IconButton>
+                    <i
+                        className="fas fa-arrow-down"
+                    />
+                </IconButton>
+                <IconButton
+                    className={ styles.delete }
+                >
+                    <i
+                        className="fas fa-times"
+                    />
+                </IconButton>
+            </div>
+        );
+    };
+
+    const renderStepsList = () => steps
         .sort(({ sequence: a }, { sequence: b }) => a - b)
         .map(({
             name, description, sequence, verb
@@ -99,19 +139,49 @@ const Steps: React.FC = () => {
             );
         });
 
-    if (steps.length === 0) {
+    const renderStepsContainer = () => {
         return (
-            <div
-                className={ styles.empty }
-            >
-                <ButtonBase
-                    onClick={ add }
-                >
-                    Add step
-                </ButtonBase>
+            <div>
+                { steps.length > 0 && (
+                    <ol
+                        className={ styles.list }
+                    >
+                        { renderStepsList() }
+                    </ol>
+                ) }
+                { renderAddStepAction() }
             </div>
         );
-    }
+    };
+
+    useEffect(() => {
+        const shift = (event: KeyboardEvent) => {
+            if (!currentStep) {
+                return;
+            }
+
+            const { sequence } = currentStep;
+
+            if (event.key === "ArrowUp") {
+                const previous = sequence - 1;
+
+                if (previous >= 0) {
+                    push(`/edit/${recipeID}/${previous}`);
+                }
+            } else if (event.key === "ArrowDown") {
+                const next = sequence + 1;
+
+                if (next < steps.length) {
+                    push(`/edit/${recipeID}/${next}`);
+                    console.log(`Pushing to ${next} from ${sequence}`);
+                }
+            }
+        };
+
+        document.addEventListener("keydown", shift);
+
+        return () => document.removeEventListener("keydown", shift);
+    }, [push, recipeID, steps, currentStep]);
 
     return (
         <div
@@ -126,19 +196,7 @@ const Steps: React.FC = () => {
                     Steps
                 </h1>
             </div>
-            <ol
-                className={ styles.list }
-            >
-                { renderSteps() }
-            </ol>
-            <button
-                className={ styles.add }
-                onClick={ add }
-            >
-                <i
-                    className="fas fa-plus"
-                />
-            </button>
+            { renderStepsContainer() }
         </div>
     );
 };
