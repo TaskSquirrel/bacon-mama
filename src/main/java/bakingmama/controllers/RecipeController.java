@@ -41,15 +41,20 @@ public class RecipeController implements BaseApiController {
     }
   }
 
-  private Map<String, Object> recipeSuccess(Map<String, Object> json) {
+  private Map<String, Object> recipeSuccess(RecipeJson rj) {
     Map<String, Object> map = new HashMap<>();
-    RecipeJson rj = new RecipeJson(json, true);
-    beanFactory.autowireBean(rj);
-
     Recipe recipe = rj.toModel();
+
     map.put("recipe", recipe.toMap());
     JsonUtils.setStatus(map, JsonUtils.SUCCESS);
     return map;
+  }
+
+  private Map<String, Object> recipeSuccess(Map<String, Object> json) {
+    RecipeJson rj = new RecipeJson(json, true);
+    beanFactory.autowireBean(rj);
+
+    return this.recipeSuccess(rj);
   }
 
   @CrossOrigin
@@ -138,19 +143,16 @@ public class RecipeController implements BaseApiController {
   Map<String, Object> getRecipe(@RequestBody Map<String, Object> body) {
     Map<String, Object> returnMap = new HashMap<>();
 
-    Long id = JsonUtils.parseId(body.get("id"));
+    RecipeJson rj = new RecipeJson(body);
+    beanFactory.autowireBean(rj);
 
-    // Check for recipe existence by ID.
-    Recipe recipe = unpackOptional(id);
+    Recipe recipe = rj.toModel();
     if (recipe == null) {
       JsonUtils.setStatus(returnMap, JsonUtils.ERROR, "Recipe couldn't be found!");
       return returnMap;
     }
 
-    returnMap.put("recipe", recipe.toMap());
-
-    JsonUtils.setStatus(returnMap, JsonUtils.SUCCESS);
-    return returnMap;
+    return this.recipeSuccess(rj);
   }
 
   @CrossOrigin
@@ -161,20 +163,19 @@ public class RecipeController implements BaseApiController {
   )
   Map<String, Object> deleteRecipe(@RequestBody Map<String, Object> body) {
     Map<String, Object> returnMap = new HashMap<>();
-    
-    Recipe recipe = rp.findRecipe(JsonUtils.castMap(body.get("recipe")));
-    if(recipe == null)
-    {
-      JsonUtils.setStatus(returnMap, JsonUtils.ERROR, "Recipe does not exist");
+    RecipeJson rj = new RecipeJson(body, true);
+    beanFactory.autowireBean(rj);
+
+    Recipe recipe = rj.toModel();
+    if (recipe == null) {
+      JsonUtils.setStatus(returnMap, JsonUtils.ERROR, "Recipe does not exist!");
       return returnMap;
     }
 
-    if(mu.deleteRecipe(recipe))
-    {
+    if (mu.deleteRecipe(recipe)) {
       JsonUtils.setStatus(returnMap, JsonUtils.SUCCESS);
-    }
-    else{
-      JsonUtils.setStatus(returnMap, JsonUtils.ERROR, "Can't Delete Recipe");
+    } else {
+      JsonUtils.setStatus(returnMap, JsonUtils.ERROR, "An error occurred while trying to delete recipe.");
     }
     return returnMap;
   }
@@ -213,11 +214,7 @@ public class RecipeController implements BaseApiController {
   @CrossOrigin
   @PostMapping(path = "/deleteStep", consumes = "application/json", produces = "application/json")
   Map<String, Object> deleteStep(@RequestBody Map<String, Object> json) {
-    Long recipeID = JsonUtils.parseId(JsonUtils.castMap(json.get("recipe")).get("id"));
-    Map<String, Object> newStep = JsonUtils.castMap(json.get("step"));
-    Long stepId = JsonUtils.parseId(newStep.get("id"));
-
-    Recipe recipe = sp.deleteStep(stepId, recipeID);
+    Recipe recipe = sp.deleteStep(json);
     return this.recipeSuccess(json);
   }
 }

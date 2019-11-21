@@ -45,8 +45,6 @@ public class StepPersistence {
     return this.findStep(JsonUtils.parseId(stepId));
   }
 
-  public Step findStep(Map<String, Object> stepJson) { return this.findStep(stepJson.get("id")); }
-
   public Item findItem(Long itemId) {
     Optional<Item> optional = itemRepository.findById(itemId);
     return unpackOptional(optional);
@@ -155,7 +153,16 @@ public class StepPersistence {
     return true;
   }
 
-  public Recipe deleteStep(Long stepId, Long recipeId) {
+  public Recipe deleteStep(Map<String, Object> json) {
+    // Grab corresponding POJOs and then their IDs
+    StepJson stepJson = new StepJson(json, true);
+    RecipeJson recipeJson = new RecipeJson(json, true);
+    beanFactory.autowireBean(stepJson);
+    beanFactory.autowireBean(recipeJson);
+
+    Long stepId = stepJson.getId();
+    Long recipeId = recipeJson.getId();
+
     Recipe recipe = recipeRepository.getOne(recipeId);
     Step deleteStep = stepRepository.getOne(stepId);
     Integer pivot = deleteStep.getSequence();
@@ -163,16 +170,14 @@ public class StepPersistence {
     stepRepository.deleteById(stepId);
 
     Set<Step> recipeSteps = recipe.getSteps();
-    for(Step step : recipeSteps)
-    {
-      if(step.getSequence() >= pivot)
-      {
+    for (Step step : recipeSteps) {
+      if (step.getSequence() >= pivot) {
         step.setSequence(step.getSequence() - 1);
         stepRepository.save(step);
       }
     }
 
-    //adding step to list and setting it to the recipe
+    // adding step to list and setting it to the recipe
     recipe.setSteps(recipeSteps);
 
     return recipe;
