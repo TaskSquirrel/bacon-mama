@@ -73,9 +73,12 @@ const Dashboard: React.FC = () => {
     return(
         <div>
             <NavBar className={ styles.navbar } userName={ "Ben" } />
-            {recipe && recipe.map((each) => (
-                <Card key={each.id} name={each.recipeName} description={each.description} />    
-            ))}
+            <div className={styles.title}>Your Recipes</div>
+            <div className={styles.card}>
+                {recipe && recipe.map((each) => (
+                    <Card key={each.id} id={`${each.id}`}  name={each.recipeName} description={each.description} />    
+                ))}
+            </div>
         </div>
     );
 };
