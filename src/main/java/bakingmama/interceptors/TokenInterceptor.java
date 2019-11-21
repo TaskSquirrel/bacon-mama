@@ -46,7 +46,7 @@ public class TokenInterceptor extends HandlerInterceptorAdapter {
             return false;
         }
 
-        response.setHeader(JsonUtils.STATUS, JsonUtils.SUCCESS);
+        // response.setHeader(JsonUtils.STATUS, JsonUtils.SUCCESS);
         return true;
     }
 }
