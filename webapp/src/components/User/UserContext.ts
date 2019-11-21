@@ -8,6 +8,8 @@ export interface UserContextShape {
     token: string | null;
     name: string | null;
     userID: string | null;
+    validated: boolean;
+    error: boolean;
 }
 
 const UserContext = React.createContext<UserContextShape>({
@@ -15,7 +17,9 @@ const UserContext = React.createContext<UserContextShape>({
     signOut: noop,
     token: null,
     name: null,
-    userID: null
+    userID: null,
+    validated: false,
+    error: false
 });
 
 export default UserContext;
