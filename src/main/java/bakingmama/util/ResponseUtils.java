@@ -18,7 +18,8 @@ public class ResponseUtils {
 
         ObjectMapper om = new ObjectMapper();
         ObjectNode on = om.createObjectNode();
-        on.put(status, message);
+        on.put(JsonUtils.STATUS, status);
+        on.put(JsonUtils.MESSAGE, message);
 
         out.print(on.toString());
         out.flush();
