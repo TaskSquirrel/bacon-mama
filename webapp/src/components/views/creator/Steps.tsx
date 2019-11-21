@@ -131,12 +131,20 @@ const Steps: React.FC = () => {
                             <div
                                 className={ styles.title }
                             >
-                                { verb || "Untitled" }
+                                { name || (
+                                    <i>
+                                        Untitled step
+                                    </i>
+                                ) }
                             </div>
                             <div
                                 className={ styles.description }
                             >
-                                { description || "No description" }
+                                { description || (
+                                    <i>
+                                        No description
+                                    </i>
+                                ) }
                             </div>
                         </div>
                     </div>

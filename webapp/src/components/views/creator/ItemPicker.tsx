@@ -17,12 +17,14 @@ const ItemPicker: React.FC = () => {
         },
         currentStep: step,
         actions: {
-            replaceStep
+            replaceStep,
+            setEditStepModal
         }
     } = useContext(ContentCreatorContext);
     const { push } = useHistory();
-
     const { sequence } = useParams();
+
+    const openEditStepModal = () => setEditStepModal(true);
 
     const openDependencyPicker = () => {
         push(`/edit/${recipeID}/${sequence}/deps`);
@@ -166,7 +168,16 @@ const ItemPicker: React.FC = () => {
             </div>
             <div
                 className={ styles.divider }
-            />
+                onClick={ openEditStepModal }
+            >
+                <span>
+                    { step.verb || (
+                        <i>
+                            No action
+                        </i>
+                    ) }
+                </span>
+            </div>
             <div
                 className={ classNames(
                     styles.scroller,
