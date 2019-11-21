@@ -16,6 +16,8 @@ public class BaseJson {
   }
   List<Map<String, Object>> castListJson(Object listMap) { return (List<Map<String, Object>>) listMap; }
 
+  public Long getId() { return this.parseId(this.json.get("id")); }
+
   public Long parseId(Object id) {
     if (id instanceof String) {
       id = Integer.parseInt((String) id);
