@@ -84,7 +84,7 @@ public class StepPersistence {
 
     // Edit step and save into DB
     Step step = stepJson.toModel();
-    step.edit(stepJson.getVerb(), stepJson.getSequence(), stepJson.getDescription(), addResultIngredient(ingredientJson, step));
+    step.edit(stepJson.getVerb(), stepJson.getSequence(), stepJson.getDescription(), addResultIngredient(ingredientJson, step), stepJson.getTitle());
     stepRepository.save(step);
 
     // Delete old ingredients and add new ingredients with new Step
@@ -104,7 +104,7 @@ public class StepPersistence {
 
     // Get associated Recipe and create new Step
     Recipe recipe = recipeJson.toModel();
-    Step addedStep = mu.addStep(recipe, null, stepJson.getVerb(), stepJson.getSequence(), stepJson.getDescription(), new HashSet<>());
+    Step addedStep = mu.addStep(recipe, null, stepJson.getVerb(), stepJson.getSequence(), stepJson.getDescription(), new HashSet<>(), stepJson.getTitle());
     Long addedStepId = addedStep.getId();
 
     // Adjust order where necessary

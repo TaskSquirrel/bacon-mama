@@ -32,4 +32,6 @@ public class StepJson extends BaseJson {
   }
 
   public String getDescription() { return (String) this.json.get("description"); }
+
+  public String getTitle() {return (String) this.json.get("title"); }
 }

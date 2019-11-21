@@ -84,7 +84,7 @@ public class ModelUtils {
     return ingredient;
   }
 
-  public Step addStep(Recipe recipe, Ingredient result, String verb, Integer sequence, String description, Set<Ingredient> ingredientSet) {
+  public Step addStep(Recipe recipe, Ingredient result, String verb, Integer sequence, String description, Set<Ingredient> ingredientSet, String title) {
     Step step = new Step();
     step.setRecipe(recipe);
     step.setResultIngredient(result);
@@ -92,6 +92,7 @@ public class ModelUtils {
     step.setSequence(sequence);
     step.setDescription(description);
     step.setIngredients(ingredientSet);
+    step.setTitle(title);
     stepRepository.save(step);
     return step;
   }
