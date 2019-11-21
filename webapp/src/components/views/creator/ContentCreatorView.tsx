@@ -1,38 +1,50 @@
 import React, { useContext } from "react";
-import NavBar from "../../controls/NavBar";
 
 import Steps from "./Steps";
 import ItemPicker from "./ItemPicker";
 
-import style from "./ContentCreatorView.module.scss";
-import ButtonBase from "../../controls/ButtonBase";
 import { ContentCreatorContext } from "./ContentCreatorProvider";
+import UtilityBar from "./UtilityBar";
+
+import styles from "./ContentCreatorView.module.scss";
 
 const CreateRecipe: React.FC = () => {
     const {
+        available,
         actions: {
-            openAddItem
+            setAddItemModal
         }
     } = useContext(ContentCreatorContext);
 
+    const openAddItemModal = () => setAddItemModal(true);
+
+    if (!available) {
+        return null;
+    }
+
     return (
-        <div className={ style.container }>
-            <div className={ style.top }>
-                <ButtonBase
-                    onClick={ openAddItem }
-                >
-                    Add item
-                </ButtonBase>
+        <div
+            className={ styles.container }
+        >
+            <div
+                className={ styles.left }
+            >
+                <Steps />
             </div>
-            <div className={ style.content }>
-                <div className={ style.left }>
-                    <Steps />
+            <div
+                className={ styles.content }
+            >
+                <div
+                    className={ styles.top }
+                >
+                    <UtilityBar />
                 </div>
-                <div className={ style.center }>
+                <div
+                    className={ styles.center }
+                >
                     <ItemPicker />
                 </div>
             </div>
-            <div className={ style.bottom }>d</div>
         </div>
     );
 };

@@ -1,0 +1,50 @@
+$breakpoints: (
+    "sm": 576px,
+    "md": 768px,
+    "lg": 992px,
+    "xl": 1200px
+);
+
+$widths: (
+    "sm": 85%,
+    "md": 80%,
+    "lg": 75%,
+    "xl": 70%
+);
+
+$smaller-widths: (
+    "sm": 95%,
+    "md": 80%,
+    "lg": 70%,
+    "xl": 60%
+);
+
+.responsive {
+    position: relative;
+
+    width: 100%;
+
+    padding-left: 1rem;
+    padding-right: 1rem;
+
+    @each $size, $breakpoint in $breakpoints {
+        @media (min-width: $breakpoint) {
+            margin: 0 auto;
+            width: map-get($widths, $size);
+        }
+    }
+}
+
+.responsive-smaller {
+    width: 100%;
+
+    padding-left: 1rem;
+    padding-right: 1rem;
+
+    @each $size, $breakpoint in $breakpoints {
+        @media (min-width: $breakpoint) {
+            margin: 0 auto;
+            max-width: map-get($smaller-widths, $size);
+        }
+    }
+}

@@ -1,5 +1,9 @@
 @import "./styles/colors";
 
+* {
+    box-sizing: border-box;
+}
+
 a {
     &,
     &:link {
