@@ -161,20 +161,19 @@ public class RecipeController implements BaseApiController {
   )
   Map<String, Object> deleteRecipe(@RequestBody Map<String, Object> body) {
     Map<String, Object> returnMap = new HashMap<>();
-    
-    Recipe recipe = rp.findRecipe(JsonUtils.castMap(body.get("recipe")));
-    if(recipe == null)
-    {
-      JsonUtils.setStatus(returnMap, JsonUtils.ERROR, "Recipe does not exist");
+    RecipeJson rj = new RecipeJson(body, true);
+    beanFactory.autowireBean(rj);
+
+    Recipe recipe = rj.toModel();
+    if (recipe == null) {
+      JsonUtils.setStatus(returnMap, JsonUtils.ERROR, "Recipe does not exist!");
       return returnMap;
     }
 
-    if(mu.deleteRecipe(recipe))
-    {
+    if (mu.deleteRecipe(recipe)) {
       JsonUtils.setStatus(returnMap, JsonUtils.SUCCESS);
-    }
-    else{
-      JsonUtils.setStatus(returnMap, JsonUtils.ERROR, "Can't Delete Recipe");
+    } else {
+      JsonUtils.setStatus(returnMap, JsonUtils.ERROR, "An error occurred while trying to delete recipe.");
     }
     return returnMap;
   }

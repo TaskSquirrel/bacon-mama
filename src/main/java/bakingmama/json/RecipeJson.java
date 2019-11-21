@@ -16,6 +16,6 @@ public class RecipeJson extends BaseJson {
 
   @Override
   public Recipe toModel() {
-    return rp.findRecipe(this.json);
+    return rp.findRecipe(this.json.get("id"));
   }
 }
