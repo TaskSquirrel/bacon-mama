@@ -34,16 +34,13 @@ public class TokenInterceptor extends HandlerInterceptorAdapter {
 
         HandlerMethod handlerMethod = (HandlerMethod) handler;
 
-        String token = request.getParameter("Authentication");
+        String token = request.getParameter("Authorization");
 
         String check = TokenUtils.verifyToken(token);
 
-        Map<String, Object> returnMap = new HashMap<>();
-
-        if(!check.equals("true"))
-        {
-            JsonUtils.setStatus(returnMap, JsonUtils.ERROR, check);
-            ResponseUtils.write(response, returnMap);
+        if (!check.equals("true")) {
+            ResponseUtils.setHeaders(response);
+            ResponseUtils.write(response, JsonUtils.ERROR, check);
             return false;
         }
         response.setHeader(JsonUtils.STATUS, JsonUtils.SUCCESS);
