@@ -30,19 +30,22 @@ public class TokenInterceptor extends HandlerInterceptorAdapter {
     }
 
     @Override
-    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-
+    public boolean preHandle(
+        HttpServletRequest request,
+        HttpServletResponse response,
+        Object handler
+    ) throws Exception {
         HandlerMethod handlerMethod = (HandlerMethod) handler;
 
         String token = request.getParameter("Authorization");
-
         String check = TokenUtils.verifyToken(token);
 
+        ResponseUtils.setHeaders(response);
         if (!check.equals("true")) {
-            ResponseUtils.setHeaders(response);
             ResponseUtils.write(response, JsonUtils.ERROR, check);
             return false;
         }
+
         response.setHeader(JsonUtils.STATUS, JsonUtils.SUCCESS);
         return true;
     }
