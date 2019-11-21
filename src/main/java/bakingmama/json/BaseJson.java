@@ -7,16 +7,18 @@ public class BaseJson {
 
   Map<String, Object> json;
 
-  public BaseJson(Map<String, Object> json) { this.json = json; }
-  public BaseJson(Map<String, Object> json, String filter) { this.json = this.castJson(json.get(filter)); }
-  public BaseJson(Object json) { this.json = this.castJson(json); }
+  BaseJson(Map<String, Object> json) { this.json = json; }
+  BaseJson(Map<String, Object> json, String filter) { this.json = this.castJson(json.get(filter)); }
+  BaseJson(Object json) { this.json = this.castJson(json); }
 
   Map<String, Object> castJson(Object json) {
     return (Map<String, Object>) json;
   }
   List<Map<String, Object>> castListJson(Object listMap) { return (List<Map<String, Object>>) listMap; }
 
-  public Long parseId(Object id) {
+  public Long getId() { return this.parseId(this.json.get("id")); }
+
+  Long parseId(Object id) {
     if (id instanceof String) {
       id = Integer.parseInt((String) id);
     }

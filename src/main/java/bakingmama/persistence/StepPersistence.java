@@ -45,8 +45,6 @@ public class StepPersistence {
     return this.findStep(JsonUtils.parseId(stepId));
   }
 
-  public Step findStep(Map<String, Object> stepJson) { return this.findStep(stepJson.get("id")); }
-
   public Item findItem(Long itemId) {
     Optional<Item> optional = itemRepository.findById(itemId);
     return unpackOptional(optional);
@@ -112,7 +110,7 @@ public class StepPersistence {
     // Edit step and save into DB
     Step step = stepJson.toModel();
     Integer oldSequence = step.getSequence();
-    step.edit(stepJson.getVerb(), stepJson.getSequence(), stepJson.getDescription(), addResultIngredient(ingredientJson, step));
+    step.edit(stepJson.getVerb(), stepJson.getSequence(), stepJson.getDescription(), addResultIngredient(ingredientJson, step), stepJson.getTitle());
     stepRepository.save(step);
 
     // Shift sequences if necessary
@@ -135,7 +133,7 @@ public class StepPersistence {
 
     // Get associated Recipe and create new Step
     Recipe recipe = recipeJson.toModel();
-    Step addedStep = mu.addStep(recipe, null, stepJson.getVerb(), stepJson.getSequence(), stepJson.getDescription(), new HashSet<>());
+    Step addedStep = mu.addStep(recipe, null, stepJson.getVerb(), stepJson.getSequence(), stepJson.getDescription(), new HashSet<>(), stepJson.getTitle());
     Long addedStepId = addedStep.getId();
 
     // Adjust order where necessary
@@ -155,7 +153,16 @@ public class StepPersistence {
     return true;
   }
 
-  public Recipe deleteStep(Long stepId, Long recipeId) {
+  public Recipe deleteStep(Map<String, Object> json) {
+    // Grab corresponding POJOs and then their IDs
+    StepJson stepJson = new StepJson(json, true);
+    RecipeJson recipeJson = new RecipeJson(json, true);
+    beanFactory.autowireBean(stepJson);
+    beanFactory.autowireBean(recipeJson);
+
+    Long stepId = stepJson.getId();
+    Long recipeId = recipeJson.getId();
+
     Recipe recipe = recipeRepository.getOne(recipeId);
     Step deleteStep = stepRepository.getOne(stepId);
     Integer pivot = deleteStep.getSequence();
@@ -163,16 +170,14 @@ public class StepPersistence {
     stepRepository.deleteById(stepId);
 
     Set<Step> recipeSteps = recipe.getSteps();
-    for(Step step : recipeSteps)
-    {
-      if(step.getSequence() >= pivot)
-      {
+    for (Step step : recipeSteps) {
+      if (step.getSequence() >= pivot) {
         step.setSequence(step.getSequence() - 1);
         stepRepository.save(step);
       }
     }
 
-    //adding step to list and setting it to the recipe
+    // adding step to list and setting it to the recipe
     recipe.setSteps(recipeSteps);
 
     return recipe;
