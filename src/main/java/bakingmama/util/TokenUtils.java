@@ -14,4 +14,16 @@ public class TokenUtils {
     public static Algorithm getAlgorithm() {
         return algorithm;
     }
+
+    public static String verifyToken(String token){
+        try {
+            JWTVerifier verifier = JWT.require(algorithm)
+                    .build();
+            verifier.verify(token);
+            return "true";
+        } catch (Exception e){
+            String returnString = "Exception Thrown at Verify Token";
+            return returnString;
+        }
+    }
 }
