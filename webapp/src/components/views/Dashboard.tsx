@@ -1,83 +1,72 @@
-import React, { useState, useEffect } from "react";
-import NavBar from "../controls/NavBar";
-import styles from "./Dashboard.module.scss";
+import React, { useState, useEffect, useCallback } from "react";
+
+import { APIManyRecipeResponse, APIRecipeList } from "./../../models/API";
+
 import useAPI from "../hooks/useAPI";
-import { AxiosRequestConfig } from 'axios';
-import { APIManyRecipeResponse, APIRecipeList } from './../../models/API';
-import { Recipe } from './../../models/recipe';
+import useUser from "../hooks/useUser";
+
+import NavBar from "../controls/NavBar";
 import Card from "../controls/Card";
 
-const Dashboard: React.FC = () => {
-    
-    // Get recipe from user
-    // Recipe
-    // {
-    // recipe name, recipeID, description
-    // }
+import styles from "./Dashboard.module.scss";
 
-    const [recipe, setRecipe] = useState<APIRecipeList[] | null>(null);
+const Dashboard: React.FC = () => {
+    const { name } = useUser();
+    const [recipes, setRecipes] = useState<APIRecipeList[] | null>(null);
 
     const request = useAPI();
 
-    const doRequest = async (
-        endpoint: string,
-        payload: AxiosRequestConfig
-    ) => {
-        try {
-            const {
-                data
-            } = await request<APIManyRecipeResponse>(
-                endpoint,
-                payload
-            );
-            
-            console.log(data);
-            
-
-            const { status, message, recipes: responseRecipe } = data;
-
-            if (status === "OK") {
-                setRecipe(responseRecipe);
-            } else {
-                throw new Error(message);
-            }
-        } catch (e) {
-            if (!e.message) {
-                throw new Error("Network request failed!");
-            } else {
-                throw e;
-            }
-        } finally {
-            
-        }
-    };
-
-    const getRecipes = () => {
-        doRequest(
+    const getRecipes = useCallback(async () => {
+        const { data: {
+            status,
+            message,
+            recipes: responseRecipes
+        } } = await request<APIManyRecipeResponse>(
             "/getRecipes",
             {
                 method: "POST",
                 data: {
-                    username: 'aa'
+                    username: name
                 }
             }
         );
-    }
+
+        if (status === "error") {
+            throw new Error(message);
+        } else {
+            return responseRecipes;
+        }
+    }, [request, name]);
 
     useEffect(() => {
-        if(!recipe){
-            getRecipes();
-        }
-    }, [])
+        const updateRecipes = async () => {
+            try {
+                if (!recipes) {
+                    const responseRecipes = await getRecipes();
 
-    return(
+                    setRecipes(responseRecipes);
+                }
+            } catch (e) {
+                // Error
+            }
+        };
+
+        updateRecipes();
+    }, [getRecipes, recipes]);
+
+    return (
         <div>
             <NavBar className={ styles.navbar } userName={ "Ben" } />
-            <div className={styles.title}>Your Recipes</div>
-            <div className={styles.card}>
-                {recipe && recipe.map((each) => (
-                    <Card key={each.id} id={`${each.id}`}  name={each.recipeName} description={each.description} />    
-                ))}
+            <div className={ styles.title }>Your Recipes</div>
+            <div className={ styles.card }>
+                { recipes && recipes.map((each) => (
+                    <Card
+                        key={ each.id }
+                        id={ `${each.id}` }
+                        name={ each.recipeName }
+                        description={ each.description }
+                    />
+                )) }
             </div>
         </div>
     );

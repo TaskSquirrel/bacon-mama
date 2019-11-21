@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 
 import { APIUserLogin } from "../../models/API";
 
-import UserContext from "./UserContext";
+import UserContext, { UserContextShape } from "./UserContext";
 import APIClient from "../../api/APIClient";
 
 import useStorage from "../hooks/useStorage";
@@ -105,10 +105,12 @@ const UserProvider: React.FC = ({ children }) => {
         return null;
     }
 
-    const context = {
+    const context: UserContextShape = {
         signIn,
         signOut,
-        token: value ? value.token : null
+        token: value ? value.token : null,
+        name: value ? value.token : null,
+        userID: value ? value.userID : null
     };
 
     return (

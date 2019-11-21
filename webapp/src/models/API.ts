@@ -1,5 +1,3 @@
-import { Recipe, Step, Item } from "./recipe";
-
 export interface Response {
     status: "OK" | "error";
     message?: string;
@@ -42,14 +40,11 @@ export interface APIRecipe {
     items: APIItem[];
 }
 
-
 export interface APIRecipeList {
     id: number;
     recipeName: string;
     description?: string;
 }
-
-
 
 export interface APIRecipeResponse extends Response {
     recipe: APIRecipe;
