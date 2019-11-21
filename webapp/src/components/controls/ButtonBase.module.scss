@@ -7,10 +7,14 @@
 
     color: var(--white);
     font: inherit;
-    text-align: center;
+    line-height: 1;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
 
     background-color: $primary;
-    padding: 0.6rem 1.1rem;
+    padding: 0.65rem 1rem;
 
     border: 1px solid $primary;
     border-radius: 5px;
@@ -19,7 +23,7 @@
         border-color 150ms ease-in-out,
         background-color 150ms ease-in-out;
 
-    &:hover {
+    &:not(.no-hover):hover {
         $darkened: darken($primary, 10%);
 
         background-color: $darkened;
@@ -27,17 +31,21 @@
     }
 
     &:focus {
-        outline: lightblue solid 1px;
+        outline: -webkit-focus-ring-color auto 5px;
     }
 
     &.inverted {
         color: $primary;
         background-color: transparent;
 
-        &:hover {
+        &:not(.no-hover):hover {
             color: var(--white);
             background-color: $primary;
             border-color: $primary;
         }
+    }
+
+    & > span:first-child {
+        margin-right: 0.5rem;
     }
 }

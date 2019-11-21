@@ -1,5 +1,5 @@
 import React, { useContext } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useHistory } from "react-router-dom";
 import classNames from "classnames";
 
 import { Step } from "../../../models/recipe";
@@ -15,27 +15,55 @@ const ItemPicker: React.FC = () => {
         metadata: {
             id: recipeID
         },
-        steps,
+        currentStep: step,
         actions: {
-            setSelectItemModal
+            replaceStep,
+            setEditStepModal
         }
     } = useContext(ContentCreatorContext);
-
+    const { push } = useHistory();
     const { sequence } = useParams();
 
-    const step = steps.find(({ sequence: seq }) => {
-        return `${seq}` === sequence;
-    });
+    const openEditStepModal = () => setEditStepModal(true);
 
-    const createItemPickerStateSetter = (
-        state: boolean
-    ) => () => setSelectItemModal(state);
+    const openDependencyPicker = () => {
+        push(`/edit/${recipeID}/${sequence}/deps`);
+    };
+
+    const openResultPicker = () => {
+        push(`/edit/${recipeID}/${sequence}/creates`);
+    };
+
+    const createOnItemCloseClick = (
+        type: "dependency" | "result",
+        dependencyID: string,
+    ) => () => {
+        if (!step) {
+            return;
+        }
+
+        const { dependencies } = step;
+
+        if (type === "dependency") {
+            replaceStep({
+                ...step,
+                dependencies: dependencies
+                    .filter(({ id }) => id !== dependencyID)
+            });
+        } else if (type === "result") {
+            replaceStep({
+                ...step,
+                result: null
+            });
+        }
+    };
 
     const renderItems = (currentStep: Step) => {
         const { dependencies } = currentStep;
 
         return dependencies.map((
             {
+                id: dependencyID,
                 item: {
                     id,
                     name
@@ -53,6 +81,10 @@ const ItemPicker: React.FC = () => {
                     quantity={ {
                         amount, unit
                     } }
+                    onCloseClick={ createOnItemCloseClick(
+                        "dependency",
+                        dependencyID
+                    ) }
                 />
             );
         });
@@ -67,7 +99,7 @@ const ItemPicker: React.FC = () => {
                     shadow
                     size="large"
                     className={ styles.button }
-                    onClick={ createItemPickerStateSetter(true) }
+                    onClick={ openResultPicker }
                 >
                     <i
                         className="fas fa-plus"
@@ -77,6 +109,7 @@ const ItemPicker: React.FC = () => {
         }
 
         const {
+            id: dependencyID,
             item: { name },
             amount,
             unit
@@ -84,14 +117,24 @@ const ItemPicker: React.FC = () => {
 
         return (
             <ItemCard
+                showButton
                 name={ name }
                 quantity={ { amount, unit } }
+                onCloseClick={ createOnItemCloseClick(
+                    "result", dependencyID
+                ) }
             />
         );
     };
 
     if (!step) {
-        return null;
+        return (
+            <div
+                className={ styles.empty }
+            >
+                Choose a step on the left to edit!
+            </div>
+        );
     }
 
     return (
@@ -114,7 +157,7 @@ const ItemPicker: React.FC = () => {
                         <AuraButton
                             size="large"
                             className={ styles.button }
-                            onClick={ createItemPickerStateSetter(true) }
+                            onClick={ openDependencyPicker }
                         >
                             <i
                                 className="fas fa-plus"
@@ -122,6 +165,18 @@ const ItemPicker: React.FC = () => {
                         </AuraButton>
                     </div>
                 </div>
+            </div>
+            <div
+                className={ styles.divider }
+                onClick={ openEditStepModal }
+            >
+                <span>
+                    { step.verb || (
+                        <i>
+                            No action
+                        </i>
+                    ) }
+                </span>
             </div>
             <div
                 className={ classNames(

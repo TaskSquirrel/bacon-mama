@@ -4,6 +4,7 @@ import classNames from "classnames";
 import { noop } from "../../utils";
 
 import styles from "./TopLevelLoadingIndicator.module.scss";
+import Portal from "./Portal";
 
 export interface TopLevelLoadingIndicatorContextShape {
     setStatus: (loading: boolean) => void;
@@ -27,12 +28,14 @@ const TopLevelLoadingIndicator: React.FC = ({
 
     const renderIndicator = () => {
         return (
-            <div
-                className={ classNames(
-                    styles.indicator,
-                    visible && styles.active
-                ) }
-            />
+            <Portal>
+                <div
+                    className={ classNames(
+                        styles.indicator,
+                        visible && styles.active
+                    ) }
+                />
+            </Portal>
         );
     };
 

@@ -12,6 +12,7 @@ export interface Item {
 }
 
 export interface Dependency {
+    id: string;
     unit: string;
     amount: number;
     item: {

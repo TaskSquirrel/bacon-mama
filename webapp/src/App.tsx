@@ -9,7 +9,6 @@ import AppRouter from "./components/shared/AppRouter";
 import routes from "./components/routes/root";
 
 import "./App.module.scss";
-import "./App.css";
 
 const App: React.FC = () => {
     return (

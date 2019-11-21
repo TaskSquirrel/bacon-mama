@@ -2,9 +2,10 @@ import { APIStep, APIRecipe, APIDependency, APIItem } from "../models/API";
 import { Recipe, Dependency, Step, Item } from "../models/recipe";
 
 function fromAPIDependency(
-    { amount, unit, item: { itemName, id } }: APIDependency
+    { id: dependencyID, amount, unit, item: { itemName, id } }: APIDependency
 ): Dependency {
     return {
+        id: `${dependencyID}`,
         amount,
         unit,
         item: {

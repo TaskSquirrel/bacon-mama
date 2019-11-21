@@ -1,12 +1,16 @@
 import React, { useState, useEffect } from "react";
 
+import { APIUserLogin } from "../../models/API";
+
 import UserContext from "./UserContext";
+import APIClient from "../../api/APIClient";
+
 import useStorage from "../hooks/useStorage";
-import { AxiosRequestConfig } from 'axios';
-import useAPI from "../hooks/useAPI";
 
 interface UserData {
     token: string | null;
+    name: string;
+    userID: string;
 }
 
 /**
@@ -22,90 +26,95 @@ const UserProvider: React.FC = ({ children }) => {
         set,
         remove
     } = useStorage<UserData>("USER");
-    const [pre, setPre] = useState<boolean>(false);
-    const [username, setUsername] = useState<string>('');
-    const request = useAPI();
+    const [
+        preflightRequestCompleted,
+        setPreflightRequestCompleted
+    ] = useState<boolean>(false);
 
-    const signIn = (
+    const signIn = async (
         name: string, password: string
     ) => {
-        
-    };
-
-    const signOut = () => {
-        remove();
-    };
-
-    useEffect(() => {
-        if (!pre && value && value.token) {
-            signOut();
-        }
-
-        if(value && value.token){
-            doRequest(
-                "/validateID",
+        try {
+            const { data: {
+                status,
+                message,
+                token,
+                userID,
+                name: userName
+            } } = await APIClient.request<APIUserLogin>(
+                "/login",
                 {
                     method: "POST",
                     data: {
-                        token: value ? value.token : null
+                        username: name,
+                        password
                     }
                 }
             );
-        }
 
-    }, [pre, value]);
-
-    const doRequest = async (
-        endpoint: string,
-        payload: AxiosRequestConfig
-    ) => {
-        try {
-
-            const {
-                data
-            } = await request(
-                endpoint,
-                payload
-            );            
-
-            const { status, message, username } = data;
-
-            if (status === "OK") {
-                setUsername(username);
-            } else {
+            if (status === "error") {
                 throw new Error(message);
+            } else {
+                set({ token, userID, name: userName });
             }
         } catch (e) {
-            if (!e.message) {
-                throw new Error("Network request failed!");
-            } else {
-                throw e;
-            }
-        } finally {
-            
+            throw e;
         }
     };
+
+    const signOut = async () => remove();
+
+    useEffect(() => {
+        if (preflightRequestCompleted || !ready || !value) {
+            // Do not need to validate user (not logged in).
+            // Or if storage hasn't loaded yet.
+
+            return;
+        }
+
+        const dispatchPreflightValidation = async () => {
+            try {
+                const { data: {
+                    status
+                } } = await APIClient.request(
+                    "/validate",
+                    {
+                        method: "POST",
+                        headers: {
+                            Authorization: `Bearer ${value.token}`
+                        }
+                    }
+                );
+
+                if (status === "error") {
+                    throw new Error();
+                }
+            } catch (e) {
+                console.warn(`[UserProvider] Validation request failed! Invalidated token.`);
+
+                remove();
+            } finally {
+                setPreflightRequestCompleted(true);
+            }
+        };
+
+        dispatchPreflightValidation();
+    }, [remove, ready, value, preflightRequestCompleted]);
 
     if (!ready) {
         return null;
     }
 
-    console.log(ready);
-
     const context = {
-        username,
         signIn,
         signOut,
         token: value ? value.token : null
     };
-    
-    
 
     return (
         <UserContext.Provider
             value={ context }
         >
-            
             { children }
         </UserContext.Provider>
     );

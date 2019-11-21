@@ -5,7 +5,14 @@ export interface Response {
     message?: string;
 }
 
+export interface APIUserLogin extends Response {
+    token: string;
+    name: string;
+    userID: string;
+}
+
 export interface APIDependency {
+    id: number;
     amount: number;
     unit: string;
     item: APIItem;

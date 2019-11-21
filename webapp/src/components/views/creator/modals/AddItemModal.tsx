@@ -1,86 +1,70 @@
-import React, { useContext, useState } from "react";
+import React, { useState, useContext } from "react";
 
-import { Step } from "../../../models/recipe";
+import { ContentCreatorContext } from "../ContentCreatorProvider";
+import Modal from "../../../shared/Modal";
+import TextField from "../../../controls/TextField";
+import TextArea from "../../../controls/TextArea";
+import ButtonBase from "../../../controls/ButtonBase";
 
-import TextField from "../../controls/TextField";
-import TextArea from "../../controls/TextArea";
-import ButtonBase from "../../controls/ButtonBase";
-import Modal from "../../shared/Modal";
-import { ContentCreatorContext } from "./ContentCreatorProvider";
+import { createChangeEventStateSetter } from "../../../../utils";
 
-import { createChangeEventStateSetter } from "../../../utils";
+import styles from "./modals.module.scss";
 
-import styles from "./EditStep.module.scss";
-
-interface EditStepProps {
-    step: Step;
+interface AddItemProps {
     control: (state: boolean) => void;
 }
 
-const EditStep: React.FC<EditStepProps> = ({
-    step, control
+const AddItem: React.FC<AddItemProps> = ({
+    control
 }) => {
     const {
         actions: {
-            replaceStep
+            addItem
         }
     } = useContext(ContentCreatorContext);
-    const [name, setName] = useState<string>(step.verb);
-    const [description, setDescription] = useState<string>(
-        step.description || ""
-    );
+    const [name, setName] = useState<string>("");
+    const [description, setDescription] = useState<string>("");
 
     const close = () => control(false);
 
-    const save = () => {
-        if (name === "" || description === "") {
-            return null;
-        }
-
-        replaceStep({
-            ...step,
-            verb: name,
-            description
-        });
-        control(false);
-    };
-
-    const onFormSubmit = (
-        event: React.FormEvent<HTMLFormElement>
-    ) => {
+    const submit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
 
-        save();
+        if (name === "" || description === "") {
+            return;
+        }
+
+        addItem(name, description);
+        control(false);
     };
 
     return (
         <Modal
             show
-            title="Edit step details"
+            title="Add item"
         >
             <form
-                onSubmit={ onFormSubmit }
+                onSubmit={ submit }
             >
                 <div
                     className={ styles.form }
                 >
                     <TextField
-                        required
-                        placeholder="Step name"
+                        placeholder="Item name"
                         value={ name }
                         onChange={ createChangeEventStateSetter(
                             setName
                         ) }
                     />
                     <TextArea
-                        placeholder="Step description"
+                        placeholder="Item description"
                         value={ description }
                         onChange={ createChangeEventStateSetter(
                             setDescription
                         ) }
                     />
                     <div
-                        className={ styles.actions }
+                        className={ styles.action }
                     >
                         <ButtonBase
                             inverted
@@ -101,4 +85,4 @@ const EditStep: React.FC<EditStepProps> = ({
     );
 };
 
-export default EditStep;
+export default AddItem;

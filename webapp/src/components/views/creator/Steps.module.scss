@@ -4,10 +4,31 @@
     list-style: none;
     margin: 0;
     padding: 0;
+
+    height: 100%;
+}
+
+.top {
+    z-index: 9998;
+
+    box-sizing: border-box;
+    position: sticky;
+    top: 0;
+
+    display: flex;
+    align-items: center;
+
+    padding: 1rem;
+
+    height: 4rem;
+    max-height: 4rem;
+
+    background-color: var(--dark);
 }
 
 .heading {
-    margin: 1rem;
+    font-size: 2rem;
+    margin: 0;
 }
 
 .step {
@@ -22,11 +43,16 @@
     display: flex;
 
     padding: 0.5rem;
-    border-radius: 5px;
+    border-radius: 5rem;
 
     transition:
+        transform 150ms ease-in-out,
         color 150ms ease-in-out,
         background-color 150ms ease-in-out;
+
+    &:not(.active):hover {
+        transform: translateX(0.5rem);
+    }
 
     &.active {
         color: var(--white);
@@ -88,8 +114,22 @@
 
 .actions {
     display: flex;
+    justify-content: space-around;
 
     width: 100%;
+    padding: 0.5rem 1rem;
+
+    button.edit {
+        color: var(--teal);
+    }
+
+    button.up {
+        color: var(--sky-blue);
+    }
+
+    button.delete {
+        color: #ff3873;
+    }
 }
 
 .button {
@@ -110,7 +150,7 @@
     font-size: 1.5rem;
     border: none;
     border-radius: 10px;
-    background-color: var(--primary);
+    background-color: var(--secondary);
     box-shadow: 0 0 5px 0 rgba(0, 0, 0, 0.2);
 
     width: 3rem;
@@ -129,4 +169,11 @@
 .icon {
     width: 4rem;
     height: 4rem;
+}
+
+.action {
+    display: flex;
+    justify-content: center;
+
+    margin: 1rem 0;
 }
