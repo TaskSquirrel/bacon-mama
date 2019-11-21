@@ -1,17 +1,11 @@
 @import "../../../styles/colors";
 
-.top {
-    width: 100%;
-    display: flex;
-    flex-direction: row;
-    justify-content: flex-end;
-    padding: 1rem 0rem;
-
-    border-bottom: 1px solid #e0e0e0;
-}
-
 .container {
+    display: flex;
+
     font: inherit;
+
+    height: 100vh;
 }
 
 .circle:hover {
@@ -19,27 +13,20 @@
 }
 
 .left {
-    overflow: scroll;
+    flex-basis: 20%;
 
-    width: 20%;
+    overflow-y: scroll;
+
     height: 100%;
+
+    color: var(--white);
+    background-color: var(--dark);
 }
 
 .center {
     flex: 1;
 
-    background-color: rgb(233, 233, 233);
-}
-
-.rightTop {
-    border-bottom: 1px solid $creation;
-}
-
-.rightBottom,
-.rightTop {
-    display: flex;
-    flex-direction: row;
-    height:37.5vh;
+    background-color: rgba(0, 0, 0, 0.05);
 }
 
 .bottom {
@@ -51,7 +38,7 @@
 
 .content {
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
 
-    height: 80vh;
+    width: 80%;
 }

@@ -60,8 +60,13 @@ public class StepPersistence {
   }
 
   public Ingredient addResultIngredient(IngredientJson ij, Step resultStep) {
+    // If the current step has no ingredient...
     if (resultStep.getResultIngredient() != null) {
       ingredientRepository.delete(resultStep.getResultIngredient());
+    }
+    // If no ingredient was passed in:
+    if (ij == null || ij.isNull()) {
+      return null;
     }
     Ingredient ing = this.addIngredient(ij, null);
     ing.setResultStep(resultStep);
@@ -71,6 +76,28 @@ public class StepPersistence {
 
   public Ingredient addIngredient(IngredientJson ij, Step step) {
     return mu.addIngredient(ij.getItem(), step, ij.getAmount(), ij.getUnit());
+  }
+
+  public boolean shiftSequences(Step step, Integer oldSequence, Integer newSequence) {
+    if (oldSequence.equals(newSequence)) { return true; }
+
+    Recipe recipe = step.getRecipe();
+    Set<Step> recipeSteps = recipe.getSteps();
+    for (Step s : recipeSteps) {
+      // Same ID
+      if (s.getId().equals(step.getId())) { continue; }
+
+      // Shifted the step up: move things in between it down
+      if (newSequence > oldSequence && s.getSequence() > oldSequence && s.getSequence() <= newSequence) {
+        step.setSequence(step.getSequence() - 1);
+      // Shifted the step down
+      } else if (newSequence < oldSequence && s.getSequence() < oldSequence && s.getSequence() >= newSequence) {
+        step.setSequence(step.getSequence() + 1);
+      }
+      stepRepository.save(step);
+    }
+
+    return true;
   }
 
   /**
@@ -84,8 +111,12 @@ public class StepPersistence {
 
     // Edit step and save into DB
     Step step = stepJson.toModel();
+    Integer oldSequence = step.getSequence();
     step.edit(stepJson.getVerb(), stepJson.getSequence(), stepJson.getDescription(), addResultIngredient(ingredientJson, step), stepJson.getTitle());
     stepRepository.save(step);
+
+    // Shift sequences if necessary
+    this.shiftSequences(step, oldSequence, step.getSequence());
 
     // Delete old ingredients and add new ingredients with new Step
     this.clearIngredients(step);
@@ -128,7 +159,7 @@ public class StepPersistence {
     Recipe recipe = recipeRepository.getOne(recipeId);
     Step deleteStep = stepRepository.getOne(stepId);
     Integer pivot = deleteStep.getSequence();
-    
+
     stepRepository.deleteById(stepId);
 
     Set<Step> recipeSteps = recipe.getSteps();

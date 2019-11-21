@@ -1,3 +1,40 @@
+@import "../../../styles/colors";
+
+$divider-color: rgb(116, 116, 116);
+
+.empty {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    width: 100%;
+    height: 100%;
+
+    color: var(--gray);
+    font-size: 1.5rem;
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+
+    width: 100%;
+    height: 100%;
+}
+
+.button {
+    color: $primary;
+
+    background-color: rgba($primary, 0.25);
+    box-shadow: none;
+
+    transition: background-color 100ms ease-in-out;
+
+    &:focus {
+        background-color: rgba($primary, 0.5);
+    }
+}
+
 .add {
     display: flex;
     margin:auto;
@@ -5,26 +42,78 @@
 }
 
 .item {
+    box-sizing: border-box;
     display: flex;
-    margin:auto;
-}
+    flex-direction: column;
 
-.items {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-around;
-    margin-bottom:7rem;
-}
-
-.container {
+    border: 1px solid #000000;
+    border-radius: 10px;
     width: 100%;
-    height: 100%;
 
-    display: grid;
-    grid-template-rows: 1fr 1fr;
-    grid-template-columns: 1fr;
+    padding: 1rem;
+
+    background-color: #ffffff;
 }
 
-.save {
+.title {
+    margin: 0;
+}
 
+.scroller {
+    overflow-x: auto;
+
+    flex: 1;
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: center;
+
+    &::-webkit-scrollbar {
+        display: none;
+    }
+
+    &.center {
+        justify-content: center;
+    }
+}
+
+.dependencies {
+    display: flex;
+    align-items: center;
+
+    .add-container {
+        display: flex;
+        justify-content: center;
+
+        width: 15rem;
+    }
+}
+
+.divider {
+    position: relative;
+
+    font-size: 0.85rem;
+
+    flex-basis: 1;
+    display: flex;
+    justify-content: center;
+
+    height: 2px;
+    width: 100%;
+
+    background-color: $divider-color;
+
+    &::before {
+        content: "Creates";
+
+        position: absolute;
+
+        display: inline-block;
+
+        color: var(--white);
+        background-color: $divider-color;
+        padding: 0.3rem 0.5rem;
+        border-radius: 2rem;
+
+        transform: translateY(-50%);
+    }
 }

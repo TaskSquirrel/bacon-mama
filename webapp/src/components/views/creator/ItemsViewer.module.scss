@@ -1,0 +1,32 @@
+@import "../../../styles/colors";
+
+.window {
+    background-color: var(--white);
+
+    padding: 2rem;
+}
+
+.actions {
+    display: flex;
+    justify-content: space-between;
+
+    margin-bottom: 2rem;
+}
+
+.heading {
+    margin: 0;
+}
+
+.items {
+    display: grid;
+    grid-template-rows: auto;
+    grid-template-columns: repeat(5, 1fr);
+    row-gap: 1rem;
+    column-gap: 1rem;
+}
+
+.item {
+    padding: 1rem;
+    border: 1px solid var(--gray);
+    border-radius: 10px;
+}

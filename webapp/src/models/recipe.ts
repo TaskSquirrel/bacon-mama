@@ -11,6 +11,16 @@ export interface Item {
     image?: string;
 }
 
+export interface Dependency {
+    id: string;
+    unit: string;
+    amount: number;
+    item: {
+        id: string,
+        name: string
+    };
+}
+
 /**
  * A `Step` is a transaction that takes a set of input items and creates
  * an output item from a verb.
@@ -19,8 +29,8 @@ export interface Step {
     id: string;
     name: string;
     description?: string;
-    dependencies: string[];
-    result: string | null;
+    dependencies: Dependency[];
+    result: Dependency | null;
     verb: string;
     sequence: number;
 }
