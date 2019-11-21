@@ -25,7 +25,8 @@ const EditStep: React.FC<EditStepProps> = ({
             replaceStep
         }
     } = useContext(ContentCreatorContext);
-    const [name, setName] = useState<string>(step.verb);
+    const [name, setName] = useState<string>(step.name);
+    const [verb, setVerb] = useState<string>(step.verb);
     const [description, setDescription] = useState<string>(
         step.description || ""
     );
@@ -39,7 +40,8 @@ const EditStep: React.FC<EditStepProps> = ({
 
         replaceStep({
             ...step,
-            verb: name,
+            name,
+            verb,
             description
         });
         control(false);
@@ -70,6 +72,13 @@ const EditStep: React.FC<EditStepProps> = ({
                         value={ name }
                         onChange={ createChangeEventStateSetter(
                             setName
+                        ) }
+                    />
+                    <TextField
+                        placeholder="Step action"
+                        value={ name }
+                        onChange={ createChangeEventStateSetter(
+                            setVerb
                         ) }
                     />
                     <TextArea

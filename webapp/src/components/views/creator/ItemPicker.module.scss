@@ -102,8 +102,8 @@ $divider-color: rgb(116, 116, 116);
 
     background-color: $divider-color;
 
-    &::before {
-        content: "Creates";
+    span {
+        cursor: pointer;
 
         position: absolute;
 
