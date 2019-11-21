@@ -20,6 +20,10 @@ public class Step {
   // Order in the recipe -- order is keyword so can't use
   private Integer sequence;
 
+  private String description;
+
+  private String title;
+
   @ManyToOne()
   private Recipe recipe;
 
@@ -29,10 +33,12 @@ public class Step {
   @OneToMany(mappedBy = "step")
   private Set<Ingredient> ingredients;
 
-  public boolean edit(String verb, Integer sequence, Ingredient resultIngredient) {
+  public boolean edit(String verb, Integer sequence, String description, Ingredient resultIngredient, String title) {
     this.verb = verb;
     this.sequence = sequence;
+    this.description = description;
     this.resultIngredient = resultIngredient;
+    this.title = title;
     return true;
   }
 
@@ -41,6 +47,8 @@ public class Step {
     map.put("id", id);
     map.put("verb", verb);
     map.put("sequence", sequence);
+    map.put("description", description);
+    map.put("title", title);
     map.put("result", resultIngredient == null ? null : resultIngredient.toMap());
 
     List<Map<String, Object>> ingredientsList = new ArrayList<>();

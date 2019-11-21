@@ -4,6 +4,8 @@ import bakingmama.models.User;
 import bakingmama.models.UserRepository;
 
 import bakingmama.util.JsonUtils;
+import bakingmama.util.TokenUtils;
+
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -11,6 +13,11 @@ import java.util.Collection;
 
 import java.util.List;
 import java.util.Map;
+
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.exceptions.JWTVerificationException;
+import com.auth0.jwt.interfaces.Claim;
+import com.auth0.jwt.interfaces.DecodedJWT;
 
 @RestController
 public class UserController implements BaseApiController {
@@ -41,6 +48,12 @@ public class UserController implements BaseApiController {
     } else if (!user.getPassword().equals(password)) {
       JsonUtils.setStatus(returnMap, JsonUtils.ERROR, "Incorrect password for user~");
     } else {
+      String token = JWT.create()
+        .withClaim("username", username)
+        .withClaim("userID", user.getId())
+        .sign(TokenUtils.getAlgorithm());
+
+      returnMap.put("token", token);
       JsonUtils.setStatus(returnMap, JsonUtils.SUCCESS);
     }
 
@@ -68,7 +81,46 @@ public class UserController implements BaseApiController {
       userRepository.save(newUser);
 
       JsonUtils.setStatus(returnMap, JsonUtils.SUCCESS);
+
+      String token = JWT.create()
+        .withClaim("username", newUser.getUsername())
+        .withClaim("userID", newUser.getId())
+        .sign(TokenUtils.getAlgorithm());
+
+      returnMap.put("token", token);
     }
     return returnMap;
+  }
+
+  @CrossOrigin
+  @PostMapping(
+      path = "/validateID",
+      consumes = "application/json",
+      produces = "application/json"
+  )
+  public Map<String, Object> validateID(@RequestBody Map<String, Object> body)
+  {
+    Map<String, Object> returnMap = new HashMap<>();
+    
+    String token = (String) body.get("token");
+
+    try {
+      DecodedJWT decoded = TokenUtils.getVerifier().verify(token);
+      Claim payloadJson = decoded.getClaim("username");
+      String username = payloadJson.asString();
+
+      if(userRepository.existsByUsername(username))
+      {
+        JsonUtils.setStatus(returnMap, JsonUtils.SUCCESS);
+      }
+      else{
+        JsonUtils.setStatus(returnMap, JsonUtils.ERROR);
+      }
+
+      return returnMap;
+    } catch (JWTVerificationException e) {
+      JsonUtils.setStatus(returnMap, JsonUtils.ERROR);
+      return returnMap;
+    }
   }
 }

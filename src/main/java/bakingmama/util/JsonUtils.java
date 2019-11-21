@@ -1,5 +1,6 @@
 package bakingmama.util;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -17,6 +18,13 @@ public class JsonUtils {
   public static void setStatus(Map<String, Object> json, String status, String message) {
     json.put(STATUS, status);
     json.put(MESSAGE, message);
+  }
+
+  public static Map<String, Object> returnError(String message) {
+    Map<String, Object> errorMap = new HashMap<>();
+    errorMap.put(STATUS, ERROR);
+    errorMap.put(MESSAGE, message);
+    return errorMap;
   }
 
   // Parses ID into Long for searching
@@ -38,5 +46,4 @@ public class JsonUtils {
     return (Map<String, Object>) map;
   }
 
-  public static List<Map<String, Object>> castListMap(Object listMap) { return (List<Map<String, Object>>) listMap; }
 }

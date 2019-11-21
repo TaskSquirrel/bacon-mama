@@ -85,8 +85,8 @@ public class ResetController implements BaseApiController {
     Ingredient breadIng = mu.addIngredient(bread, null, 100d, "pieces");
 
     // Add steps
-    Step newStep1 = mu.addStep(newRecipe, doughIng, "mix", 1, new HashSet<>());
-    Step newStep2 = mu.addStep(newRecipe, breadIng, "bake", 2, new HashSet<>());
+    Step newStep1 = mu.addStep(newRecipe, doughIng, "mix", 1, "You are mixing",  new HashSet<>(), "title 1");
+    Step newStep2 = mu.addStep(newRecipe, breadIng, "bake", 2, "You are baking", new HashSet<>(), "title 2");
 
     doughIng.setResultStep(newStep1);
     breadIng.setResultStep(newStep2);
