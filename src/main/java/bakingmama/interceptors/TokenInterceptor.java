@@ -14,20 +14,15 @@ import bakingmama.util.JsonUtils;
 import bakingmama.util.ResponseUtils;
 import bakingmama.util.TokenUtils;
 
-
 public class TokenInterceptor extends HandlerInterceptorAdapter {
 
     @Override
     public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception exception)
-    throws Exception {
-        System.out.println("After Completion");
-    }
+    throws Exception { }
 
     @Override
     public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView)
-    throws Exception {
-        System.out.println("Post Handling");
-    }
+    throws Exception { }
 
     @Override
     public boolean preHandle(
@@ -37,7 +32,7 @@ public class TokenInterceptor extends HandlerInterceptorAdapter {
     ) throws Exception {
         HandlerMethod handlerMethod = (HandlerMethod) handler;
 
-        String token = request.getParameter("Authorization");
+        String token = request.getHeader("Authorization");
         String check = TokenUtils.verifyToken(token);
 
         ResponseUtils.setHeaders(response);

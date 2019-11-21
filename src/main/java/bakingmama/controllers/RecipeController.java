@@ -9,6 +9,7 @@ import bakingmama.util.JsonUtils;
 import bakingmama.util.ModelUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
+import org.springframework.http.HttpHeaders;
 import org.springframework.web.bind.annotation.*;
 
 import javax.persistence.EntityManager;
@@ -90,7 +91,10 @@ public class RecipeController implements BaseApiController {
       consumes = "application/json",
       produces = "application/json"
   )
-  Map<String, Object> editRecipe(@RequestBody Map<String, Object> body) {
+  Map<String, Object> editRecipe(@RequestBody Map<String, Object> body, @RequestHeader HttpHeaders headers) {
+    // Pre-processing:
+    System.out.println("Recieved Auth: " + headers.get(HttpHeaders.AUTHORIZATION).get(0));
+
     Map<String, Object> returnMap = new HashMap<>();
 
     Recipe recipe = rp.findRecipe(JsonUtils.castMap(body.get("recipe")));
