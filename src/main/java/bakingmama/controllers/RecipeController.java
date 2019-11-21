@@ -176,10 +176,11 @@ public class RecipeController implements BaseApiController {
       return returnMap;
     }
 
-    if (mu.deleteRecipe(recipe)) {
+    try {
+      mu.deleteRecipe(recipe);
       JsonUtils.setStatus(returnMap, JsonUtils.SUCCESS);
-    } else {
-      JsonUtils.setStatus(returnMap, JsonUtils.ERROR, "An error occurred while trying to delete recipe.");
+    } catch (Exception e) {
+      JsonUtils.setStatus(returnMap, JsonUtils.ERROR, e.getMessage());
     }
     return returnMap;
   }
@@ -191,34 +192,50 @@ public class RecipeController implements BaseApiController {
       produces = "application/json"
   )
   Map<String, Object> addItem(@RequestBody Map<String, Object> body) {
-    // Grab Recipe ID
-    Recipe recipe = rp.findRecipe(JsonUtils.castMap(body.get("recipe")));
-    // Grab Item Stuff
-    Map<String, Object> stepMap = JsonUtils.castMap(body.get("item"));
-    String itemName = (String) stepMap.get("name");
+    try {
+      // Grab Recipe ID
+      Recipe recipe = rp.findRecipe(JsonUtils.castMap(body.get("recipe")));
+      // Grab Item Stuff
+      Map<String, Object> stepMap = JsonUtils.castMap(body.get("item"));
+      String itemName = (String) stepMap.get("name");
 
-    Item newItem = mu.addItem(itemName, recipe);
+      Item newItem = mu.addItem(itemName, recipe);
+    } catch (Exception e) {
+      return JsonUtils.returnError(e.getMessage());
+    }
     return this.recipeSuccess(body);
   }
 
   @CrossOrigin
   @PostMapping(path = "/editStep", consumes = "application/json", produces = "application/json")
   Map<String, Object> editStep(@RequestBody Map<String, Object> json) {
-    sp.editStep(json);
+    try {
+      sp.editStep(json);
+    } catch (Exception e) {
+      return JsonUtils.returnError(e.getMessage());
+    }
     return this.recipeSuccess(json);
   }
 
   @CrossOrigin
   @PostMapping(path = "/addStep", consumes = "application/json", produces = "application/json")
   Map<String, Object> addStep(@RequestBody Map<String, Object> json) {
-    sp.addStep(json);
+    try {
+      sp.addStep(json);
+    } catch (Exception e) {
+      return JsonUtils.returnError(e.getMessage());
+    }
     return this.recipeSuccess(json);
   }
 
   @CrossOrigin
   @PostMapping(path = "/deleteStep", consumes = "application/json", produces = "application/json")
   Map<String, Object> deleteStep(@RequestBody Map<String, Object> json) {
-    Recipe recipe = sp.deleteStep(json);
+    try {
+      sp.deleteStep(json);
+    } catch (Exception e) {
+      return JsonUtils.returnError(e.getMessage());
+    }
     return this.recipeSuccess(json);
   }
 }
