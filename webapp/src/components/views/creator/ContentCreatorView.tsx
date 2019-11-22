@@ -7,19 +7,35 @@ import { ContentCreatorContext } from "./ContentCreatorProvider";
 import UtilityBar from "./UtilityBar";
 
 import styles from "./ContentCreatorView.module.scss";
+import { Link } from "react-router-dom";
 
 const CreateRecipe: React.FC = () => {
     const {
-        available,
-        actions: {
-            setAddItemModal
-        }
+        error,
+        available
     } = useContext(ContentCreatorContext);
 
-    const openAddItemModal = () => setAddItemModal(true);
-
-    if (!available) {
+    if (!available && !error) {
         return null;
+    }
+
+    if (error) {
+        return (
+            <div
+                className={ styles.error }
+            >
+                <div>
+                    Recipe not found!
+                </div>
+                <div>
+                    <Link
+                        to="/"
+                    >
+                        Go back
+                    </Link>
+                </div>
+            </div>
+        );
     }
 
     return (

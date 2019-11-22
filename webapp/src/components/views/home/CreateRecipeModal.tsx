@@ -1,6 +1,7 @@
 import React, { useState, useCallback } from "react";
 
 import useAPI from "../../hooks/useAPI";
+import useUser from "../../hooks/useUser";
 
 import Modal from "../../shared/Modal";
 import TextField from "../../controls/TextField";
@@ -20,10 +21,11 @@ const CreateRecipeModal: React.FC<CreateRecipeModalProps> = ({
 }) => {
     const [name, setName] = useState<string>("");
     const [description, setDescription] = useState<string>("");
+    const { name: userName } = useUser();
+    const request = useAPI();
 
     const createControlSetter = (state: boolean) => () => control(state);
 
-    const request = useAPI();
 
     const addRecipe = useCallback(async () => {
         await request(
@@ -31,7 +33,7 @@ const CreateRecipeModal: React.FC<CreateRecipeModalProps> = ({
             {
                 method: "POST",
                 data: {
-                    username: "aw",
+                    username: userName,
                     recipeName: name,
                     description
                 }
