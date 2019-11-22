@@ -18,7 +18,7 @@ export interface APIDependency {
 
 export interface APIStep {
     id: number;
-    name: string;
+    title: string;
     description?: string;
     dependencies: APIDependency[];
     result: APIDependency | null;

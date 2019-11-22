@@ -9,15 +9,16 @@ public class InterceptorConfig extends WebMvcConfigurerAdapter {
 
 	@Override
 	public void addInterceptors(InterceptorRegistry registry) {
-		registry.addInterceptor(new TokenInterceptor()).addPathPatterns("/api/addRecipe");
-		registry.addInterceptor(new TokenInterceptor()).addPathPatterns("/api/editRecipe");
-		registry.addInterceptor(new TokenInterceptor()).addPathPatterns("/api/deleteRecipe");
-		registry.addInterceptor(new TokenInterceptor()).addPathPatterns("/api/addStep");
-		registry.addInterceptor(new TokenInterceptor()).addPathPatterns("/api/editStep");
-		registry.addInterceptor(new TokenInterceptor()).addPathPatterns("/api/deleteStep");
-		registry.addInterceptor(new TokenInterceptor()).addPathPatterns("/api/addIngredient");
-		registry.addInterceptor(new TokenInterceptor()).addPathPatterns("/api/editIngredient");
-		registry.addInterceptor(new TokenInterceptor()).addPathPatterns("/api/deleteIngredient");
-		registry.addInterceptor(new TokenInterceptor()).addPathPatterns("/api/validateID");
+		registry.addInterceptor(new TokenInterceptor())
+				.addPathPatterns("/api/addRecipe")
+				.addPathPatterns("/api/editRecipe")
+				.addPathPatterns("/api/deleteRecipe")
+				.addPathPatterns("/api/addStep")
+				.addPathPatterns("/api/editStep")
+				.addPathPatterns("/api/deleteStep")
+				.addPathPatterns("/api/addIngredient")
+				.addPathPatterns("/api/editIngredient")
+				.addPathPatterns("/api/deleteIngredient")
+				.addPathPatterns("/api/validate");
 	}
 }

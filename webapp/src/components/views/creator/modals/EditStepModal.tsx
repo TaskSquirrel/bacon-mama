@@ -76,7 +76,7 @@ const EditStep: React.FC<EditStepProps> = ({
                     />
                     <TextField
                         placeholder="Step action"
-                        value={ name }
+                        value={ verb }
                         onChange={ createChangeEventStateSetter(
                             setVerb
                         ) }
