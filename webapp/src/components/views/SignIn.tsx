@@ -1,16 +1,17 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 
+import useUser from "../hooks/useUser";
+
 import CenteredPane from "../CenteredPane";
 import TextField from "../controls/TextField";
 import ButtonBase from "../controls/ButtonBase";
 
-import APIClient from "../../api/APIClient";
-
 import styles from "./SignIn.module.scss";
-
+import requireSignedIn from "../shared/requireSignedIn";
 
 const SignIn: React.FC = () => {
+    const { signIn } = useUser();
     const [name, setName] = useState<string>("");
     const [password, setPassword] = useState<string>("");
     const [done, setDone] = useState<boolean>(false);
@@ -30,25 +31,7 @@ const SignIn: React.FC = () => {
 
         const login = async () => {
             try {
-                const { data: {
-                    status,
-                    message: errorMessage
-                } } = await APIClient.request(
-                    "/login",
-                    {
-                        method: "POST",
-                        data: {
-                            username: name,
-                            password
-                        }
-                    }
-                );
-
-                if (status === "OK") {
-                    setError(null);
-                } else {
-                    throw new Error(errorMessage);
-                }
+                signIn(name, password);
             } catch (e) {
                 setError(e.message);
             } finally {
@@ -75,9 +58,14 @@ const SignIn: React.FC = () => {
                         <Link
                             to="/dashboard"
                         >
+<<<<<<< HEAD
                             <div className={styles.link}>
                                 Start Baking!
                             </div>
+=======
+
+                            Start Baking!
+>>>>>>> 28640f4090cb7ee44fd4947953aa19a62a788184
                         </Link>
                     </ButtonBase>
                 </div>
@@ -133,4 +121,4 @@ const SignIn: React.FC = () => {
     );
 };
 
-export default SignIn;
+export default requireSignedIn(true)(SignIn);

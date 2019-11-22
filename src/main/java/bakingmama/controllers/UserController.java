@@ -50,6 +50,7 @@ public class UserController implements BaseApiController {
     } else {
       String token = JWT.create()
         .withClaim("username", username)
+        .withClaim("userID", user.getId())
         .sign(TokenUtils.getAlgorithm());
 
       returnMap.put("token", token);
@@ -83,6 +84,7 @@ public class UserController implements BaseApiController {
 
       String token = JWT.create()
         .withClaim("username", newUser.getUsername())
+        .withClaim("userID", newUser.getId())
         .sign(TokenUtils.getAlgorithm());
 
       returnMap.put("token", token);
@@ -102,7 +104,6 @@ public class UserController implements BaseApiController {
     
     String token = (String) body.get("token");
 
-    JsonUtils.setStatus(returnMap, JsonUtils.ERROR, "Can not validate.");
     try {
       DecodedJWT decoded = TokenUtils.getVerifier().verify(token);
       Claim payloadJson = decoded.getClaim("username");
@@ -110,12 +111,15 @@ public class UserController implements BaseApiController {
 
       if(userRepository.existsByUsername(username))
       {
-        returnMap.put("username", username);
         JsonUtils.setStatus(returnMap, JsonUtils.SUCCESS);
+      }
+      else{
+        JsonUtils.setStatus(returnMap, JsonUtils.ERROR);
       }
 
       return returnMap;
     } catch (JWTVerificationException e) {
+      JsonUtils.setStatus(returnMap, JsonUtils.ERROR);
       return returnMap;
     }
   }

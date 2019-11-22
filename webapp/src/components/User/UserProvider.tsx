@@ -23,9 +23,10 @@ const UserProvider: React.FC = ({ children }) => {
     const {
         ready,
         value,
-        set,
+        setValue,
         remove
     } = useStorage<UserData>("USER");
+    const [error, setError] = useState<boolean>(false);
     const [
         preflightRequestCompleted,
         setPreflightRequestCompleted
@@ -55,7 +56,9 @@ const UserProvider: React.FC = ({ children }) => {
             if (status === "error") {
                 throw new Error(message);
             } else {
-                set({ token, userID, name: userName });
+                setValue({
+                    token, userID, name: userName,
+                });
             }
         } catch (e) {
             throw e;
@@ -77,7 +80,7 @@ const UserProvider: React.FC = ({ children }) => {
                 const { data: {
                     status
                 } } = await APIClient.request(
-                    "/validate",
+                    "/validateID",
                     {
                         method: "POST",
                         headers: {
@@ -87,12 +90,15 @@ const UserProvider: React.FC = ({ children }) => {
                 );
 
                 if (status === "error") {
+                    // Failed to validate
+                    remove();
+
                     throw new Error();
                 }
             } catch (e) {
-                console.warn(`[UserProvider] Validation request failed! Invalidated token.`);
+                console.warn(`[UserProvider] Validation request failed!`);
 
-                remove();
+                setError(true);
             } finally {
                 setPreflightRequestCompleted(true);
             }
@@ -108,6 +114,8 @@ const UserProvider: React.FC = ({ children }) => {
     const context: UserContextShape = {
         signIn,
         signOut,
+        error,
+        validated: preflightRequestCompleted,
         token: value ? value.token : null,
         name: value ? value.token : null,
         userID: value ? value.userID : null
