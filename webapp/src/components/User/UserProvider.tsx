@@ -56,7 +56,7 @@ const UserProvider: React.FC = ({ children }) => {
             if (status === "error") {
                 throw new Error(message);
             } else {
-                setValue({
+                await setValue({
                     token, userID, name: userName,
                 });
             }
@@ -80,12 +80,13 @@ const UserProvider: React.FC = ({ children }) => {
                 const { data: {
                     status
                 } } = await APIClient.request(
-                    "/validateID",
+                    "/validate",
                     {
                         method: "POST",
                         headers: {
-                            Authorization: `Bearer ${value.token}`
-                        }
+                            Authorization: `${value.token}`
+                        },
+                        data: {}
                     }
                 );
 
@@ -117,7 +118,7 @@ const UserProvider: React.FC = ({ children }) => {
         error,
         validated: preflightRequestCompleted,
         token: value ? value.token : null,
-        name: value ? value.token : null,
+        name: value ? value.name : null,
         userID: value ? value.userID : null
     };
 
