@@ -80,12 +80,13 @@ const UserProvider: React.FC = ({ children }) => {
                 const { data: {
                     status
                 } } = await APIClient.request(
-                    "/validateID",
+                    "/validate",
                     {
                         method: "POST",
                         headers: {
-                            Authorization: `Bearer ${value.token}`
-                        }
+                            Authorization: `${value.token}`
+                        },
+                        data: {}
                     }
                 );
 

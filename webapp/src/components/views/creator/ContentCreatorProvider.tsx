@@ -100,7 +100,7 @@ const ContentCreatorProvider: React.FC = ({ children }) => {
             } = await request<APIRecipeResponse>(
                 endpoint,
                 payload
-            );            
+            );
 
             const { status, message, recipe: responseRecipe } = data;
 
