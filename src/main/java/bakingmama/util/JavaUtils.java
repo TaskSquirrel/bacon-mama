@@ -10,7 +10,7 @@ public class JavaUtils {
    */
   public static <T> T findAndUnpack(JpaRepository jpar, Object id) {
     Optional<T> optional = (Optional<T>) jpar.findById(JsonUtils.parseId(id));
-    if (optional.isEmpty()) {
+    if (!optional.isPresent()) {
       return null;
     } else {
       return optional.get();

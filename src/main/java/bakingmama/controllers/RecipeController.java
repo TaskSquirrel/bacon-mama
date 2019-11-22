@@ -35,7 +35,7 @@ public class RecipeController implements BaseApiController {
 
   Recipe unpackOptional(Long id) {
     Optional<Recipe> optional = recipeRepository.findById(id);
-    if (optional.isEmpty()) {
+    if (!optional.isPresent()) {
       return null;
     } else {
       return optional.get();
