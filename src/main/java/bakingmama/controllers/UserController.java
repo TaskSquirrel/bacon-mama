@@ -6,6 +6,7 @@ import bakingmama.models.UserRepository;
 import bakingmama.util.JsonUtils;
 import bakingmama.util.TokenUtils;
 
+import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -94,22 +95,16 @@ public class UserController implements BaseApiController {
 
   @CrossOrigin
   @PostMapping(
-      path = "/validateID",
+      path = "/validate",
       consumes = "application/json",
       produces = "application/json"
   )
-  public Map<String, Object> validateID(@RequestBody Map<String, Object> body)
+  public Map<String, Object> validateID(@RequestBody Map<String, Object> body, @RequestAttribute("userName") String userName)
   {
     Map<String, Object> returnMap = new HashMap<>();
-    
-    String token = (String) body.get("token");
 
     try {
-      DecodedJWT decoded = TokenUtils.getVerifier().verify(token);
-      Claim payloadJson = decoded.getClaim("username");
-      String username = payloadJson.asString();
-
-      if(userRepository.existsByUsername(username))
+      if(userRepository.existsByUsername(userName))
       {
         JsonUtils.setStatus(returnMap, JsonUtils.SUCCESS);
       }
