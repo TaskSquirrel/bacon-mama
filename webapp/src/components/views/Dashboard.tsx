@@ -9,10 +9,13 @@ import NavBar from "../controls/NavBar";
 import Card from "../controls/Card";
 
 import styles from "./Dashboard.module.scss";
+import CreateRecipeModal from './home/CreateRecipeModal';
 
 const Dashboard: React.FC = () => {
     const { name } = useUser();
     const [recipes, setRecipes] = useState<APIRecipeList[] | null>(null);
+    const [create, setCreate] = useState<boolean>(false);
+    const [add, setAdd] = useState<boolean>(true);
 
     const request = useAPI();
 
@@ -26,7 +29,7 @@ const Dashboard: React.FC = () => {
             {
                 method: "POST",
                 data: {
-                    username: name
+                    username: "aw"
                 }
             }
         );
@@ -38,13 +41,28 @@ const Dashboard: React.FC = () => {
         }
     }, [request, name]);
 
+    const update = async () => {
+        try {
+            const responseRecipes = await getRecipes();
+            setRecipes(responseRecipes.sort((a,b) => {
+                return a.id-b.id;
+            }));
+        } catch (e) {
+            // Error
+        }
+    }
+    
+    
     useEffect(() => {
+
         const updateRecipes = async () => {
             try {
                 if (!recipes) {
                     const responseRecipes = await getRecipes();
-
-                    setRecipes(responseRecipes);
+    
+                    setRecipes(responseRecipes.sort((a,b) => {
+                        return a.id-b.id;
+                    }));
                 }
             } catch (e) {
                 // Error
@@ -54,9 +72,22 @@ const Dashboard: React.FC = () => {
         updateRecipes();
     }, [getRecipes, recipes]);
 
+    const createRecipe = () => {
+        
+        if(!create){
+            return;
+        }
+
+        return (<CreateRecipeModal control={setCreate} update={update}/>)
+    }
+
+    const setC = useCallback(() => {
+        setCreate(true);
+    },[create])
+
     return (
         <div>
-            <NavBar className={ styles.navbar } userName={ "Ben" } />
+            <NavBar click={setC} className={ styles.navbar } userName={ "Ben" } />
             <div className={ styles.title }>Your Recipes</div>
             <div className={ styles.card }>
                 { recipes && recipes.map((each) => (
@@ -68,6 +99,7 @@ const Dashboard: React.FC = () => {
                     />
                 )) }
             </div>
+            {createRecipe()}
         </div>
     );
 };

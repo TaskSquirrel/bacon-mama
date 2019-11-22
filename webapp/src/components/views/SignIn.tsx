@@ -68,15 +68,16 @@ const SignIn: React.FC = () => {
                     <img
                         src="/assets/green-check.svg"
                     />
-                    <span>
+                    <div className={styles.message}>
                         You've successfully signed-in!
-                    </span>
+                    </div>
                     <ButtonBase>
                         <Link
                             to="/dashboard"
                         >
-                            
-                            Start Baking!
+                            <div className={styles.link}>
+                                Start Baking!
+                            </div>
                         </Link>
                     </ButtonBase>
                 </div>
