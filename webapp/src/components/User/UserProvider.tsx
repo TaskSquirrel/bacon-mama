@@ -118,7 +118,7 @@ const UserProvider: React.FC = ({ children }) => {
         error,
         validated: preflightRequestCompleted,
         token: value ? value.token : null,
-        name: value ? value.token : null,
+        name: value ? value.name : null,
         userID: value ? value.userID : null
     };
 
