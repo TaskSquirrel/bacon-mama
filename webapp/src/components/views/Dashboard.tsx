@@ -7,9 +7,9 @@ import useUser from "../hooks/useUser";
 
 import NavBar from "../controls/NavBar";
 import Card from "../controls/Card";
+import CreateRecipeModal from "./home/CreateRecipeModal";
 
 import styles from "./Dashboard.module.scss";
-import CreateRecipeModal from './home/CreateRecipeModal';
 
 const Dashboard: React.FC = () => {
     const { name } = useUser();
@@ -29,7 +29,7 @@ const Dashboard: React.FC = () => {
             {
                 method: "POST",
                 data: {
-                    username: "aw"
+                    username: name
                 }
             }
         );
@@ -44,24 +44,22 @@ const Dashboard: React.FC = () => {
     const update = async () => {
         try {
             const responseRecipes = await getRecipes();
-            setRecipes(responseRecipes.sort((a,b) => {
-                return a.id-b.id;
+            setRecipes(responseRecipes.sort((a, b) => {
+                return a.id - b.id;
             }));
         } catch (e) {
             // Error
         }
-    }
-    
-    
-    useEffect(() => {
+    };
 
+    useEffect(() => {
         const updateRecipes = async () => {
             try {
                 if (!recipes) {
                     const responseRecipes = await getRecipes();
-    
-                    setRecipes(responseRecipes.sort((a,b) => {
-                        return a.id-b.id;
+
+                    setRecipes(responseRecipes.sort((a, b) => {
+                        return a.id - b.id;
                     }));
                 }
             } catch (e) {
@@ -73,23 +71,42 @@ const Dashboard: React.FC = () => {
     }, [getRecipes, recipes]);
 
     const createRecipe = () => {
-        
-        if(!create){
+        if (!create) {
             return;
         }
 
-        return (<CreateRecipeModal control={setCreate} update={update}/>)
-    }
+        return (
+            <CreateRecipeModal
+                control={ setCreate }
+                update={ update }
+            />
+        );
+    };
 
     const setC = useCallback(() => {
         setCreate(true);
-    },[create])
+    }, [create]);
 
     return (
         <div>
-            <NavBar click={setC} className={ styles.navbar } userName={ "Ben" } />
-            <div className={ styles.title }>Your Recipes</div>
-            <div className={ styles.card }>
+            <NavBar
+                click={ setC }
+                className={ styles.navbar }
+                userName={ "Ben" }
+            />
+            <div
+                className={ styles.title }
+            >
+                Your Recipes
+            </div>
+            <div
+                className={ styles.card }
+            >
+                { recipes && recipes.length === 0 && (
+                    <div>
+                        No recipes found!
+                    </div>
+                ) }
                 { recipes && recipes.map((each) => (
                     <Card
                         key={ each.id }
@@ -99,7 +116,7 @@ const Dashboard: React.FC = () => {
                     />
                 )) }
             </div>
-            {createRecipe()}
+            { createRecipe() }
         </div>
     );
 };

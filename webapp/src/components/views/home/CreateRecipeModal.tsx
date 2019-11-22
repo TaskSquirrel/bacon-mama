@@ -1,13 +1,13 @@
 import React, { useState, useCallback } from "react";
-import classNames from "classnames";
 
+import useAPI from "../../hooks/useAPI";
 
-import styles from "./CreateRecipeModal.module.scss";
 import Modal from "../../shared/Modal";
 import TextField from "../../controls/TextField";
 import ButtonBase from "../../controls/ButtonBase";
 import { createChangeEventStateSetter } from "../../../utils";
-import useAPI from "../../hooks/useAPI";
+
+import styles from "./CreateRecipeModal.module.scss";
 
 interface CreateRecipeModalProps {
     control: (state: boolean) => void;
@@ -17,10 +17,9 @@ interface CreateRecipeModalProps {
 const CreateRecipeModal: React.FC<CreateRecipeModalProps> = ({
     control,
     update,
-    
 }) => {
-    const [name, setName] = useState<string>('');
-    const [description, setDescription] = useState<string>('');
+    const [name, setName] = useState<string>("");
+    const [description, setDescription] = useState<string>("");
 
     const createControlSetter = (state: boolean) => () => control(state);
 
@@ -38,15 +37,13 @@ const CreateRecipeModal: React.FC<CreateRecipeModalProps> = ({
                 }
             }
         );
-    },[request, name])
+    }, [request, name]);
 
     const onSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         addRecipe().then(() =>  update());
         control(false);
-        
     };
-
 
     return (
         <Modal
@@ -64,12 +61,12 @@ const CreateRecipeModal: React.FC<CreateRecipeModalProps> = ({
                         required
                         placeholder="Recipe Name"
                         value={ name }
-                        onChange={ createChangeEventStateSetter(setName)}
+                        onChange={ createChangeEventStateSetter(setName) }
                     />
                     <TextField
                         placeholder="Recipe Description"
                         value={ description }
-                        onChange={createChangeEventStateSetter(setDescription)}
+                        onChange={ createChangeEventStateSetter(setDescription) }
                     />
                     <div
                         className={ styles.actions }
