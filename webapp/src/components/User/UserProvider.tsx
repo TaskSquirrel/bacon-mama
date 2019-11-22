@@ -56,7 +56,7 @@ const UserProvider: React.FC = ({ children }) => {
             if (status === "error") {
                 throw new Error(message);
             } else {
-                setValue({
+                await setValue({
                     token, userID, name: userName,
                 });
             }

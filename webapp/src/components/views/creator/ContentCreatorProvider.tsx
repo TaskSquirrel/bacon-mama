@@ -8,7 +8,7 @@ import {
     Metadata,
     Recipe
 } from "../../../models/recipe";
-import { APIRecipeResponse, Omit } from "../../../models/API";
+import { APIRecipeResponse } from "../../../models/API";
 
 import ItemPickerModal from "./modals/ItemPickerModal";
 import AddItemModal from "./modals/AddItemModal";
@@ -181,7 +181,8 @@ const ContentCreatorProvider: React.FC = ({ children }) => {
                         id: recipeID
                     },
                     step: {
-                        id, name, verb, sequence,
+                        id, verb, sequence,
+                        title: name,
                         dependencies,
                         result: result || null,
                         description
