@@ -3,20 +3,24 @@ import { Redirect } from "react-router-dom";
 
 import useUser from "../hooks/useUser";
 
+import DelayedIndicator from "../shared/DelayedIndicator";
+
 const Root: React.FC = () => {
     const {
         validated, error, token
     } = useUser();
 
     if (!validated) {
-        return null;
+        return (
+            <DelayedIndicator />
+        );
     }
 
     if (error) {
         return (
-            <div>
-                There was an error communicating with the server.
-            </div>
+            <DelayedIndicator
+                text="We're having issues connecting to the server..."
+            />
         );
     }
 

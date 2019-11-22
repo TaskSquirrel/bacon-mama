@@ -71,12 +71,14 @@ const UserProvider: React.FC = ({ children }) => {
         if (preflightRequestCompleted || !ready || !value) {
             // Do not need to validate user (not logged in).
             // Or if storage hasn't loaded yet.
+            setPreflightRequestCompleted(true);
 
             return;
         }
 
         const dispatchPreflightValidation = async () => {
             try {
+                console.log("Dispatching");
                 const { data: {
                     status
                 } } = await APIClient.request(

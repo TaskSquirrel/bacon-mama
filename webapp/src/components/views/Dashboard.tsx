@@ -92,7 +92,7 @@ const Dashboard: React.FC = () => {
             <NavBar
                 click={ setC }
                 className={ styles.navbar }
-                userName={ "Ben" }
+                userName={ name || "User" }
             />
             <div
                 className={ styles.title }
