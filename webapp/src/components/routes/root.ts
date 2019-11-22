@@ -1,6 +1,7 @@
 import { Route } from "../../models/Router";
 
 import requireSignedIn from "../shared/requireSignedIn";
+import Root from "../views/Root";
 import SignIn from "../views/SignIn";
 import SignOut from "../views/SignOut";
 import Dashboard from "./../views/Dashboard";
@@ -9,6 +10,11 @@ import Register from "../views/Register";
 import ItemsViewer from "../views/creator/ItemsViewer";
 
 const routes: Route[] = [
+    {
+        to: "/",
+        exact: true,
+        component: Root
+    },
     {
         to: "/sign-in",
         exact: true,
