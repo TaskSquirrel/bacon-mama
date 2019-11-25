@@ -56,7 +56,7 @@
 
     &.active {
         color: var(--white);
-        background-color: $secondary;
+        background-color: var(--secondary);
 
         .sequence {
             color: var(--secondary);
