@@ -19,6 +19,13 @@ $smaller-widths: (
     "xl": 60%
 );
 
+$smaller-widths-wider: (
+    "sm": 95%,
+    "md": 95%,
+    "lg": 90%,
+    "xl": 85%
+);
+
 .responsive {
     position: relative;
 
@@ -31,6 +38,15 @@ $smaller-widths: (
         @media (min-width: $breakpoint) {
             margin: 0 auto;
             width: map-get($widths, $size);
+        }
+    }
+
+    &.wider {
+        @each $size, $breakpoint in $breakpoints {
+            @media (min-width: $breakpoint) {
+                margin: 0 auto;
+                width: map-get($smaller-widths-wider, $size);
+            }
         }
     }
 }
