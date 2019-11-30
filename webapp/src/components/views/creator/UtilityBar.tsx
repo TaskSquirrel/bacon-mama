@@ -7,11 +7,15 @@ import styles from "./UtilityBar.module.scss";
 
 const UtilityBar: React.FC = () => {
     const {
-        available,
         metadata: {
             name
+        },
+        actions: {
+            setAddItemModal
         }
     } = useContext(ContentCreatorContext);
+
+    const openAddItemModal = () => setAddItemModal(true);
 
     return (
         <div
@@ -27,7 +31,9 @@ const UtilityBar: React.FC = () => {
                 </h2>
             </div>
             <div>
-                <ButtonBase>
+                <ButtonBase
+                    onClick={ openAddItemModal }
+                >
                     <span>
                         <i
                             className="fas fa-plus"

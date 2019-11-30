@@ -87,14 +87,16 @@ const Register: React.FC = () => {
                     <img
                         src="/assets/green-check.svg"
                     />
-                    <span>
+                    <div className={styles.message}>
                         You've successfully signed-up!
-                    </span>
+                    </div>
                     <ButtonBase>
                         <Link
                             to="/sign-in"
                         >
-                            Log In
+                            <div className={styles.link}>
+                                Sign In
+                            </div>
                         </Link>
                     </ButtonBase>
                 </div>

@@ -9,7 +9,7 @@ export interface UseStorageParams<T> {
 
 const useStorage = <P>(key: string, initialValue?: P) => {
     const [
-        { ready, value },
+        storageItem,
         setStorageItem
     ] = useState<UseStorageParams<P>>({
         ready: false,
@@ -21,20 +21,20 @@ const useStorage = <P>(key: string, initialValue?: P) => {
         removeItem
     } = useContext(StorageContext);
 
+    const { ready, value } = storageItem;
+
     const remove = async () => {
-        await removeItem(key);
         setStorageItem({
             ready: true,
             value: null
         });
     };
 
-    const set = async (val: P) => {
-        if (val === value) {
+    const setValue = (val: P) => {
+        if (val === storageItem.value) {
             return;
         }
 
-        await setItem(key, val);
         setStorageItem({
             ready: true,
             value: val
@@ -51,13 +51,27 @@ const useStorage = <P>(key: string, initialValue?: P) => {
             });
         };
 
-        getFromStorage();
-    }, [getItem, key, ready]);
+        if (!storageItem.ready) {
+            getFromStorage();
+        }
+    }, [getItem, key, storageItem]);
+
+    useEffect(() => {
+        if (!ready) {
+            return;
+        }
+
+        if (value) {
+            setItem(key, value);
+        } else {
+            removeItem(key);
+        }
+    }, [storageItem]);
 
     return {
-        ready,
-        value,
-        set,
+        ready: storageItem.ready,
+        value: storageItem.value,
+        setValue,
         remove
     };
 };

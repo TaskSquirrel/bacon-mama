@@ -16,11 +16,11 @@ function fromAPIDependency(
 }
 
 function fromAPIStep(
-    { id, name, description, dependencies, result, verb, sequence }: APIStep
+    { id, title, description, dependencies, result, verb, sequence }: APIStep
 ): Step {
     return {
         id: `${id}`,
-        name,
+        name: title,
         description,
         dependencies: dependencies.map(fromAPIDependency),
         result: result ? fromAPIDependency(result) : null,

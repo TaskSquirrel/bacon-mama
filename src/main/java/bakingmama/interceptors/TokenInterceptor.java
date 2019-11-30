@@ -1,18 +1,14 @@
 package bakingmama.interceptors;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.springframework.web.method.HandlerMethod;
-import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
-
-import bakingmama.util.JsonUtils;
 import bakingmama.util.ResponseUtils;
 import bakingmama.util.TokenUtils;
+import com.auth0.jwt.exceptions.JWTVerificationException;
+import org.slf4j.LoggerFactory;
+import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
 public class TokenInterceptor extends HandlerInterceptorAdapter {
 
@@ -30,18 +26,29 @@ public class TokenInterceptor extends HandlerInterceptorAdapter {
         HttpServletResponse response,
         Object handler
     ) throws Exception {
-        HandlerMethod handlerMethod = (HandlerMethod) handler;
-
         String token = request.getHeader("Authorization");
-        String check = TokenUtils.verifyToken(token);
 
-        ResponseUtils.setHeaders(response);
-        if (!check.equals("true")) {
-            ResponseUtils.write(response, JsonUtils.ERROR, check);
+        if (!request.getMethod().equals("POST")) {
+            return true;
+        }
+
+        try {
+            TokenUtils.UserToken check = TokenUtils.verifyAndDecode(token);
+
+            LoggerFactory.getLogger(LoggerFactory.class).info(check.getUserName());
+
+            request.setAttribute("userID", check.getUserID());
+            request.setAttribute("userName", check.getUserName());
+        } catch (JWTVerificationException e) {
+            ResponseUtils.write(response, "error", "Authorization token invalid!");
+
+            return false;
+        } catch (Exception e) {
+            ResponseUtils.write(response, "error", e.getMessage());
+
             return false;
         }
 
-        // response.setHeader(JsonUtils.STATUS, JsonUtils.SUCCESS);
         return true;
     }
 }

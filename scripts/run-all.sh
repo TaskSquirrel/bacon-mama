@@ -6,7 +6,7 @@ fi
 
 echo "Executing webpack:"
 # webpack
-npm run build
+yarn build
 
 # code to move build files
 cp -r ./build/. ../src/main/resources/static
