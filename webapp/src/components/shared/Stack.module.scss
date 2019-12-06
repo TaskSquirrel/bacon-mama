@@ -1,0 +1,56 @@
+.stack,
+.inline {
+    display: flex;
+}
+
+.stack {
+    flex-direction: column;
+
+    margin: -0.5rem 0;
+
+    & > * {
+        margin: 0.5rem 0;
+    }
+
+    &.big {
+        margin: -1rem 0;
+
+        & > * {
+            margin: 1rem 0;
+        }
+    }
+
+    &.bigger {
+        margin: -1.5rem 0;
+
+        & > * {
+            margin: 1.5rem 0;
+        }
+    }
+}
+
+.inline {
+    flex-direction: row;
+
+    margin: -0.5rem -0.5rem;
+
+    & > * {
+        margin: 0.5rem;
+    }
+
+    &.big {
+        margin: -1rem -1rem;
+
+        & > * {
+            margin: 1rem;
+        }
+    }
+
+    &.bigger {
+        margin: -1.5rem -1.5rem;
+
+        & > * {
+            margin: 1.5rem;
+        }
+    }
+}
