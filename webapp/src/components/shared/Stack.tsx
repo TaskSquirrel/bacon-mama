@@ -4,13 +4,15 @@ import classNames from "classnames";
 import styles from "./Stack.module.scss";
 
 interface StackProps {
+    className?: string;
     inline?: boolean;
-    size?: "big" | "bigger";
+    gap?: "big" | "bigger";
 }
 
 const Stack: React.FC<StackProps> = ({
+    className,
     inline,
-    size,
+    gap,
     ...props
 }) => {
     return (
@@ -20,7 +22,8 @@ const Stack: React.FC<StackProps> = ({
                 inline
                     ? styles.inline
                     : styles.stack,
-                size && styles[size]
+                gap && styles[gap],
+                className
             ) }
         />
     );

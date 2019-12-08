@@ -6,6 +6,7 @@ import styles from "./ButtonBase.module.scss";
 export interface ButtonBaseProps extends React.HTMLProps<HTMLButtonElement> {
     className?: string;
     inverted?: boolean;
+    clear?: boolean;
     noHover?: boolean;
     type?: "button" | "submit" | "reset";
 }
@@ -13,6 +14,7 @@ export interface ButtonBaseProps extends React.HTMLProps<HTMLButtonElement> {
 const ButtonBase: React.FC<ButtonBaseProps> = ({
     children,
     inverted,
+    clear,
     noHover,
     className,
     type,
@@ -25,7 +27,8 @@ const ButtonBase: React.FC<ButtonBaseProps> = ({
             className={ classNames(
                 styles.base,
                 inverted && styles.inverted,
-                noHover && styles["no-hover"],
+                (noHover || clear) && styles["no-hover"],
+                clear && styles.clear,
                 className
             ) }
         >

@@ -4,6 +4,20 @@
     height: 100%;
 }
 
+.header {
+    margin-bottom: 1rem;
+}
+
+.description {
+    color: var(--darkened);
+}
+
+.amount {
+    text-align: right;
+
+    width: 7rem;
+}
+
 .items {
     display: grid;
     grid-template-rows: auto;
@@ -23,9 +37,11 @@
     border-radius: 5px;
 
     transition:
+        background-color 150ms ease-in-out,
         border-color 150ms ease-in-out;
 
     &.selected {
+        background-color: var(--white);
         border-color: var(--primary);
     }
 }

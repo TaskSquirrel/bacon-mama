@@ -1,14 +1,16 @@
 import React, { useState, useContext } from "react";
-import classNames from "classnames";
 import { useParams, useHistory } from "react-router-dom";
+import classNames from "classnames";
 
 import { Item, Step, Dependency } from "../../../../models/recipe";
 
 import { ContentCreatorContext } from "../ContentCreatorProvider";
 import ButtonBase from "../../../controls/ButtonBase";
 import TextField from "../../../controls/TextField";
+import Slider from "../../../controls/Slider";
 import FullModal from "../../../shared/FullModal";
 import Responsive from "../../../shared/Responsive";
+import Stack from "../../../shared/Stack";
 
 import styles from "./ItemPickerModal.module.scss";
 import modalStyles from "./modals.module.scss";
@@ -108,6 +110,24 @@ const ItemPickerModal: React.FC<ItemPickerModalProps> = ({
         });
     };
 
+    const renderItemsContainer = () => {
+        if (items.length > 0) {
+            return (
+                <div
+                    className={ styles.items }
+                >
+                    { renderItems() }
+                </div>
+            );
+        }
+
+        return (
+            <div>
+                You did not add any items to this recipe yet!
+            </div>
+        );
+    };
+
     return (
         <FullModal
             show={ show }
@@ -123,13 +143,26 @@ const ItemPickerModal: React.FC<ItemPickerModalProps> = ({
                         className={ modalStyles.form }
                     >
                         <div>
-                            <h3>
-                                Measurement
-                            </h3>
-                            <div>
+                            <Stack
+                                className={ styles.header }
+                            >
+                                <h3>
+                                    Measurement
+                                </h3>
+                                <div
+                                    className={ styles.description }
+                                >
+                                    Describe how much of an item you want to add including its unit.
+                                    Amounts are rounded to the nearest tenth.
+                                </div>
+                            </Stack>
+                            <Stack
+                                inline
+                            >
                                 <TextField
                                     required
                                     placeholder="Amount"
+                                    className={ styles.amount }
                                     value={ amount }
                                     onChange={ onAmountChange }
                                 />
@@ -139,17 +172,13 @@ const ItemPickerModal: React.FC<ItemPickerModalProps> = ({
                                     value={ unit }
                                     onChange={ onUnitChange }
                                 />
-                            </div>
+                            </Stack>
                         </div>
                         <div>
                             <h3>
                                 Available items
                             </h3>
-                            <div
-                                className={ styles.items }
-                            >
-                                { renderItems() }
-                            </div>
+                            { renderItemsContainer() }
                         </div>
                     </div>
                     <div

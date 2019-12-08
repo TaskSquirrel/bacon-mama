@@ -4,7 +4,9 @@ import { ContentCreatorContext } from "../ContentCreatorProvider";
 import Modal from "../../../shared/Modal";
 import TextField from "../../../controls/TextField";
 import TextArea from "../../../controls/TextArea";
+import Upload from "../../../controls/Upload";
 import ButtonBase from "../../../controls/ButtonBase";
+import Stack from "../../../shared/Stack";
 
 import { createChangeEventStateSetter } from "../../../../utils";
 
@@ -46,9 +48,7 @@ const AddItem: React.FC<AddItemProps> = ({
             <form
                 onSubmit={ submit }
             >
-                <div
-                    className={ styles.form }
-                >
+                <Stack>
                     <TextField
                         placeholder="Item name"
                         value={ name }
@@ -63,11 +63,13 @@ const AddItem: React.FC<AddItemProps> = ({
                             setDescription
                         ) }
                     />
+                    <Upload />
                     <div
-                        className={ styles.action }
+                        className={ styles.actions }
                     >
                         <ButtonBase
                             inverted
+                            clear
                             type="button"
                             onClick={ close }
                         >
@@ -79,7 +81,7 @@ const AddItem: React.FC<AddItemProps> = ({
                             Save
                         </ButtonBase>
                     </div>
-                </div>
+                </Stack>
             </form>
         </Modal>
     );

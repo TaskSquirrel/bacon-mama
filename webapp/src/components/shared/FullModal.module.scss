@@ -25,15 +25,19 @@
     display: flex;
     justify-content: space-between;
 
-    margin-bottom: 2rem;
+    margin: -1rem;
+    margin-bottom: 3rem;
+    padding: 2rem;
+
+    background-color: var(--primary);
+    color: white;
 }
 
 .heading {
-    margin: 0;
-}
+    font-size: 2.5rem;
 
-.subtitle {
-    color: var(--gray);
+    margin: 0;
+    margin-bottom: 0.5rem;
 }
 
 .close {
@@ -42,5 +46,6 @@
     border: none;
     background: transparent;
 
+    color: var(--white);
     font-size: 1.5rem;
 }

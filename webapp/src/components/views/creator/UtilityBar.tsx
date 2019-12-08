@@ -1,19 +1,26 @@
 import React, { useContext } from "react";
+import { useHistory } from "react-router-dom";
 
 import { ContentCreatorContext } from "./ContentCreatorProvider";
+import Stack from "../../shared/Stack";
 import ButtonBase from "../../controls/ButtonBase";
 
 import styles from "./UtilityBar.module.scss";
+import Editable from "../../controls/Editable";
 
 const UtilityBar: React.FC = () => {
     const {
         metadata: {
+            id,
             name
         },
         actions: {
             setAddItemModal
         }
     } = useContext(ContentCreatorContext);
+    const { push } = useHistory();
+
+    const openPlayer = () => push(`/play/${id}`);
 
     const openAddItemModal = () => setAddItemModal(true);
 
@@ -24,26 +31,54 @@ const UtilityBar: React.FC = () => {
             <div
                 className={ styles.metadata }
             >
-                <h2
+                <Editable
+                    text={ name }
                     className={ styles.name }
-                >
-                    { name }
-                </h2>
+                />
             </div>
-            <div>
+            <Stack
+                inline
+                className={ styles.actions }
+            >
                 <ButtonBase
+                    inverted
+                    clear
+                >
+                    <i
+                        className="fas fa-pen"
+                    />
+                </ButtonBase>
+                <ButtonBase
+                    inverted
+                    clear
                     onClick={ openAddItemModal }
+                >
+                    <i
+                        className="fas fa-plus"
+                    />
+                </ButtonBase>
+                <ButtonBase
+                    inverted
+                    clear
+                    onClick={ openPlayer }
+                >
+                    <i
+                        className="fas fa-play"
+                    />
+                </ButtonBase>
+                <ButtonBase
+                    className={ styles.share }
                 >
                     <span>
                         <i
-                            className="fas fa-plus"
+                            className="fas fa-share"
                         />
                     </span>
                     <span>
-                        Add item
+                        Share
                     </span>
                 </ButtonBase>
-            </div>
+            </Stack>
         </div>
     );
 };
