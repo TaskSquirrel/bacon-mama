@@ -8,6 +8,7 @@ import Dashboard from "./../views/Dashboard";
 import ContentCreator from "../views/creator/ContentCreator";
 import Register from "../views/Register";
 import ItemsViewer from "../views/creator/ItemsViewer";
+import Playthrough from "../views/playthrough/Playthrough";
 
 const routes: Route[] = [
     {
@@ -49,6 +50,11 @@ const routes: Route[] = [
         to: "/dashboard",
         exact: true,
         component: requireSignedIn()(Dashboard)
+    },
+    {
+        to: "/play/:id",
+        exact: true,
+        component: requireSignedIn()(Playthrough)
     }
 ];
 
