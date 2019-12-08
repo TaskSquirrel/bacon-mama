@@ -86,7 +86,11 @@ const Editable: React.FC<EditableProps> = ({
         document.addEventListener("keydown", onEnter);
 
         return () => document.removeEventListener("keydown", onEnter);
-    }, [active]);
+    }, [active, input]);
+
+    useEffect(() => {
+        setInput(text);
+    }, [text]);
 
     return (
         <div

@@ -4,18 +4,20 @@ import { useHistory } from "react-router-dom";
 import { ContentCreatorContext } from "./ContentCreatorProvider";
 import Stack from "../../shared/Stack";
 import ButtonBase from "../../controls/ButtonBase";
+import Editable from "../../controls/Editable";
 
 import styles from "./UtilityBar.module.scss";
-import Editable from "../../controls/Editable";
 
 const UtilityBar: React.FC = () => {
     const {
         metadata: {
             id,
-            name
+            name,
+            description
         },
         actions: {
-            setAddItemModal
+            setAddItemModal,
+            replaceRecipe
         }
     } = useContext(ContentCreatorContext);
     const { push } = useHistory();
@@ -23,6 +25,10 @@ const UtilityBar: React.FC = () => {
     const openPlayer = () => push(`/play/${id}`);
 
     const openAddItemModal = () => setAddItemModal(true);
+
+    const onEnterPress = (text: string) => {
+        replaceRecipe(text, description);
+    };
 
     return (
         <div
@@ -34,6 +40,7 @@ const UtilityBar: React.FC = () => {
                 <Editable
                     text={ name }
                     className={ styles.name }
+                    onEnterPress={ onEnterPress }
                 />
             </div>
             <Stack
