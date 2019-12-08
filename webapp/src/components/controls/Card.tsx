@@ -1,13 +1,13 @@
 import React from "react";
+import { Link } from "react-router-dom";
 import classNames from "classnames";
 
 import styles from "./Card.module.scss";
-import { Link } from 'react-router-dom';
 
 export interface CardProps extends React.HTMLProps<HTMLDivElement> {
-    name: string,
-    description?: string,
-    id: string
+    name: string;
+    description?: string;
+    id: string;
 }
 
 const Card: React.FC<CardProps> = ({
@@ -18,21 +18,26 @@ const Card: React.FC<CardProps> = ({
 }) => {
     return (
         <div
-            className={classNames(
+            className={ classNames(
                 styles.card,
                 className
-            )}
+            ) }
         >
-            <div className={styles.name}>
-                {name}
+            <div
+                className={ styles.name }
+            >
+                { name }
             </div>
-            <div className={styles.description}>
-                {description}
+            <div
+                className={ styles.description }
+            >
+                { description }
             </div>
-
-            <div className={styles.edit}>
+            <div
+                className={ styles.edit }
+            >
                 <Link
-                    to={`/edit/${id}`}
+                    to={ `/edit/${id}` }
                 >
                     Edit
                 </Link>

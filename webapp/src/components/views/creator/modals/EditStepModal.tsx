@@ -93,6 +93,7 @@ const EditStep: React.FC<EditStepProps> = ({
                     >
                         <ButtonBase
                             inverted
+                            clear
                             type="button"
                             onClick={ close }
                         >

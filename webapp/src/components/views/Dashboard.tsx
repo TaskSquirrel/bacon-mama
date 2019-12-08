@@ -10,6 +10,7 @@ import Card from "../controls/Card";
 import CreateRecipeModal from "./home/CreateRecipeModal";
 
 import styles from "./Dashboard.module.scss";
+import Responsive from "../shared/Responsive";
 
 const Dashboard: React.FC = () => {
     const { name } = useUser();
@@ -91,31 +92,32 @@ const Dashboard: React.FC = () => {
         <div>
             <NavBar
                 click={ setC }
-                className={ styles.navbar }
                 userName={ name || "User" }
             />
-            <div
-                className={ styles.title }
-            >
-                Your Recipes
-            </div>
-            <div
-                className={ styles.card }
-            >
-                { recipes && recipes.length === 0 && (
-                    <div>
-                        No recipes found!
-                    </div>
-                ) }
-                { recipes && recipes.map((each) => (
-                    <Card
-                        key={ each.id }
-                        id={ `${each.id}` }
-                        name={ each.recipeName }
-                        description={ each.description }
-                    />
-                )) }
-            </div>
+            <Responsive>
+                <div
+                    className={ styles.title }
+                >
+                    Your Recipes
+                </div>
+                <div
+                    className={ styles["card-container"] }
+                >
+                    { recipes && recipes.length === 0 && (
+                        <div>
+                            No recipes found!
+                        </div>
+                    ) }
+                    { recipes && recipes.map((each) => (
+                        <Card
+                            key={ each.id }
+                            id={ `${each.id}` }
+                            name={ each.recipeName }
+                            description={ each.description }
+                        />
+                    )) }
+                </div>
+            </Responsive>
             { createRecipe() }
         </div>
     );

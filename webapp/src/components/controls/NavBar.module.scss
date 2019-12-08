@@ -7,29 +7,63 @@
     flex-direction: row;
     justify-content: flex-end;
 
-    a {
-        color: black;
-        padding: 0.9rem 1rem;
-    }
-
-    a:hover {
-        margin-top:-5px;
-        cursor: pointer;
-        border-bottom: 5px solid lightblue;
-    }
-
-    padding: 1rem 0rem;
-        
+    padding: 3rem 0rem;
 
     color: var(--white);
     font: inherit;
+
+    a:link {
+        position: relative;
+
+        display: flex;
+        align-items: center;
+
+        color: var(--black);
+
+        &::after {
+            content: "";
+
+            position: absolute;
+            left: 0;
+            right: 0;
+            bottom: 0;
+
+            height: 4px;
+
+            transform: scaleX(0);
+
+            transition: transform 200ms ease-in-out;
+        }
+    }
+
+    a.selected,
+    a:hover {
+        cursor: pointer;
+
+        &::after {
+            background-color: var(--secondary);
+
+            transform: scaleX(1);
+        }
+    }
+}
+
+.links {
+    display: flex;
+
+    margin-right: 2rem;
+
+    & > *:not(:last-child) {
+        margin-right: 2rem;
+    }
 }
 
 .button {
-    padding: 0;
+    a {
+        color: var(--white);
 
-    a:hover {
-        cursor: pointer;
-        border-bottom: none;
+        &:hover {
+            cursor: pointer;
+        }
     }
 }

@@ -7,7 +7,7 @@
 a {
     &,
     &:link {
-        color: $secondary;
+        color: var(--secondary);
         font-weight: bold;
         text-decoration: none;
     }
