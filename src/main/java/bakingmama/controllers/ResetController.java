@@ -61,7 +61,6 @@ public class ResetController implements BaseApiController {
     return returnMap;
   }
 
-  // Makes dummy user
   void makeUser() {
     User newUser = new User();
     newUser.setUsername("test-username");
@@ -97,5 +96,7 @@ public class ResetController implements BaseApiController {
     mu.addIngredient(eggs, newStep1, 3d, "");
     mu.addIngredient(flour, newStep1, 500d, "grams");
     mu.addIngredient(dough, newStep2, 10d, "ounces");
+
+    // Add images to the recipe
   }
 }

@@ -1,6 +1,7 @@
 package bakingmama.controllers;
 
 import bakingmama.models.Image;
+import bakingmama.models.ImageIP;
 import bakingmama.models.ImageRepository;
 import bakingmama.util.JavaUtils;
 import bakingmama.util.JsonUtils;
@@ -9,51 +10,39 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.sql.rowset.serial.SerialBlob;
+import java.sql.Blob;
 import java.util.HashMap;
 import java.util.Map;
 
 @RestController
-public class IngredientController implements BaseApiController {
+public class ItemController implements BaseApiController {
   @Autowired
   ImageRepository imageRepository;
+  @Autowired
+  ImageIP imageIP;
 
   @CrossOrigin
-  @PostMapping(
-      path = "/addImage",
-      consumes = "multipart/form-data",
-      produces = "application/json"
-  )
+  @PostMapping(path = "/images/add", consumes = "multipart/form-data", produces = "application/json")
   Map<String, Object> addImage(@RequestParam("file") MultipartFile file) {
-    Map<String, Object> returnMap = new HashMap<>();
     try {
-      byte[] fileBytes = file.getBytes();
-      SerialBlob sb = new SerialBlob(fileBytes);
-
-      Image im = new Image();
-      im.setData(sb);
-      imageRepository.save(im);
-      JsonUtils.setStatus(returnMap, JsonUtils.SUCCESS);
+      byte[] bytes = file.getBytes();
+      imageIP.addImage(bytes);
+      return JsonUtils.returnSuccess();
     } catch (Exception e) {
-      JsonUtils.setStatus(returnMap, JsonUtils.ERROR, e.getMessage());
+      return JsonUtils.returnError(e.getMessage());
     }
-    return returnMap;
   }
 
   @CrossOrigin
-  @PostMapping(
-      path = "/getImage",
-      consumes = "application/json",
-      produces = "application/json"
-  )
-  Map<String, Object> getImage(@RequestBody Map<String, Object> body) {
+  @GetMapping(path = "/images/{id}", produces = "application/json")
+  Map<String, Object> getImage(@PathVariable Integer id) {
     Map<String, Object> returnMap = new HashMap<>();
-
     try {
-      Long imageID = JsonUtils.parseId(body.get("id"));
-      Image image = JavaUtils.find(imageRepository, imageID);
+      Long imageID = JsonUtils.parseId(id);
+      Image image = imageRepository.getOne(imageID);
 
-      // Return image???
-
+      Blob blob = image.getData();
+      returnMap.put("image", blob.getBytes(1, (int) blob.length()));
       JsonUtils.setStatus(returnMap, JsonUtils.SUCCESS);
     } catch (Exception e) {
       JsonUtils.setStatus(returnMap, JsonUtils.ERROR, e.getMessage());
