@@ -35,7 +35,7 @@ public class RecipeController implements BaseApiController {
 
   Recipe unpackOptional(Long id) {
     Optional<Recipe> optional = recipeRepository.findById(id);
-    if (optional.isEmpty()) {
+    if (!optional.isPresent()) {
       return null;
     } else {
       return optional.get();
@@ -91,7 +91,7 @@ public class RecipeController implements BaseApiController {
       consumes = "application/json",
       produces = "application/json"
   )
-  Map<String, Object> editRecipe(@RequestBody Map<String, Object> body, @RequestHeader HttpHeaders headers) {
+  Map<String, Object> editRecipe(@RequestBody Map<String, Object> body, @RequestHeader HttpHeaders headers, @RequestAttribute("userName") String userName) {
     // Pre-processing:
     System.out.println("Recieved Auth: " + headers.get(HttpHeaders.AUTHORIZATION).get(0));
 
@@ -99,7 +99,7 @@ public class RecipeController implements BaseApiController {
 
     Recipe recipe = rp.findRecipe(JsonUtils.castMap(body.get("recipe")));
 
-    Map<String, Object> newRecipe = JsonUtils.castMap(body.get("editRecipe"));
+    Map<String, Object> newRecipe = JsonUtils.castMap(body.get("replace"));
     String recipeName = (String) newRecipe.get("recipeName");
     String description = (String) newRecipe.get("description");
 

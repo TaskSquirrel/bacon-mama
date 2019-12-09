@@ -51,6 +51,7 @@ public class UserController implements BaseApiController {
       String token = JWT.create()
         .withClaim("username", username)
         .withClaim("userID", user.getId())
+        .withClaim("role", user.getRole())
         .sign(TokenUtils.getAlgorithm());
 
       returnMap.put("token", token);
@@ -71,6 +72,7 @@ public class UserController implements BaseApiController {
 
     String username = (String) body.get("username");
     String password = (String) body.get("password");
+    String role = (String) body.get("role");
 
     if (userRepository.existsByUsername(username)) {
       JsonUtils.setStatus(returnMap, JsonUtils.ERROR, "Username already taken.");
@@ -78,6 +80,7 @@ public class UserController implements BaseApiController {
       User newUser = new User();
       newUser.setUsername(username);
       newUser.setPassword(password);
+      newUser.setRole(role);
       userRepository.save(newUser);
 
       JsonUtils.setStatus(returnMap, JsonUtils.SUCCESS);
@@ -85,6 +88,7 @@ public class UserController implements BaseApiController {
       String token = JWT.create()
         .withClaim("username", newUser.getUsername())
         .withClaim("userID", newUser.getId())
+        .withClaim("role", newUser.getRole())
         .sign(TokenUtils.getAlgorithm());
 
       returnMap.put("token", token);
