@@ -1,0 +1,17 @@
+.container {
+    display: flex;
+
+    height: 100vh;
+    max-height: 100vh;
+}
+
+.left {
+    flex-basis: 25%;
+
+    color: var(--white);
+    background-color: var(--dark);
+}
+
+.right {
+    flex-grow: 1;
+}

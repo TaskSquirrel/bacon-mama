@@ -51,7 +51,7 @@ const CreateRecipe: React.FC = () => {
     }
 
     return (
-        <div
+        <main
             className={ styles.container }
         >
             <div
@@ -73,7 +73,7 @@ const CreateRecipe: React.FC = () => {
                     <ItemPicker />
                 </div>
             </div>
-        </div>
+        </main>
     );
 };
 
