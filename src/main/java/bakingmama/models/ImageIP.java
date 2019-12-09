@@ -26,6 +26,8 @@ public class ImageIP {
       Image im = new Image();
       im.setData(blob);
       imageRepository.save(im);
+      System.out.println(im);
+      System.out.println(im.getData());
       return im;
     } catch (SQLException sqle) {
       return null;

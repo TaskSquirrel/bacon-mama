@@ -26,8 +26,11 @@ public class ItemController implements BaseApiController {
   Map<String, Object> addImage(@RequestParam("file") MultipartFile file) {
     try {
       byte[] bytes = file.getBytes();
-      imageIP.addImage(bytes);
-      return JsonUtils.returnSuccess();
+      Image image = imageIP.addImage(bytes);
+      Map<String, Object> returnMap = new HashMap<>();
+      returnMap.put("id", image.getId());
+      JsonUtils.setStatus(returnMap, JsonUtils.SUCCESS);
+      return returnMap;
     } catch (Exception e) {
       return JsonUtils.returnError(e.getMessage());
     }

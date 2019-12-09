@@ -6,9 +6,14 @@ import bakingmama.util.ModelUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.imageio.ImageIO;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
+import java.awt.image.BufferedImage;
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.IOException;
 import java.util.*;
 
 @RestController
@@ -22,6 +27,8 @@ public class ResetController implements BaseApiController {
   RecipeRepository recipeRepository;
   @Autowired
   IngredientRepository ingredientRepository;
+  @Autowired
+  ImageIP imageIP;
   @Autowired
   ModelUtils mu;
 
@@ -41,6 +48,7 @@ public class ResetController implements BaseApiController {
     try {
       utx.begin();
 
+      em.createQuery("DELETE FROM Image").executeUpdate();
       em.createQuery("DELETE FROM Ingredient").executeUpdate();
       em.createQuery("DELETE FROM Step").executeUpdate();
       em.createQuery("DELETE FROM Item").executeUpdate();
@@ -51,11 +59,10 @@ public class ResetController implements BaseApiController {
 
       this.makeUser();
       this.makeRecipe();
+      JsonUtils.setStatus(returnMap, JsonUtils.SUCCESS, "Reset successful!");
     } catch (Exception e) {
       String errorMessage = e.getMessage();
       JsonUtils.setStatus(returnMap, JsonUtils.ERROR, errorMessage);
-    } finally {
-      JsonUtils.setStatus(returnMap, JsonUtils.SUCCESS, "Reset successful!");
     }
 
     return returnMap;
@@ -68,7 +75,7 @@ public class ResetController implements BaseApiController {
     userRepository.save(newUser);
   }
 
-  void makeRecipe() {
+  void makeRecipe() throws Exception {
     User user = userRepository.findByUsername("test-username");
 
     // Make recipe and attach it to the user:
@@ -97,6 +104,17 @@ public class ResetController implements BaseApiController {
     mu.addIngredient(flour, newStep1, 500d, "grams");
     mu.addIngredient(dough, newStep2, 10d, "ounces");
 
+    System.out.println("ZZZZZZ");
     // Add images to the recipe
+    try {
+      ClassLoader cl = ResetController.class.getClassLoader();
+
+      BufferedImage img;
+      File file = new File(cl.getResource("static/images/bread.jpg").getFile());
+      img = ImageIO.read(file);
+      imageIP.addImage(img);
+    } catch (Exception e) {
+      throw new Exception("Reset is messed up! Message: " + e.getMessage());
+    }
   }
 }
