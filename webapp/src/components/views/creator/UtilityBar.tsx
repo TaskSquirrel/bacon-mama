@@ -11,18 +11,17 @@ import styles from "./UtilityBar.module.scss";
 const UtilityBar: React.FC = () => {
     const {
         metadata: {
-            id,
             name,
             description
         },
         actions: {
+            setPlayModal,
             setAddItemModal,
             replaceRecipe
         }
     } = useContext(ContentCreatorContext);
-    const { push } = useHistory();
 
-    const openPlayer = () => push(`/play/${id}`);
+    const openPlayer = () => setPlayModal(true);
 
     const openAddItemModal = () => setAddItemModal(true);
 
