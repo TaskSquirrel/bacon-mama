@@ -110,9 +110,12 @@ public class ResetController implements BaseApiController {
       ClassLoader cl = ResetController.class.getClassLoader();
 
       BufferedImage img;
-      File file = new File(cl.getResource("static/images/bread.jpg").getFile());
+      File file;
+
+      file = new File(cl.getResource("static/images/bread.jpg").getFile());
       img = ImageIO.read(file);
       imageIP.addImage(img);
+
     } catch (Exception e) {
       throw new Exception("Reset is messed up! Message: " + e.getMessage());
     }
