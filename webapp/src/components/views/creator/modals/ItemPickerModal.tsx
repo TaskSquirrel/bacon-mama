@@ -7,10 +7,11 @@ import { Item, Step, Dependency } from "../../../../models/recipe";
 import { ContentCreatorContext } from "../ContentCreatorProvider";
 import ButtonBase from "../../../controls/ButtonBase";
 import TextField from "../../../controls/TextField";
-import Slider from "../../../controls/Slider";
 import FullModal from "../../../shared/FullModal";
 import Responsive from "../../../shared/Responsive";
 import Stack from "../../../shared/Stack";
+
+import { isNumber } from "../../../../utils";
 
 import styles from "./ItemPickerModal.module.scss";
 import modalStyles from "./modals.module.scss";
@@ -55,7 +56,13 @@ const ItemPickerModal: React.FC<ItemPickerModalProps> = ({
     const onSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
 
-        if (!selected || !amount || !unit) {
+        if (!selected || !amount || !unit || !isNumber(amount)) {
+            return;
+        }
+
+        const asNumber = Number(amount);
+
+        if (asNumber < 0) {
             return;
         }
 
@@ -87,6 +94,31 @@ const ItemPickerModal: React.FC<ItemPickerModalProps> = ({
         }
 
         close();
+    };
+
+    const renderSuggestion = () => {
+        if (!isNumber(amount)) {
+            return (
+                <div>
+                    Please enter a number!
+                </div>
+            );
+        }
+
+        let suggestion;
+        const asNumber = Number(amount);
+
+        if (asNumber > 1000) {
+            suggestion = "We suggest using numbers less than 1000 and switching units.";
+        } else if (asNumber < 0) {
+            suggestion = "No negatives!";
+        }
+
+        return (
+            <div>
+                { suggestion }
+            </div>
+        );
     };
 
     const createSelectItem = (id: string) => () => setSelected(id);
@@ -158,6 +190,7 @@ const ItemPickerModal: React.FC<ItemPickerModalProps> = ({
                             </Stack>
                             <Stack
                                 inline
+                                className={ styles.measurement }
                             >
                                 <TextField
                                     required
@@ -172,6 +205,9 @@ const ItemPickerModal: React.FC<ItemPickerModalProps> = ({
                                     value={ unit }
                                     onChange={ onUnitChange }
                                 />
+                                <div>
+                                    { renderSuggestion() }
+                                </div>
                             </Stack>
                         </div>
                         <div>
