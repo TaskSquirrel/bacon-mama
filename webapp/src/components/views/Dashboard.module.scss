@@ -1,9 +1,14 @@
 @import "../../styles/colors";
 
-.navbar {
-    width:100%;
-    display:flex;
-    flex-direction: row;
-    justify-content: flex-end;
-    padding: 2rem 0rem;
+.title {
+    font-size: 2rem;
+    font-weight: bold;
+
+    margin-bottom: 2rem;
+}
+
+.card-container {
+    display: grid;
+    grid-template-rows: auto;
+    grid-template-columns: repeat(4, 1fr);
 }

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 
 import { APIUserLogin } from "../../models/API";
 
-import UserContext from "./UserContext";
+import UserContext, { UserContextShape } from "./UserContext";
 import APIClient from "../../api/APIClient";
 
 import useStorage from "../hooks/useStorage";
@@ -23,9 +23,10 @@ const UserProvider: React.FC = ({ children }) => {
     const {
         ready,
         value,
-        set,
+        setValue,
         remove
     } = useStorage<UserData>("USER");
+    const [error, setError] = useState<boolean>(false);
     const [
         preflightRequestCompleted,
         setPreflightRequestCompleted
@@ -55,7 +56,9 @@ const UserProvider: React.FC = ({ children }) => {
             if (status === "error") {
                 throw new Error(message);
             } else {
-                set({ token, userID, name: userName });
+                await setValue({
+                    token, userID, name: userName,
+                });
             }
         } catch (e) {
             throw e;
@@ -68,12 +71,14 @@ const UserProvider: React.FC = ({ children }) => {
         if (preflightRequestCompleted || !ready || !value) {
             // Do not need to validate user (not logged in).
             // Or if storage hasn't loaded yet.
+            setPreflightRequestCompleted(true);
 
             return;
         }
 
         const dispatchPreflightValidation = async () => {
             try {
+                console.log("Dispatching");
                 const { data: {
                     status
                 } } = await APIClient.request(
@@ -81,18 +86,22 @@ const UserProvider: React.FC = ({ children }) => {
                     {
                         method: "POST",
                         headers: {
-                            Authorization: `Bearer ${value.token}`
-                        }
+                            Authorization: `${value.token}`
+                        },
+                        data: {}
                     }
                 );
 
                 if (status === "error") {
+                    // Failed to validate
+                    remove();
+
                     throw new Error();
                 }
             } catch (e) {
-                console.warn(`[UserProvider] Validation request failed! Invalidated token.`);
+                console.warn(`[UserProvider] Validation request failed!`);
 
-                remove();
+                setError(true);
             } finally {
                 setPreflightRequestCompleted(true);
             }
@@ -105,10 +114,14 @@ const UserProvider: React.FC = ({ children }) => {
         return null;
     }
 
-    const context = {
+    const context: UserContextShape = {
         signIn,
         signOut,
-        token: value ? value.token : null
+        error,
+        validated: preflightRequestCompleted,
+        token: value ? value.token : null,
+        name: value ? value.name : null,
+        userID: value ? value.userID : null
     };
 
     return (

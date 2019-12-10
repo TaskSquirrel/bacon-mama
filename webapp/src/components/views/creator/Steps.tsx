@@ -129,7 +129,10 @@ const Steps: React.FC = () => {
                             className={ styles.details }
                         >
                             <div
-                                className={ styles.title }
+                                className={ classNames(
+                                    styles.title,
+                                    isActive && styles.active
+                                ) }
                             >
                                 { name || (
                                     <i>
@@ -137,15 +140,17 @@ const Steps: React.FC = () => {
                                     </i>
                                 ) }
                             </div>
-                            <div
-                                className={ styles.description }
-                            >
-                                { description || (
-                                    <i>
-                                        No description
-                                    </i>
-                                ) }
-                            </div>
+                            { isActive && (
+                                <div
+                                    className={ styles.description }
+                                >
+                                    { description || (
+                                        <i>
+                                            No description
+                                        </i>
+                                    ) }
+                                </div>
+                            ) }
                         </div>
                     </div>
                     { isActive && renderActions(id) }

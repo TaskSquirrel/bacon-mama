@@ -15,7 +15,7 @@ public class RecipePersistence {
   RecipeRepository recipeRepository;
 
   public <T> T unpackOptional(Optional<T> op) {
-    if (op.isEmpty()) {
+    if (!op.isPresent()) {
       return null;
     } else {
       return op.get();

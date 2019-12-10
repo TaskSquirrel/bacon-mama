@@ -76,7 +76,7 @@ const EditStep: React.FC<EditStepProps> = ({
                     />
                     <TextField
                         placeholder="Step action"
-                        value={ name }
+                        value={ verb }
                         onChange={ createChangeEventStateSetter(
                             setVerb
                         ) }
@@ -93,6 +93,7 @@ const EditStep: React.FC<EditStepProps> = ({
                     >
                         <ButtonBase
                             inverted
+                            clear
                             type="button"
                             onClick={ close }
                         >

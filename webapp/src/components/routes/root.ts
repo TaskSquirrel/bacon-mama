@@ -1,31 +1,45 @@
 import { Route } from "../../models/Router";
 
+import requireSignedIn from "../shared/requireSignedIn";
+import Root from "../views/Root";
 import SignIn from "../views/SignIn";
+import SignOut from "../views/SignOut";
+import Dashboard from "./../views/Dashboard";
 import ContentCreator from "../views/creator/ContentCreator";
 import Register from "../views/Register";
-import Dashboard from "./../views/Dashboard";
 import ItemsViewer from "../views/creator/ItemsViewer";
+import Playthrough from "../views/playthrough/Playthrough";
 
 const routes: Route[] = [
     {
+        to: "/",
+        exact: true,
+        component: Root
+    },
+    {
         to: "/sign-in",
         exact: true,
-        component: SignIn
+        component: requireSignedIn(true)(SignIn)
     },
     {
         to: "/sign-up",
         exact: true,
-        component: Register
+        component: requireSignedIn(true)(Register)
+    },
+    {
+        to: "/sign-out",
+        exact: true,
+        component: requireSignedIn()(SignOut)
     },
     {
         to: "/edit/:id",
         exact: true,
-        component: ContentCreator
+        component: requireSignedIn()(ContentCreator)
     },
     {
         to: "/edit/:id/:sequence",
         exact: false,
-        component: ContentCreator
+        component: requireSignedIn()(ContentCreator)
     },
     {
         to: "/items/:id/:sequence",
@@ -35,7 +49,12 @@ const routes: Route[] = [
     {
         to: "/dashboard",
         exact: true,
-        component: Dashboard
+        component: requireSignedIn()(Dashboard)
+    },
+    {
+        to: "/play/:id",
+        exact: true,
+        component: requireSignedIn()(Playthrough)
     }
 ];
 

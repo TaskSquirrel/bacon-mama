@@ -8,7 +8,7 @@ import {
     Metadata,
     Recipe
 } from "../../../models/recipe";
-import { APIRecipeResponse, Omit } from "../../../models/API";
+import { APIRecipeResponse } from "../../../models/API";
 
 import ItemPickerModal from "./modals/ItemPickerModal";
 import AddItemModal from "./modals/AddItemModal";
@@ -20,6 +20,7 @@ import { fromAPIRecipe } from "../../../api/mappings";
 import { noop } from "../../../utils";
 
 export interface ContentCreatorContextShape {
+    error: boolean;
     available: boolean;
     metadata: Metadata;
     currentStep: Step | null;
@@ -31,11 +32,13 @@ export interface ContentCreatorContextShape {
         addItem: (name: string, description?: string) => Promise<void> | void,
         addStep: (step: Omit<Step, "id">) => Promise<void> | void,
         replaceStep: (step: Step) => Promise<void> | void,
-        deleteStep: (stepID: string) => Promise<void> | void
+        deleteStep: (stepID: string) => Promise<void> | void,
+        replaceRecipe: (name: string, description?: string) => Promise<void> | void,
     };
 }
 
 export const DEFAULT_CONTENT_CREATOR_CONTEXT: ContentCreatorContextShape = {
+    error: false,
     available: false,
     metadata: {
         id: "content_creator",
@@ -51,6 +54,7 @@ export const DEFAULT_CONTENT_CREATOR_CONTEXT: ContentCreatorContextShape = {
         addStep: noop,
         replaceStep: noop,
         deleteStep: noop,
+        replaceRecipe: noop,
     }
 };
 
@@ -59,6 +63,7 @@ export const ContentCreatorContext = React.createContext<
 >(DEFAULT_CONTENT_CREATOR_CONTEXT);
 
 const ContentCreatorProvider: React.FC = ({ children }) => {
+    const [error, setError] = useState<boolean>(false);
     const [addItemModal, setAddItemModal] = useState<boolean>(false);
     const [editStepModal, setEditStepModal] = useState<boolean>(false);
     const [recipe, setRecipe] = useState<Recipe | null>(null);
@@ -181,7 +186,8 @@ const ContentCreatorProvider: React.FC = ({ children }) => {
                         id: recipeID
                     },
                     step: {
-                        id, name, verb, sequence,
+                        id, verb, sequence,
+                        title: name,
                         dependencies,
                         result: result || null,
                         description
@@ -208,16 +214,38 @@ const ContentCreatorProvider: React.FC = ({ children }) => {
         );
     };
 
-    const updateRecipe = () => {
+    const replaceRecipe = async (name: string, description?: string) => {
         doRequest(
-            "/getRecipe",
+            "/editRecipe",
             {
                 method: "POST",
                 data: {
-                    id: recipeID
+                    recipe: {
+                        id: recipeID
+                    },
+                    replace: {
+                        recipeName: name,
+                        description
+                    }
                 }
             }
         );
+    };
+
+    const updateRecipe = async () => {
+        try {
+            await doRequest(
+                "/getRecipe",
+                {
+                    method: "POST",
+                    data: {
+                        id: recipeID
+                    }
+                }
+            );
+        } catch (e) {
+            setError(true);
+        }
     };
 
     const renderSelectItemModal = () => {
@@ -267,13 +295,14 @@ const ContentCreatorProvider: React.FC = ({ children }) => {
     useEffect(() => {
         // On mount fetch recipe
 
-        if (!recipe) {
+        if (!recipe && !error) {
             updateRecipe();
         }
-    }, [recipe, updateRecipe]);
+    }, [error, recipe, updateRecipe]);
 
     const value: ContentCreatorContextShape = recipe
         ? {
+            error,
             available: true,
             metadata: {
                 id: recipe.id,
@@ -286,10 +315,14 @@ const ContentCreatorProvider: React.FC = ({ children }) => {
             actions: {
                 setAddItemModal: createModalStateSetter(setAddItemModal),
                 setEditStepModal: createModalStateSetter(setEditStepModal),
-                addItem, addStep, replaceStep, deleteStep
+                addItem, addStep, replaceStep, deleteStep,
+                replaceRecipe,
             }
         }
-        : DEFAULT_CONTENT_CREATOR_CONTEXT;
+        : {
+            ...DEFAULT_CONTENT_CREATOR_CONTEXT,
+            error
+        };
 
     return (
         <>

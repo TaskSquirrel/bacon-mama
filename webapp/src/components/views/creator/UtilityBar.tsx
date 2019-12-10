@@ -1,17 +1,34 @@
 import React, { useContext } from "react";
+import { useHistory } from "react-router-dom";
 
 import { ContentCreatorContext } from "./ContentCreatorProvider";
+import Stack from "../../shared/Stack";
 import ButtonBase from "../../controls/ButtonBase";
+import Editable from "../../controls/Editable";
 
 import styles from "./UtilityBar.module.scss";
 
 const UtilityBar: React.FC = () => {
     const {
-        available,
         metadata: {
-            name
+            id,
+            name,
+            description
+        },
+        actions: {
+            setAddItemModal,
+            replaceRecipe
         }
     } = useContext(ContentCreatorContext);
+    const { push } = useHistory();
+
+    const openPlayer = () => push(`/play/${id}`);
+
+    const openAddItemModal = () => setAddItemModal(true);
+
+    const onEnterPress = (text: string) => {
+        replaceRecipe(text, description);
+    };
 
     return (
         <div
@@ -20,24 +37,55 @@ const UtilityBar: React.FC = () => {
             <div
                 className={ styles.metadata }
             >
-                <h2
+                <Editable
+                    text={ name }
                     className={ styles.name }
-                >
-                    { name }
-                </h2>
+                    onEnterPress={ onEnterPress }
+                />
             </div>
-            <div>
-                <ButtonBase>
+            <Stack
+                inline
+                className={ styles.actions }
+            >
+                <ButtonBase
+                    inverted
+                    clear
+                >
+                    <i
+                        className="fas fa-pen"
+                    />
+                </ButtonBase>
+                <ButtonBase
+                    inverted
+                    clear
+                    onClick={ openAddItemModal }
+                >
+                    <i
+                        className="fas fa-plus"
+                    />
+                </ButtonBase>
+                <ButtonBase
+                    inverted
+                    clear
+                    onClick={ openPlayer }
+                >
+                    <i
+                        className="fas fa-play"
+                    />
+                </ButtonBase>
+                <ButtonBase
+                    className={ styles.share }
+                >
                     <span>
                         <i
-                            className="fas fa-plus"
+                            className="fas fa-share"
                         />
                     </span>
                     <span>
-                        Add item
+                        Share
                     </span>
                 </ButtonBase>
-            </div>
+            </Stack>
         </div>
     );
 };

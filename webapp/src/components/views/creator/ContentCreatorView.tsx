@@ -1,8 +1,10 @@
 import React, { useContext } from "react";
+import { Link } from "react-router-dom";
 
 import Steps from "./Steps";
 import ItemPicker from "./ItemPicker";
 
+import DelayedIndicator from "../../shared/DelayedIndicator";
 import { ContentCreatorContext } from "./ContentCreatorProvider";
 import UtilityBar from "./UtilityBar";
 
@@ -10,16 +12,42 @@ import styles from "./ContentCreatorView.module.scss";
 
 const CreateRecipe: React.FC = () => {
     const {
+        error,
         available,
         actions: {
             setAddItemModal
         }
     } = useContext(ContentCreatorContext);
 
-    const openAddItemModal = () => setAddItemModal(true);
+    if (!available && !error) {
+        return (
+            <DelayedIndicator />
+        );
+    }
 
     if (!available) {
-        return null;
+        return (
+            <DelayedIndicator />
+        );
+    }
+
+    if (error) {
+        return (
+            <div
+                className={ styles.error }
+            >
+                <div>
+                    Recipe not found!
+                </div>
+                <div>
+                    <Link
+                        to="/"
+                    >
+                        Go back
+                    </Link>
+                </div>
+            </div>
+        );
     }
 
     return (

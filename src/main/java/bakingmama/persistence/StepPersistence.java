@@ -29,7 +29,7 @@ public class StepPersistence {
   ModelUtils mu;
 
   public <T> T unpackOptional(Optional<T> op) {
-    if (op.isEmpty()) {
+    if (!op.isPresent()) {
       return null;
     } else {
       return op.get();

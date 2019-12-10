@@ -1,18 +1,21 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 
+import useUser from "../hooks/useUser";
+
 import CenteredPane from "../CenteredPane";
 import TextField from "../controls/TextField";
 import ButtonBase from "../controls/ButtonBase";
 
-import APIClient from "../../api/APIClient";
+import useLoadingIndicator from "../hooks/useLoadingIndicator";
 
 import styles from "./SignIn.module.scss";
 
 const SignIn: React.FC = () => {
+    const { setStatus } = useLoadingIndicator();
+    const { signIn } = useUser();
     const [name, setName] = useState<string>("");
     const [password, setPassword] = useState<string>("");
-    const [done, setDone] = useState<boolean>(false);
     const [error, setError] = useState<string | null>(null);
 
     const onNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -29,59 +32,17 @@ const SignIn: React.FC = () => {
 
         const login = async () => {
             try {
-                const { data: {
-                    status,
-                    message: errorMessage
-                } } = await APIClient.request(
-                    "/login",
-                    {
-                        method: "POST",
-                        data: {
-                            username: name,
-                            password
-                        }
-                    }
-                );
-
-                if (status === "OK") {
-                    setError(null);
-                } else {
-                    throw new Error(errorMessage);
-                }
+                setStatus(true);
+                await signIn(name, password);
             } catch (e) {
                 setError(e.message);
             } finally {
-                setDone(true);
+                setStatus(false);
             }
         };
 
         login();
     };
-
-    if (done && !error) {
-        return (
-            <CenteredPane>
-                <div
-                    className={ styles.stack }
-                >
-                    <img
-                        src="/assets/green-check.svg"
-                    />
-                    <span>
-                        You've successfully signed-in!
-                    </span>
-                    <ButtonBase>
-                        <Link
-                            to="/dashboard"
-                        >
-                            
-                            Start Baking!
-                        </Link>
-                    </ButtonBase>
-                </div>
-            </CenteredPane>
-        );
-    }
 
     return (
         <CenteredPane>

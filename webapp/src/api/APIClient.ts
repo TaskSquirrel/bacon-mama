@@ -22,8 +22,15 @@ class APIClient {
     private URL: string;
 
     constructor(https?: boolean) {
-        const { API_URL } = process.env;
-        const USE_URL = API_URL || "localhost:8080/api";
+        const {
+            REACT_APP_API: API_URL,
+            REACT_APP_API_PROD: PROD,
+            NODE_ENV
+        } = process.env;
+        const IN_PRODUCTION = NODE_ENV === "production";
+        const URL = IN_PRODUCTION ? PROD : API_URL;
+
+        const USE_URL = URL || "localhost:8080/api";
 
         const useProtocol = https
             ? "https"

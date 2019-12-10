@@ -6,6 +6,7 @@ import bakingmama.models.UserRepository;
 import bakingmama.util.JsonUtils;
 import bakingmama.util.TokenUtils;
 
+import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -43,10 +44,8 @@ public class UserController implements BaseApiController {
     // 2) If found, check if passwords are NOT equal
     // 3) Otherwise, return success
     User user = userRepository.findByUsername(username);
-    if (user == null) {
-      JsonUtils.setStatus(returnMap, JsonUtils.ERROR, "Username couldn't be found!");
-    } else if (!user.getPassword().equals(password)) {
-      JsonUtils.setStatus(returnMap, JsonUtils.ERROR, "Incorrect password for user~");
+    if (user == null || !user.getPassword().equals(password)) {
+      JsonUtils.setStatus(returnMap, JsonUtils.ERROR, "Credentials incorrect!");
     } else {
       String token = JWT.create()
         .withClaim("username", username)
@@ -55,6 +54,9 @@ public class UserController implements BaseApiController {
         .sign(TokenUtils.getAlgorithm());
 
       returnMap.put("token", token);
+      returnMap.put("name", username);
+      returnMap.put("userID", user.getId());
+
       JsonUtils.setStatus(returnMap, JsonUtils.SUCCESS);
     }
 
@@ -98,22 +100,16 @@ public class UserController implements BaseApiController {
 
   @CrossOrigin
   @PostMapping(
-      path = "/validateID",
+      path = "/validate",
       consumes = "application/json",
       produces = "application/json"
   )
-  public Map<String, Object> validateID(@RequestBody Map<String, Object> body)
+  public Map<String, Object> validateID(@RequestBody Map<String, Object> body, @RequestAttribute("userName") String userName)
   {
     Map<String, Object> returnMap = new HashMap<>();
-    
-    String token = (String) body.get("token");
 
     try {
-      DecodedJWT decoded = TokenUtils.getVerifier().verify(token);
-      Claim payloadJson = decoded.getClaim("username");
-      String username = payloadJson.asString();
-
-      if(userRepository.existsByUsername(username))
+      if(userRepository.existsByUsername(userName))
       {
         JsonUtils.setStatus(returnMap, JsonUtils.SUCCESS);
       }

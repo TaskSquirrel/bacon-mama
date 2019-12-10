@@ -23,7 +23,9 @@ $divider-color: rgb(116, 116, 116);
 }
 
 .button {
-    color: $primary;
+    $primary: map-get($colors, "primary");
+
+    color: var(--primary);
 
     background-color: rgba($primary, 0.25);
     box-shadow: none;
