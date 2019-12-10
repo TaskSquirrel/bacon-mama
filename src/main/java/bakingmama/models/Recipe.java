@@ -26,7 +26,7 @@ public class Recipe {
   @OneToMany(mappedBy = "recipe")
   private Set<Item> items;
 
-  @OneToMany(mappedBy = "recipe")
+  @ManyToMany
   private Set<Course> courses;
 
   public Map<String, Object> toMapOverview() {

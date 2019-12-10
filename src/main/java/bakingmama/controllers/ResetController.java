@@ -46,6 +46,7 @@ public class ResetController implements BaseApiController {
       em.createQuery("DELETE FROM Item").executeUpdate();
       em.createQuery("DELETE FROM Recipe").executeUpdate();
       em.createQuery("DELETE FROM User").executeUpdate();
+      em.createQuery("DELETE FROM Course").executeUpdate();
 
       utx.commit();
 
@@ -66,7 +67,7 @@ public class ResetController implements BaseApiController {
     User newUser = new User();
     newUser.setUsername("test-username");
     newUser.setPassword("test-password");
-    newUser.setRole("admin");
+    newUser.setRole("professor");
     userRepository.save(newUser);
   }
 

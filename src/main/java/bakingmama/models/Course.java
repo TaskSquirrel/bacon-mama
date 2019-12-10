@@ -16,12 +16,14 @@ public class Course
   @GeneratedValue(strategy = GenerationType.AUTO)
   private Long id;
   private String courseName;
+
+  @ManyToOne
   private User professor;
 
-  @OneToMany(mappedBy = "course")
+  @OneToMany(mappedBy = "courses")
   private Set<User> students;
   
-  @OneToMany(mappedBy = "course")
+  @ManyToMany
   private Set<Recipe> recipes;
 
   public Map<String, Object> toMapOverview() {
