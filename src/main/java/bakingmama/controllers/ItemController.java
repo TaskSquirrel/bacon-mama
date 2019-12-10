@@ -46,8 +46,7 @@ public class ItemController implements BaseApiController {
       Long imageID = JsonUtils.parseId(id);
       Image image = imageRepository.getOne(imageID);
 
-      Blob blob = image.getData();
-      returnMap.put("image", blob.getBytes(1, (int) blob.length()));
+      returnMap.put("image", image.getDataBytes());
       JsonUtils.setStatus(returnMap, JsonUtils.SUCCESS);
     } catch (Exception e) {
       JsonUtils.setStatus(returnMap, JsonUtils.ERROR, e.getMessage());
