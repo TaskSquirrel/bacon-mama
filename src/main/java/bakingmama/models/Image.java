@@ -4,6 +4,7 @@ import lombok.*;
 
 import javax.persistence.*;
 import java.sql.Blob;
+import java.sql.SQLException;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -18,4 +19,8 @@ public class Image {
   @Column
   @Lob
   private Blob data;
+  
+  public byte[] getDataBytes() throws SQLException {
+    return data.getBytes(1, (int) data.length());
+  }
 }
