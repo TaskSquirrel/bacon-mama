@@ -1,8 +1,6 @@
 package bakingmama.controllers;
 
-import bakingmama.models.Image;
-import bakingmama.models.ImageIP;
-import bakingmama.models.ImageRepository;
+import bakingmama.models.*;
 import bakingmama.util.JavaUtils;
 import bakingmama.util.JsonUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,9 +17,11 @@ import java.util.Map;
 @RestController
 public class ItemController implements BaseApiController {
   @Autowired
+  ImageIP imageIP;
+  @Autowired
   ImageRepository imageRepository;
   @Autowired
-  ImageIP imageIP;
+  ItemRepository itemRepository;
 
   @CrossOrigin
   @PostMapping(path = "/images/add", consumes = "multipart/form-data", produces = "application/json")
@@ -57,7 +57,8 @@ public class ItemController implements BaseApiController {
 
   @CrossOrigin
   @GetMapping(path = "/images/{id}", produces = MediaType.IMAGE_JPEG_VALUE)
-  @ResponseBody byte[] getImage(@PathVariable Integer id) {
+  @ResponseBody
+  byte[] getImage(@PathVariable Integer id) {
     try {
       Map<String, Object> returnMap = new HashMap<>();
       Long imageID = JsonUtils.parseId(id);
@@ -67,6 +68,21 @@ public class ItemController implements BaseApiController {
       return blob.getBytes(1, (int) blob.length());
     } catch (Exception e) {
       return null;
+    }
+  }
+
+  @CrossOrigin
+  @GetMapping(path = "/items/{itemID}/addImage/{imageID}", produces = "application/json")
+  Map<String, Object> attachImage(@PathVariable Integer itemID, @PathVariable Integer imageID) {
+    try {
+      Item item = itemRepository.getOne(JsonUtils.parseId(itemID));
+      Image image = imageRepository.getOne(JsonUtils.parseId(imageID));
+      item.setImage(image);
+      itemRepository.save(item);
+
+      return JsonUtils.returnSuccess();
+    } catch (Exception e) {
+      return JsonUtils.returnError(e.getMessage());
     }
   }
 }

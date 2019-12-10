@@ -34,6 +34,9 @@ public class Item {
     Map<String, Object> map = new HashMap<>();
     map.put("id", id);
     map.put("itemName", itemName);
+
+    if (image != null) { map.put("image", image.getId()); }
+
     return map;
   }
 }

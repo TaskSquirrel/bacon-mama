@@ -15,6 +15,8 @@ import java.sql.SQLException;
 public class ImageIP {
   @Autowired
   ImageRepository imageRepository;
+  @Autowired
+  ItemRepository itemRepository;
 
   /**
    * Saves a byte array into the DB as a new Image.
@@ -27,7 +29,10 @@ public class ImageIP {
       im.setData(blob);
       imageRepository.save(im);
 
-      if (item != null) { item.setImage(im); }
+      if (item != null) {
+        item.setImage(im);
+        itemRepository.save(item);
+      }
 
       return im;
     } catch (SQLException sqle) {
