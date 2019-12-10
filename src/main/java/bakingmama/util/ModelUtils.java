@@ -23,6 +23,8 @@ public class ModelUtils {
   ItemRepository itemRepository;
   @Autowired
   IngredientRepository ingredientRepository;
+  @Autowired
+  CourseRepository courseRepository;
 
   public Recipe addRecipe(User user, String name, String description) {
     Recipe recipe = new Recipe();
@@ -95,5 +97,18 @@ public class ModelUtils {
     step.setTitle(title);
     stepRepository.save(step);
     return step;
+  }
+
+  public Course addCourse(User professor, String courseName)
+  {
+    Course newCourse = new Course();
+    newCourse.setProfessor(professor);
+    newCourse.setCourseName(courseName);
+    courseRepository.save(newCourse);
+    Set<Course> profCourses = professor.getCourses();
+    profCourses.add(newCourse);
+    professor.setCourses(profCourses);
+    userRepository.save(professor);
+    return newCourse;
   }
 }

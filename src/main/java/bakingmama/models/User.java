@@ -20,7 +20,7 @@ public class User {
   @OneToMany(mappedBy = "user")
   private Set<Recipe> recipes;
 
-  @OneToMany(mappedBy = "User")
+  @OneToMany(mappedBy = "user")
   private Set<Course> courses;
 
   private String role;

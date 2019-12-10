@@ -66,6 +66,7 @@ public class ResetController implements BaseApiController {
     User newUser = new User();
     newUser.setUsername("test-username");
     newUser.setPassword("test-password");
+    newUser.setRole("admin");
     userRepository.save(newUser);
   }
 
