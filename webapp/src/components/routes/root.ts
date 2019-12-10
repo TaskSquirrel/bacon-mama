@@ -9,6 +9,7 @@ import ContentCreator from "../views/creator/ContentCreator";
 import Register from "../views/Register";
 import ItemsViewer from "../views/creator/ItemsViewer";
 import Playthrough from "../views/playthrough/Playthrough";
+import Class from './../views/class/Class';
 
 const routes: Route[] = [
     {
@@ -55,7 +56,12 @@ const routes: Route[] = [
         to: "/play/:id",
         exact: true,
         component: requireSignedIn()(Playthrough)
-    }
+    },
+    {
+        to: "/class",
+        exact: true,
+        component: requireSignedIn()(Class)
+    },
 ];
 
 export default routes;

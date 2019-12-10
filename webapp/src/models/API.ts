@@ -40,6 +40,10 @@ export interface APIRecipe {
     items: APIItem[];
 }
 
+export interface APIClassList {
+
+}
+
 export interface APIRecipeList {
     id: number;
     recipeName: string;
@@ -52,6 +56,10 @@ export interface APIRecipeResponse extends Response {
 
 export interface APIManyRecipeResponse extends Response {
     recipes: APIRecipeList[];
+}
+
+export interface APIManyClassResponse extends Response {
+    recipes: APIClassList[];
 }
 
 export type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>;
