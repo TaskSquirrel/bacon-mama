@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from "react";
 
-import { APIManyRecipeResponse, APIRecipeList, APIClassList } from "../../../models/API";
+import { APIRecipeList, APIClassList } from "../../../models/API";
 
 import useAPI from "../../hooks/useAPI";
 import useUser from "../../hooks/useUser";
@@ -20,36 +20,17 @@ const Class: React.FC = () => {
     const [create, setCreate] = useState<boolean>(false);
     const [createClass, setCreateClass] = useState<boolean>(false);
     const [classes, setClasses] = useState<APIClassList[] | null>(null);
+    const [selectedClass, setSelectedClass] = useState<APIClassList | null>(null);
+    const [students, setStudents] = useState<string[]  | null>(null);
 
     const request = useAPI();
 
-    const getRecipes = useCallback(async () => {
-        const { data: {
-            status,
-            message,
-            recipes: responseRecipes
-        } } = await request<APIManyRecipeResponse>(
-            "/getRecipes",
-            {
-                method: "POST",
-                data: {
-                    username: name
-                }
-            }
-        );
-
-        if (status === "error") {
-            throw new Error(message);
-        } else {
-            return responseRecipes;
-        }
-    }, [request, name]);
 
     const getClasses = useCallback(async () => {
         const { data: {
             status,
             message,
-            recipes: responseRecipes
+            classes: responseClasses
         } } = await request<APIManyClassResponse>(
             "/getClasses",
             {
@@ -63,28 +44,32 @@ const Class: React.FC = () => {
         if (status === "error") {
             throw new Error(message);
         } else {
-            return responseRecipes;
+            return responseClasses;
         }
     }, [request, name]);
 
-    const updateRecipe = async () => {
+    const updateClasses = async () => {
         try {
-            const responseRecipes = await getRecipes();
-            setRecipes(responseRecipes.sort((a, b) => {
-                return a.id - b.id;
-            }));
+            if (!classes) {
+                const responseClasses = await getClasses();
+
+                setClasses(responseClasses.sort((a, b) => {
+                    return a.id - b.id;
+                }));
+            }
         } catch (e) {
             // Error
         }
     };
 
+
     useEffect(() => {
         const updateClasses = async () => {
             try {
                 if (!recipes) {
-                    const responseRecipes = await getClasses();
+                    const responseClasses = await getClasses();
 
-                    setRecipes(responseRecipes.sort((a, b) => {
+                    setClasses(responseClasses.sort((a, b) => {
                         return a.id - b.id;
                     }));
                 }
@@ -96,18 +81,6 @@ const Class: React.FC = () => {
         updateClasses();
     }, [getClasses, classes]);
 
-    const createRecipe = () => {
-        if (!create) {
-            return;
-        }
-
-        return (
-            <CreateRecipeModal
-                control={ setCreate }
-                update={ updateRecipe }
-            />
-        );
-    };
 
     const setC = useCallback(() => {
         setCreate(true);
@@ -121,7 +94,7 @@ const Class: React.FC = () => {
         return (
             <CreateRecipeModal
                 control={ setCreateClass }
-                update={ updateRecipe }
+                update={ updateClasses }
             />
         );
     }
@@ -130,8 +103,13 @@ const Class: React.FC = () => {
         setCreateClass(true);
     }
 
-    const selectClass = () => {
-        
+    const selectClass = (classes: APIClassList | null) => {
+        if(classes){
+            setSelectedClass(classes);
+            setStudents(classes.students);
+            setRecipes(classes.recipes);
+        }
+       
     }
 
     return (
@@ -144,7 +122,7 @@ const Class: React.FC = () => {
                 <div
                     className={ styles.title }
                 >
-                    Your Classes
+                    Your Courses
                 </div>
                 <div
                     className={ styles["card-container"] }
@@ -158,28 +136,55 @@ const Class: React.FC = () => {
                         <ClassCard
                             key={ each.id }
                             id={ `${each.id}` }
-                            name={ each.recipeName }
-                            description={ each.description }
+                            name={ each.name }
                             click={selectClass}
+                            style={{backgroundColor: selectedClass ? selectedClass.name === each.name ? 'lightblue' : 'white' : 'white' }}
                         />
                     )) }
 
-                    {<ClassCard click={toggleClass}/>}
+                    {<ClassCard add={toggleClass}/>}
                 </div>
 
             </Responsive>
+            <br />
             <Responsive>
                 <div
                     className={ styles.title }
                 >
-                    Your Recipes
+                    Students In the Course
                 </div>
                 <div
                     className={ styles["card-container"] }
                 >
-                    { recipes && recipes.length === 0 && (
+                    { !students  && (
                         <div>
-                            No recipes found!
+                            No Courses Selected!
+                        </div>
+                    ) }
+                    { students && students.map((each) => (
+                        <ClassCard
+                            key={ each }
+                            name={ each }
+                        />
+                    )) }
+
+                    {students && <ClassCard add={toggleClass}/>}
+                </div>
+
+            </Responsive>
+            <br />
+            <Responsive>
+                <div
+                    className={ styles.title }
+                >
+                    Recipes In the Course
+                </div>
+                <div
+                    className={ styles["card-container"] }
+                >
+                    { !recipes && (
+                        <div>
+                            No Courses Selected!
                         </div>
                     ) }
                     { recipes && recipes.map((each) => (
@@ -192,8 +197,8 @@ const Class: React.FC = () => {
                     )) }
                 </div>
             </Responsive>
-            { createRecipe() }
             { addClass() }
+            
         </div>
     );
 };

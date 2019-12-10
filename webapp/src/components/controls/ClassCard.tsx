@@ -1,14 +1,16 @@
-import React, { useState } from "react";
+import React from "react";
 import { Link } from "react-router-dom";
 import classNames from "classnames";
 
 import styles from "./ClassCard.module.scss";
+import { APIClassList } from './../../models/API';
 
 export interface CardProps extends React.HTMLProps<HTMLDivElement> {
     name?: string;
     description?: string;
     id?: string;
-    click: () => void;
+    add?: () => void;
+    click?: (classes:APIClassList | null) => void;
 }
 
 const ClassCard: React.FC<CardProps> = ({
@@ -16,10 +18,11 @@ const ClassCard: React.FC<CardProps> = ({
     name,
     description,
     id,
-    click
+    click,
+    add
 }) => {
-    
-    const [color, setColor]  = useState<String>("white");
+
+    const classes: APIClassList | null = name ? {id:1, students:["a","b"],name:"dd", recipes:[{id:1,recipeName:"hi"}]} : null;
 
     return (
         <div
@@ -27,11 +30,7 @@ const ClassCard: React.FC<CardProps> = ({
                 styles.card,
                 className
             )}
-            style={{backgroundColor: `${color}`}}
-            onClick={ ()  => {
-                click();
-                setColor("lightblue");
-            }}
+            onClick={name ? () => {if(click) click(classes)} : add}
         >
             {name ? (
                 <div>

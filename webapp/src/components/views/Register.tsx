@@ -11,6 +11,7 @@ import styles from "./Register.module.scss";
 
 const Register: React.FC = () => {
     const [name, setName] = useState<string>("");
+    const [role, setRole] = useState<string>("");
     const [password, setPassword] = useState<string>("");
     const [password2, setPassword2] = useState<string>("");
     const [done, setDone] = useState<boolean>(false);
@@ -20,6 +21,10 @@ const Register: React.FC = () => {
         setError("");
         setName(event.target.value);
     };
+
+    const onRoleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setRole(event.target.value);
+    }
 
     const onPasswordChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         if(password2 !== event.target.value){
@@ -58,7 +63,8 @@ const Register: React.FC = () => {
                         method: "POST",
                         data: {
                             username: name,
-                            password
+                            password,
+                            role
                         }
                     }
                 );
@@ -118,6 +124,13 @@ const Register: React.FC = () => {
                         placeholder="Username"
                         value={ name }
                         onChange={ onNameChange }
+                    />
+                    <TextField
+                        required
+                        type="text"
+                        placeholder="Role"
+                        value={ role }
+                        onChange={ onRoleChange }
                     />
                     <TextField
                         required
