@@ -43,9 +43,9 @@ const NavBar: React.FC<NavBarProps> = ({
                         Recipes
                     </Link>
                     <Link
-                        to="/baking"
+                        to="/class"
                     >
-                        Baking
+                        Class
                     </Link>
                     <ButtonBase
                         onClick={ click }
