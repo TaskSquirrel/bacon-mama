@@ -32,16 +32,6 @@ public class RecipeController implements BaseApiController {
   @Autowired
   AutowireCapableBeanFactory beanFactory;
 
-
-  Recipe unpackOptional(Long id) {
-    Optional<Recipe> optional = recipeRepository.findById(id);
-    if (!optional.isPresent()) {
-      return null;
-    } else {
-      return optional.get();
-    }
-  }
-
   private Map<String, Object> recipeSuccess(RecipeJson rj) {
     Map<String, Object> map = new HashMap<>();
     Recipe recipe = rj.toModel();
