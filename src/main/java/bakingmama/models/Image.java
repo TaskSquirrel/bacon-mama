@@ -19,7 +19,7 @@ public class Image {
   @Column
   @Lob
   private Blob data;
-  
+
   public byte[] getDataBytes() throws SQLException {
     return data.getBytes(1, (int) data.length());
   }
