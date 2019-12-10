@@ -55,6 +55,7 @@ public class UserController implements BaseApiController {
 
       returnMap.put("token", token);
       returnMap.put("name", username);
+      returnMap.put("role", user.getRole());
       returnMap.put("userID", user.getId());
 
       JsonUtils.setStatus(returnMap, JsonUtils.SUCCESS);

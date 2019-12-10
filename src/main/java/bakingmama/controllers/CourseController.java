@@ -2,7 +2,8 @@ package bakingmama.controllers;
 
 import bakingmama.json.CourseJson;
 import bakingmama.models.*;
-
+import bakingmama.persistence.CoursePersistence;
+import bakingmama.persistence.RecipePersistence;
 import bakingmama.util.JsonUtils;
 import bakingmama.util.ModelUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +14,7 @@ import java.util.*;
 
 import javax.persistence.EntityManager;
 
+@RestController
 public class CourseController implements BaseApiController{
     @Autowired
     private CourseRepository courseRepository;
@@ -22,6 +24,10 @@ public class CourseController implements BaseApiController{
     private RecipeRepository recipeRepository;
     @Autowired
     ModelUtils mu;
+    @Autowired
+    CoursePersistence cp;
+    @Autowired
+    RecipePersistence rp;
 
     @Autowired
     EntityManager em;
@@ -81,4 +87,98 @@ public class CourseController implements BaseApiController{
         
         return this.courseSuccess(cj);
     }
-}
+
+    @CrossOrigin
+    @PostMapping(
+      path = "/editCourse",
+      consumes = "application/json",
+      produces = "application/json"
+    )
+    Map<String, Object> editCourse(@RequestBody Map<String, Object> body) {
+        Map<String, Object> returnMap = new HashMap<>();
+
+        Course course = cp.findCourse(JsonUtils.castMap(body.get("course")));
+        Map<String, Object> newCourse = JsonUtils.castMap(body.get("replace"));
+
+        String courseName = (String) newCourse.get("courseName");
+
+        course = mu.editCourse(course, courseName);
+
+        returnMap.put("course", course.toMap());
+        
+        JsonUtils.setStatus(returnMap, JsonUtils.SUCCESS);
+
+        return returnMap;
+    }
+
+    @CrossOrigin
+    @PostMapping(
+      path = "/addStudentToCourse",
+      consumes = "application/json",
+      produces = "application/json"
+    )
+    Map<String, Object> addStudentToCourse(@RequestBody Map<String, Object> body) {
+      Map<String, Object> returnMap = new HashMap<>();
+
+      String username = (String) body.get("username");
+      User user = userRepository.findByUsername(username);
+      if (user == null) {
+        JsonUtils.setStatus(returnMap, JsonUtils.ERROR, "User couldn't be found!");
+        return returnMap;
+      }
+      if (user.getRole().equals("professor"))
+      {
+        JsonUtils.setStatus(returnMap, JsonUtils.ERROR, "Professor can't be a student");
+        return returnMap;
+      }
+
+      Course course = cp.findCourse(JsonUtils.castMap(body.get("course")));
+      course = mu.addStudenToCourse(course, user);
+      returnMap.put("course", course.toMap());
+
+      JsonUtils.setStatus(returnMap, JsonUtils.SUCCESS);
+      return returnMap;
+    }
+
+    @CrossOrigin
+    @PostMapping(
+      path = "/addRecipeToCourse",
+      consumes = "application/json",
+      produces = "application/json"
+    )
+    Map<String, Object> addRecipeToCourse(@RequestBody Map<String, Object> body) {
+      Map<String, Object> returnMap = new HashMap<>();
+
+      Recipe recipe = rp.findRecipe(JsonUtils.castMap(body.get("recipe")));
+      Course course = cp.findCourse(JsonUtils.castMap(body.get("course")));
+
+      course = mu.addRecipeToCourse(course, recipe);
+
+      returnMap.put("course", course.toMap());
+
+      JsonUtils.setStatus(returnMap, JsonUtils.SUCCESS);
+      return returnMap;
+    }
+
+    @CrossOrigin
+    @PostMapping(
+      path = "/removeRecipeFromCourse",
+      consumes = "application/json",
+      produces = "application/json"
+    )
+    Map<String, Object> removeRecipeFromCourse(@RequestBody Map<String, Object> body) {
+      Map<String, Object> returnMap = new HashMap<>();
+
+      Recipe recipe = rp.findRecipe(JsonUtils.castMap(body.get("recipe")));
+      Course course = cp.findCourse(JsonUtils.castMap(body.get("course")));
+
+      course = mu.removeRecipeFromCourse(course, recipe);
+
+      returnMap.put("course", course.toMap());
+
+      JsonUtils.setStatus(returnMap, JsonUtils.SUCCESS);
+      return returnMap;
+    }
+
+
+  }

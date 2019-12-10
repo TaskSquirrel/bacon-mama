@@ -128,10 +128,26 @@ public class RecipeController implements BaseApiController {
       return returnMap;
     }
 
-    List<Map<String, Object>> recipes = new ArrayList<>();
-    returnMap.put("recipes", recipes);
-    for (Recipe recipe : user.getRecipes()) {
-      recipes.add(recipe.toMapOverview());
+    if(user.getRole().equals("professor")){
+      List<Map<String, Object>> recipes = new ArrayList<>();
+      returnMap.put("recipes", recipes);
+      for (Recipe recipe : user.getRecipes()) {
+        recipes.add(recipe.toMapOverview());
+      }
+    }
+    else
+    {
+      List<Map<String, Object>> recipes = new ArrayList<>();
+      returnMap.put("recipes", recipes);
+      Set<Course> courses = user.getCourses();
+      for(Course course : courses)
+      {
+        Set<Recipe> recipeInCourse = course.getRecipes();
+        for(Recipe recipe : recipeInCourse)
+        {
+          recipes.add(recipe.toMapOverview());
+        }
+      }
     }
 
     JsonUtils.setStatus(returnMap, JsonUtils.SUCCESS);

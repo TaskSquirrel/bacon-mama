@@ -111,4 +111,44 @@ public class ModelUtils {
     userRepository.save(professor);
     return newCourse;
   }
+
+  public Course editCourse(Course course, String courseName)
+  {
+    course.setCourseName(courseName);
+    courseRepository.save(course);
+    return course;
+  }
+
+  public Course addStudenToCourse(Course course, User student)
+  {
+    Set<User> students = course.getStudents();
+    students.add(student);
+    course.setStudents(students);
+    courseRepository.save(course);
+
+    Set<Course> courses = student.getCourses();
+    courses.add(course);
+    student.setCourses(courses);
+    userRepository.save(student);
+
+    return course;
+  }
+
+  public Course addRecipeToCourse(Course course, Recipe recipe)
+  {
+    Set<Recipe> recipes = course.getRecipes();
+    recipes.add(recipe);
+    course.setRecipes(recipes);
+    courseRepository.save(course);
+    return course;
+  }
+
+  public Course removeRecipeFromCourse(Course course, Recipe recipe)
+  {
+    Set<Recipe> recipes = course.getRecipes();
+    recipes.remove(recipe);
+    course.setRecipes(recipes);
+    courseRepository.save(course);
+    return course;
+  }
 }
