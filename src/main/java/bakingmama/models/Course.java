@@ -18,8 +18,10 @@ public class Course
   private String courseName;
   private User professor;
 
-  @OneToMany(mappedBy = "recipe")
+  @OneToMany(mappedBy = "courses")
   private Set<User> students;
   
+  @OneToMany(mappedBy = "courses")
+  private Set<Recipe> recipes;
 
 }
