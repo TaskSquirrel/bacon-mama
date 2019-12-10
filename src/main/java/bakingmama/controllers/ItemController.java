@@ -6,11 +6,13 @@ import bakingmama.models.ImageRepository;
 import bakingmama.util.JavaUtils;
 import bakingmama.util.JsonUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.sql.rowset.serial.SerialBlob;
 import java.sql.Blob;
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -37,8 +39,8 @@ public class ItemController implements BaseApiController {
   }
 
   @CrossOrigin
-  @GetMapping(path = "/images/{id}", produces = "application/json")
-  Map<String, Object> getImage(@PathVariable Integer id) {
+  @GetMapping(path = "/images/bytes/{id}", produces = "application/json")
+  Map<String, Object> getImageBytes(@PathVariable Integer id) {
     Map<String, Object> returnMap = new HashMap<>();
     try {
       Long imageID = JsonUtils.parseId(id);
@@ -51,5 +53,20 @@ public class ItemController implements BaseApiController {
       JsonUtils.setStatus(returnMap, JsonUtils.ERROR, e.getMessage());
     }
     return returnMap;
+  }
+
+  @CrossOrigin
+  @GetMapping(path = "/images/{id}", produces = MediaType.IMAGE_JPEG_VALUE)
+  @ResponseBody byte[] getImage(@PathVariable Integer id) {
+    try {
+      Map<String, Object> returnMap = new HashMap<>();
+      Long imageID = JsonUtils.parseId(id);
+      Image image = imageRepository.getOne(imageID);
+
+      Blob blob = image.getData();
+      return blob.getBytes(1, (int) blob.length());
+    } catch (Exception e) {
+      return null;
+    }
   }
 }

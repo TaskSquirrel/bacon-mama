@@ -19,26 +19,31 @@ public class ImageIP {
   /**
    * Saves a byte array into the DB as a new Image.
    */
-  public Image addImage(byte[] bytes) {
+  public Image addImage(byte[] bytes, Item item) {
     try {
       Blob blob = new SerialBlob(bytes);
 
       Image im = new Image();
       im.setData(blob);
       imageRepository.save(im);
-      System.out.println(im);
-      System.out.println(im.getData());
+
+      if (item != null) { item.setImage(im); }
+
       return im;
     } catch (SQLException sqle) {
       return null;
     }
   }
 
-  public Image addImage(RenderedImage ri) {
+  public Image addImage(byte[] bytes) {
+    return this.addImage(bytes, null);
+  }
+
+  public Image addImage(RenderedImage ri, Item item) {
     try {
       ByteArrayOutputStream baos = new ByteArrayOutputStream();
       ImageIO.write(ri, "png", baos);
-      return this.addImage(baos.toByteArray());
+      return this.addImage(baos.toByteArray(), item);
     } catch (IOException ioe) {
       return null;
     }

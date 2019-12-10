@@ -21,8 +21,11 @@ public class Item {
   private String itemName;
   private String description;
 
-  // Image related stuff (future support)
+  // Deprecated -- not using AWS
   private String imageUrl;
+
+  @OneToOne()
+  private Image image;
 
   @ManyToOne()
   private Recipe recipe;

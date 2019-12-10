@@ -104,7 +104,6 @@ public class ResetController implements BaseApiController {
     mu.addIngredient(flour, newStep1, 500d, "grams");
     mu.addIngredient(dough, newStep2, 10d, "ounces");
 
-    System.out.println("ZZZZZZ");
     // Add images to the recipe
     try {
       ClassLoader cl = ResetController.class.getClassLoader();
@@ -112,9 +111,21 @@ public class ResetController implements BaseApiController {
       BufferedImage img;
       File file;
 
+      file = new File(cl.getResource("static/images/eggs.jpg").getFile());
+      img = ImageIO.read(file);
+      imageIP.addImage(img, eggs);
+
+      file = new File(cl.getResource("static/images/flour.png").getFile());
+      img = ImageIO.read(file);
+      imageIP.addImage(img, flour);
+
+      file = new File(cl.getResource("static/images/dough.jpg").getFile());
+      img = ImageIO.read(file);
+      imageIP.addImage(img, dough);
+
       file = new File(cl.getResource("static/images/bread.jpg").getFile());
       img = ImageIO.read(file);
-      imageIP.addImage(img);
+      imageIP.addImage(img, bread);
 
     } catch (Exception e) {
       throw new Exception("Reset is messed up! Message: " + e.getMessage());
