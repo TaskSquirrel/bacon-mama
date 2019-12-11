@@ -26,6 +26,9 @@ public class Recipe {
   @OneToMany(mappedBy = "recipe")
   private Set<Item> items;
 
+  @ManyToMany
+  private Set<Course> courses;
+
   public Map<String, Object> toMapOverview() {
     Map<String, Object> map = new HashMap<>();
     map.put("id", id);

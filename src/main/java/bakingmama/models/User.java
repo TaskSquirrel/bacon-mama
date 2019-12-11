@@ -19,4 +19,9 @@ public class User {
 
   @OneToMany(mappedBy = "user")
   private Set<Recipe> recipes;
+
+  @ManyToMany
+  private Set<Course> courses;
+
+  private String role;
 }
