@@ -166,4 +166,24 @@ public class ModelUtils {
     courseRepository.save(course);
     return course;
   }
+
+  public void deleteCourse(Course course)
+  {
+    Set<User> students = course.getStudents();
+    for(User student : students)
+    {
+      Set<Course> courses = student.getCourses();
+      courses.remove(course);
+      student.setCourses(courses);
+      userRepository.saveAndFlush(student);
+    }
+
+    User prof = course.getProfessor();
+    Set<Course> profCourses = prof.getCourses();
+    profCourses.remove(course);
+    prof.setCourses(profCourses);
+    userRepository.saveAndFlush(prof);
+
+    courseRepository.delete(course);
+  }
 }
