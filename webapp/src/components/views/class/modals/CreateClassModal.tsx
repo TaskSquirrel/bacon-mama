@@ -1,14 +1,14 @@
 import React, { useState, useCallback } from "react";
 
-import useAPI from "../../hooks/useAPI";
-import useUser from "../../hooks/useUser";
+import useAPI from "../../../hooks/useAPI";
+import useUser from "../../../hooks/useUser";
 
-import Modal from "../../shared/Modal";
-import TextField from "../../controls/TextField";
-import ButtonBase from "../../controls/ButtonBase";
-import { createChangeEventStateSetter } from "../../../utils";
+import Modal from "../../../shared/Modal";
+import TextField from "../../../controls/TextField";
+import ButtonBase from "../../../controls/ButtonBase";
+import { createChangeEventStateSetter } from "../../../../utils";
 
-import styles from "./CreateRecipeModal.module.scss";
+import styles from "./CreateClassModal.module.scss";
 
 interface CreateRecipeModalProps {
     control: (state: boolean) => void;

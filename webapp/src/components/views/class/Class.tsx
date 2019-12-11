@@ -8,7 +8,7 @@ import useUser from "../../hooks/useUser";
 import NavBar from "../../controls/NavBar";
 import Card from "../../controls/Card";
 import ClassCard from "../../controls/ClassCard";
-import CreateRecipeModal from "../home/CreateRecipeModal";
+import CreateClassModal from "./modals/CreateClassModal";
 
 import styles from "./Class.module.scss";
 import Responsive from "../../shared/Responsive";
@@ -92,7 +92,7 @@ const Class: React.FC = () => {
         }
 
         return (
-            <CreateRecipeModal
+            <CreateClassModal
                 control={ setCreateClass }
                 update={ updateClasses }
             />
@@ -168,7 +168,7 @@ const Class: React.FC = () => {
                         />
                     )) }
 
-                    {students && <ClassCard add={toggleClass}/>}
+                    {selectedClass && <ClassCard add={toggleClass}/>}
                 </div>
 
             </Responsive>
@@ -195,6 +195,7 @@ const Class: React.FC = () => {
                             description={ each.description }
                         />
                     )) }
+                    {selectedClass && <ClassCard add={toggleClass}/>}
                 </div>
             </Responsive>
             { addClass() }
