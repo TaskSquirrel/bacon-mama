@@ -32,15 +32,14 @@ const ItemSelector: React.FC<ItemSelectorProps> = ({
         replace(selectedItem.id, amount);
     };
 
-    const renderItem = ({
-        id, name, description
-    }: Item) => {
+    const renderItem = ({ id, name, description }: Item) => {
         const selected = selectedItem
             ? selectedItem.id === id
             : false;
 
         return (
             <div
+                key={ id }
                 className={ classNames(
                     styles.item,
                     selected && styles.selected,

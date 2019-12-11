@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react";
 import { Item } from "../../../models/recipe";
 
 import ItemSelector from "./ItemSelector";
+import ButtonBase from "../../controls/ButtonBase";
 import usePlaythrough from "./usePlaythrough";
 
 import { shuffle } from "../../../utils";
@@ -17,6 +18,43 @@ const Play: React.FC = () => {
         selected,
         nextStep,
     } = usePlaythrough();
+
+    const renderInstructions = () => {
+        return (
+            <div
+                className={ styles.guide }
+            >
+                <h1
+                    className={ styles.title }
+                >
+                    How to complete this recipe
+                </h1>
+                <ol
+                    className={ styles.list }
+                >
+                    <li>
+                        One item is created at each step using ingredients listed to the left
+                    </li>
+                    <li>
+                        At each step, several items are presented randomly and it's your job to
+                        correctly allocate the proper amounts!
+                    </li>
+                    <li>
+                        Be careful, though. Adding more than you need or adding the wrong
+                        ingredients will leave you with error marks!
+                    </li>
+                </ol>
+                <div>
+                    <ButtonBase
+                        className={ styles.start }
+                        onClick={ nextStep }
+                    >
+                        Start!
+                    </ButtonBase>
+                </div>
+            </div>
+        );
+    };
 
     const renderFeedback = () => {
         let mainText;
@@ -64,7 +102,8 @@ const Play: React.FC = () => {
             >
                 Next
             </button>
-            { renderFeedback() }
+            { !currentStep && renderInstructions() }
+            { currentStep && renderFeedback() }
             { currentStep && (
                 <ItemSelector
                     items={ shownItems }

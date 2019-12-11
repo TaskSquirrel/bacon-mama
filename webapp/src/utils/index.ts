@@ -12,9 +12,9 @@ export const createChangeEventStateSetter = (
 
 export const isNumber = (test: string) => {
     try {
-        Number(test);
+        const asNumber = Number(test);
 
-        return true;
+        return !isNaN(asNumber);
     } catch (e) {
         return false;
     }
