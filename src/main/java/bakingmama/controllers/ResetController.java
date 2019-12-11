@@ -84,10 +84,10 @@ public class ResetController implements BaseApiController {
     Recipe newRecipe = mu.addRecipe(user, "test-recipeName", "test-recipeDescription");
 
     // Add some items for test recipe:
-    Item eggs = mu.addItem("eggs", newRecipe);
-    Item flour = mu.addItem("flour", newRecipe);
-    Item dough = mu.addItem("dough", newRecipe);
-    Item bread = mu.addItem("bread", newRecipe);
+    Item eggs = mu.addItem("eggs", newRecipe, null);
+    Item flour = mu.addItem("flour", newRecipe, null);
+    Item dough = mu.addItem("dough", newRecipe, null);
+    Item bread = mu.addItem("bread", newRecipe, null);
 
     Ingredient doughIng = mu.addIngredient(dough, null, 10d, "ounces");
     Ingredient breadIng = mu.addIngredient(bread, null, 100d, "pieces");

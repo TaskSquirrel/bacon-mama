@@ -7,10 +7,11 @@ import { Item, Step, Dependency } from "../../../../models/recipe";
 import { ContentCreatorContext } from "../ContentCreatorProvider";
 import ButtonBase from "../../../controls/ButtonBase";
 import TextField from "../../../controls/TextField";
-import Slider from "../../../controls/Slider";
 import FullModal from "../../../shared/FullModal";
 import Responsive from "../../../shared/Responsive";
 import Stack from "../../../shared/Stack";
+
+import { isNumber } from "../../../../utils";
 
 import styles from "./ItemPickerModal.module.scss";
 import modalStyles from "./modals.module.scss";
@@ -36,6 +37,12 @@ const ItemPickerModal: React.FC<ItemPickerModalProps> = ({
     const { id: recipeID, sequence: stepSequence } = useParams();
     const { push } = useHistory();
 
+    const { dependencies } = currentStep;
+
+    const exists = dependencies.find(
+        ({ item: { id: itemID } }) => itemID === selected
+    );
+
     const title = pick === "dependencies"
         ? "Add a dependency"
         : "Choose result item";
@@ -55,20 +62,32 @@ const ItemPickerModal: React.FC<ItemPickerModalProps> = ({
     const onSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
 
-        if (!selected || !amount || !unit) {
+        if (!selected || !amount || !unit || !isNumber(amount)) {
+            return;
+        }
+
+        const asNumber = Number(amount);
+
+        if (asNumber < 0) {
             return;
         }
 
         if (pick === "dependencies") {
+            const { dependencies: deps } = currentStep;
+
+            if (exists) {
+                return;
+            }
+
             replaceStep({
                 ...currentStep,
                 dependencies: [
-                    ...currentStep.dependencies,
+                    ...deps,
                     {
                         item: {
                             id: selected
                         },
-                        amount: Number(amount),
+                        amount: asNumber,
                         unit
                     } as Dependency
                 ]
@@ -80,13 +99,38 @@ const ItemPickerModal: React.FC<ItemPickerModalProps> = ({
                     item: {
                         id: selected
                     },
-                    amount: Number(amount),
+                    amount: asNumber,
                     unit
                 } as Dependency
             });
         }
 
         close();
+    };
+
+    const renderSuggestion = () => {
+        if (!isNumber(amount)) {
+            return (
+                <div>
+                    Please enter a number!
+                </div>
+            );
+        }
+
+        let suggestion;
+        const asNumber = Number(amount);
+
+        if (asNumber > 1000) {
+            suggestion = "We suggest using numbers less than 1000 and switching units.";
+        } else if (asNumber < 0) {
+            suggestion = "No negatives!";
+        }
+
+        return (
+            <div>
+                { suggestion }
+            </div>
+        );
     };
 
     const createSelectItem = (id: string) => () => setSelected(id);
@@ -158,6 +202,7 @@ const ItemPickerModal: React.FC<ItemPickerModalProps> = ({
                             </Stack>
                             <Stack
                                 inline
+                                className={ styles.measurement }
                             >
                                 <TextField
                                     required
@@ -172,14 +217,24 @@ const ItemPickerModal: React.FC<ItemPickerModalProps> = ({
                                     value={ unit }
                                     onChange={ onUnitChange }
                                 />
+                                <div>
+                                    { renderSuggestion() }
+                                </div>
                             </Stack>
                         </div>
-                        <div>
+                        <Stack>
                             <h3>
                                 Available items
                             </h3>
+                            { exists && (
+                                <div
+                                    className={ styles.error }
+                                >
+                                    Item is already added as a dependency in this step!
+                                </div>
+                            ) }
                             { renderItemsContainer() }
-                        </div>
+                        </Stack>
                     </div>
                     <div
                         className={ styles.actions }

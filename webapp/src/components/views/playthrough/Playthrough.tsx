@@ -1,10 +1,13 @@
 import React from "react";
 
+import PlaythroughProvider from "./PlaythroughProvider";
 import PlaythroughView from "./PlaythroughView";
 
 const Playthrough: React.FC = () => {
     return (
-        <PlaythroughView />
+        <PlaythroughProvider>
+            <PlaythroughView />
+        </PlaythroughProvider>
     );
 };
 

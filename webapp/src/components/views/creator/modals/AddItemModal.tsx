@@ -11,6 +11,7 @@ import Stack from "../../../shared/Stack";
 import { createChangeEventStateSetter } from "../../../../utils";
 
 import styles from "./modals.module.scss";
+import addItemModalStyles from "./AddItemModal.module.scss";
 
 interface AddItemProps {
     control: (state: boolean) => void;
@@ -20,6 +21,7 @@ const AddItem: React.FC<AddItemProps> = ({
     control
 }) => {
     const {
+        items,
         actions: {
             addItem
         }
@@ -27,12 +29,16 @@ const AddItem: React.FC<AddItemProps> = ({
     const [name, setName] = useState<string>("");
     const [description, setDescription] = useState<string>("");
 
+    const itemNameAlreadyInUse = items.find(
+        ({ name: itemName }) => itemName === name
+    );
+
     const close = () => control(false);
 
     const submit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
 
-        if (name === "" || description === "") {
+        if (name === "" || description === "" || itemNameAlreadyInUse) {
             return;
         }
 
@@ -49,7 +55,15 @@ const AddItem: React.FC<AddItemProps> = ({
                 onSubmit={ submit }
             >
                 <Stack>
+                    { itemNameAlreadyInUse && (
+                        <div
+                            className={ addItemModalStyles.error }
+                        >
+                            { `"${name}" is already an item!` }
+                        </div>
+                    ) }
                     <TextField
+                        required
                         placeholder="Item name"
                         value={ name }
                         onChange={ createChangeEventStateSetter(
