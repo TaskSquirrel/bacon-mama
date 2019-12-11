@@ -27,6 +27,7 @@ const Class: React.FC = () => {
     const [students, setStudents] = useState<APIStudent[] | null>(null);
     const [addStudents, setAddStudents] = useState<boolean>(false);
     const [addRecipes, setaddRecipes] = useState<boolean>(false);
+    const [index, setIndex] = useState<number>(-1);
 
     const request = useAPI();
 
@@ -58,11 +59,28 @@ const Class: React.FC = () => {
 
     const update = async () => {
         try {
-            const responseClasses = await getClasses();
-
-            setClasses(responseClasses.sort((a, b) => {
+            let responseClasses = await getClasses();
+            
+            responseClasses = responseClasses.sort((a, b) => {
                 return a.id - b.id;
-            }));
+            })
+
+            setClasses(responseClasses);
+
+            if(selectedClass){
+                setStudents(responseClasses[index].students.sort((a,b) => {
+                    if(a.userName > b.userName){
+                        return 1;
+                    }
+                    if(a.userName < b.userName){
+                        return -1;
+                    }
+    
+                    return 0;
+                }));
+                setRecipes(responseClasses[index].recipes.sort((a,b) => a.id-b.id));
+            }
+            
 
         } catch (e) {
             // Error
@@ -131,6 +149,7 @@ const Class: React.FC = () => {
                 control={setaddRecipes}
                 update={update}
                 info={'recipe'}
+                course={selectedClass}
                 
             />
         );
@@ -139,9 +158,19 @@ const Class: React.FC = () => {
 
     const selectClass = (i: number) => {
         if (classes) {
+            setIndex(i);
             setSelectedClass(classes[i]);
-            setStudents(classes[i].students);
-            setRecipes(classes[i].recipes);
+            setStudents(classes[i].students.sort((a,b) => {
+                if(a.userName > b.userName){
+                    return 1;
+                }
+                if(a.userName < b.userName){
+                    return -1;
+                }
+
+                return 0;
+            }));
+            setRecipes(classes[i].recipes.sort((a,b) => a.id-b.id));
         }
 
     }
