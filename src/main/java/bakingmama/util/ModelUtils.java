@@ -119,17 +119,32 @@ public class ModelUtils {
     return course;
   }
 
-  public Course addStudenToCourse(Course course, User student)
+  public Course addStudentToCourse(Course course, User student)
   {
     Set<User> students = course.getStudents();
     students.add(student);
     course.setStudents(students);
-    courseRepository.save(course);
+    courseRepository.saveAndFlush(course);
 
     Set<Course> courses = student.getCourses();
     courses.add(course);
     student.setCourses(courses);
-    userRepository.save(student);
+    userRepository.saveAndFlush(student);
+
+    return course;
+  }
+
+  public Course removeStudentFromCourse(Course course, User student)
+  {
+    Set<User> students = course.getStudents();
+    students.remove(student);
+    course.setStudents(students);
+    courseRepository.saveAndFlush(course);
+
+    Set<Course> courses = student.getCourses();
+    courses.remove(course);
+    student.setCourses(courses);
+    userRepository.saveAndFlush(student);
 
     return course;
   }

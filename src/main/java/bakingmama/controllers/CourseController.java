@@ -90,6 +90,35 @@ public class CourseController implements BaseApiController{
 
     @CrossOrigin
     @PostMapping(
+      path = "/getCourses",
+      consumes = "application/json",
+      produces = "application/json"
+    )
+    Map<String, Object> getCourses(@RequestBody Map<String, Object> body) {
+        Map<String, Object> returnMap = new HashMap<>();
+
+        String username = (String) body.get("username");
+
+        User user = userRepository.findByUsername(username);
+        if (user == null) {
+          JsonUtils.setStatus(returnMap, JsonUtils.ERROR, "User couldn't be found!");
+          return returnMap;
+        }
+
+        List<Map<String, Object>> courses = new ArrayList<>();
+        returnMap.put("courses", courses);
+        for(Course course : user.getCourses())
+        {
+          courses.add(course.toMap());
+        }
+
+        
+        JsonUtils.setStatus(returnMap, JsonUtils.SUCCESS);
+        return returnMap;
+    }
+
+    @CrossOrigin
+    @PostMapping(
       path = "/editCourse",
       consumes = "application/json",
       produces = "application/json"
@@ -133,7 +162,31 @@ public class CourseController implements BaseApiController{
       }
 
       Course course = cp.findCourse(JsonUtils.castMap(body.get("course")));
-      course = mu.addStudenToCourse(course, user);
+      course = mu.addStudentToCourse(course, user);
+      returnMap.put("course", course.toMap());
+
+      JsonUtils.setStatus(returnMap, JsonUtils.SUCCESS);
+      return returnMap;
+    }
+
+    @CrossOrigin
+    @PostMapping(
+      path = "/removeStudentFromCourse",
+      consumes = "application/json",
+      produces = "application/json"
+    )
+    Map<String, Object> removeStudentFromCourse(@RequestBody Map<String, Object> body) {
+      Map<String, Object> returnMap = new HashMap<>();
+
+      String username = (String) body.get("username");
+      User user = userRepository.findByUsername(username);
+      if (user == null) {
+        JsonUtils.setStatus(returnMap, JsonUtils.ERROR, "User couldn't be found!");
+        return returnMap;
+      }
+
+      Course course = cp.findCourse(JsonUtils.castMap(body.get("course")));
+      course = mu.removeStudentFromCourse(course, user);
       returnMap.put("course", course.toMap());
 
       JsonUtils.setStatus(returnMap, JsonUtils.SUCCESS);
@@ -159,6 +212,8 @@ public class CourseController implements BaseApiController{
       JsonUtils.setStatus(returnMap, JsonUtils.SUCCESS);
       return returnMap;
     }
+
+    
 
     @CrossOrigin
     @PostMapping(
