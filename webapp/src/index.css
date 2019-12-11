@@ -20,6 +20,8 @@ code {
 }
 
 :root {
+    --error: #c44f6a;
+
     --black: #000000;
     --white: #ffffff;
     --gray: #9c9c9c;

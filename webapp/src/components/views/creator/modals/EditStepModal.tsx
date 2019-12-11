@@ -75,6 +75,7 @@ const EditStep: React.FC<EditStepProps> = ({
                         ) }
                     />
                     <TextField
+                        required
                         placeholder="Step action"
                         value={ verb }
                         onChange={ createChangeEventStateSetter(
@@ -82,7 +83,8 @@ const EditStep: React.FC<EditStepProps> = ({
                         ) }
                     />
                     <TextArea
-                        placeholder="Step description"
+                        required
+                        placeholder="Step description - be informative!"
                         value={ description }
                         onChange={ createChangeEventStateSetter(
                             setDescription

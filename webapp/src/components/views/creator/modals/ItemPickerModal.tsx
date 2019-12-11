@@ -37,6 +37,12 @@ const ItemPickerModal: React.FC<ItemPickerModalProps> = ({
     const { id: recipeID, sequence: stepSequence } = useParams();
     const { push } = useHistory();
 
+    const { dependencies } = currentStep;
+
+    const exists = dependencies.find(
+        ({ item: { id: itemID } }) => itemID === selected
+    );
+
     const title = pick === "dependencies"
         ? "Add a dependency"
         : "Choose result item";
@@ -67,15 +73,21 @@ const ItemPickerModal: React.FC<ItemPickerModalProps> = ({
         }
 
         if (pick === "dependencies") {
+            const { dependencies: deps } = currentStep;
+
+            if (exists) {
+                return;
+            }
+
             replaceStep({
                 ...currentStep,
                 dependencies: [
-                    ...currentStep.dependencies,
+                    ...deps,
                     {
                         item: {
                             id: selected
                         },
-                        amount: Number(amount),
+                        amount: asNumber,
                         unit
                     } as Dependency
                 ]
@@ -87,7 +99,7 @@ const ItemPickerModal: React.FC<ItemPickerModalProps> = ({
                     item: {
                         id: selected
                     },
-                    amount: Number(amount),
+                    amount: asNumber,
                     unit
                 } as Dependency
             });
@@ -210,12 +222,19 @@ const ItemPickerModal: React.FC<ItemPickerModalProps> = ({
                                 </div>
                             </Stack>
                         </div>
-                        <div>
+                        <Stack>
                             <h3>
                                 Available items
                             </h3>
+                            { exists && (
+                                <div
+                                    className={ styles.error }
+                                >
+                                    Item is already added as a dependency in this step!
+                                </div>
+                            ) }
                             { renderItemsContainer() }
-                        </div>
+                        </Stack>
                     </div>
                     <div
                         className={ styles.actions }
