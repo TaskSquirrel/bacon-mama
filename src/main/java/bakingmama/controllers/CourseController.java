@@ -139,6 +139,32 @@ public class CourseController implements BaseApiController{
 
         return returnMap;
     }
+    @CrossOrigin
+    @PostMapping(
+      path = "/getAllStudents",
+      consumes = "application/json",
+      produces = "application/json"
+    )
+    Map<String, Object> getAllStudents(@RequestBody Map<String, Object> body) {
+      Map<String, Object> returnMap = new HashMap<>();
+
+      List<User> users = userRepository.findAll();
+      
+      List<Map<String, Object>> students = new ArrayList<>();
+      returnMap.put("students", students);
+      for(User user : users)
+      {
+        if(user.getRole().equals("student"))
+        {
+          Map<String, Object> tmp= new HashMap<>();
+          tmp.put("username", user.getUsername());
+          students.add(tmp);
+        }
+      }
+
+      return returnMap;
+    }
+
 
     @CrossOrigin
     @PostMapping(
