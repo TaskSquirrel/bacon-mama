@@ -1,5 +1,6 @@
 import React from "react";
 
+import DelayedIndicator from "../../shared/DelayedIndicator";
 import Sidebar from "./Sidebar";
 import Play from "./Play";
 
@@ -8,7 +9,21 @@ import usePlaythrough from "./usePlaythrough";
 import styles from "./PlaythroughView.module.scss";
 
 const PlaythroughView: React.FC = () => {
-    const {} = usePlaythrough();
+    const { error, recipe } = usePlaythrough();
+
+    if (error) {
+        return (
+            <div>
+                Error loading recipe
+            </div>
+        );
+    }
+
+    if (!recipe) {
+        return (
+            <DelayedIndicator />
+        );
+    }
 
     return (
         <main
