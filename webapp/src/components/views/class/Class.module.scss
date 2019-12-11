@@ -1,0 +1,14 @@
+@import "../../../styles/colors";
+
+.title {
+    font-size: 2rem;
+    font-weight: bold;
+
+    margin-bottom: 2rem;
+}
+
+.card-container {
+    display: grid;
+    grid-template-rows: auto;
+    grid-template-columns: repeat(4, 1fr);
+}

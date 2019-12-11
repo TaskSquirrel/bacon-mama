@@ -50,10 +50,12 @@ public class UserController implements BaseApiController {
       String token = JWT.create()
         .withClaim("username", username)
         .withClaim("userID", user.getId())
+        .withClaim("role", user.getRole())
         .sign(TokenUtils.getAlgorithm());
 
       returnMap.put("token", token);
       returnMap.put("name", username);
+      returnMap.put("role", user.getRole());
       returnMap.put("userID", user.getId());
 
       JsonUtils.setStatus(returnMap, JsonUtils.SUCCESS);
@@ -71,6 +73,13 @@ public class UserController implements BaseApiController {
   Map<String, Object> addUser(@RequestBody Map<String, Object> body) {
     Map<String, Object> returnMap = new HashMap<>();
 
+    String role = "student";
+    String roleFromRequest = (String) body.get("role");
+
+    if (roleFromRequest != null) {
+      role = roleFromRequest;
+    }
+
     String username = (String) body.get("username");
     String password = (String) body.get("password");
 
@@ -80,6 +89,7 @@ public class UserController implements BaseApiController {
       User newUser = new User();
       newUser.setUsername(username);
       newUser.setPassword(password);
+      newUser.setRole(role);
       userRepository.save(newUser);
 
       JsonUtils.setStatus(returnMap, JsonUtils.SUCCESS);
@@ -87,6 +97,7 @@ public class UserController implements BaseApiController {
       String token = JWT.create()
         .withClaim("username", newUser.getUsername())
         .withClaim("userID", newUser.getId())
+        .withClaim("role", newUser.getRole())
         .sign(TokenUtils.getAlgorithm());
 
       returnMap.put("token", token);

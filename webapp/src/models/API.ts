@@ -40,10 +40,26 @@ export interface APIRecipe {
     items: APIItem[];
 }
 
+export interface APIClassList {
+    id: number;
+    recipes: APIRecipe[];
+    courseName:string;
+    professor:string;
+    students:APIStudent[];
+}
+
+export interface APIStudent {
+    userName : string;
+}
+
 export interface APIRecipeList {
     id: number;
     recipeName: string;
     description?: string;
+}
+
+export interface APIStudentResponse extends Response {
+    students: string[];
 }
 
 export interface APIRecipeResponse extends Response {
@@ -53,5 +69,11 @@ export interface APIRecipeResponse extends Response {
 export interface APIManyRecipeResponse extends Response {
     recipes: APIRecipeList[];
 }
+
+export interface APIManyClassResponse extends Response {
+    courses: APIClassList[];
+}
+
+
 
 export type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>;

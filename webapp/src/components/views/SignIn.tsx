@@ -50,6 +50,13 @@ const SignIn: React.FC = () => {
                 onSubmit={ onFormSubmit }
             >
                 <div
+                    className={ styles.logo }
+                >
+                    <img
+                        src="/assets/mama.png"
+                    />
+                </div>
+                <div
                     className={ styles.form }
                 >
                     <TextField

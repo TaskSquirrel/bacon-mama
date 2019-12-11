@@ -23,6 +23,8 @@ public class ModelUtils {
   ItemRepository itemRepository;
   @Autowired
   IngredientRepository ingredientRepository;
+  @Autowired
+  CourseRepository courseRepository;
 
   public Recipe addRecipe(User user, String name, String description) {
     Recipe recipe = new Recipe();
@@ -96,5 +98,93 @@ public class ModelUtils {
     step.setTitle(title);
     stepRepository.save(step);
     return step;
+  }
+
+  public Course addCourse(User professor, String courseName)
+  {
+    Course newCourse = new Course();
+    newCourse.setProfessor(professor);
+    newCourse.setCourseName(courseName);
+    courseRepository.save(newCourse);
+    Set<Course> profCourses = professor.getCourses();
+    profCourses.add(newCourse);
+    professor.setCourses(profCourses);
+    userRepository.save(professor);
+    return newCourse;
+  }
+
+  public Course editCourse(Course course, String courseName)
+  {
+    course.setCourseName(courseName);
+    courseRepository.save(course);
+    return course;
+  }
+
+  public Course addStudentToCourse(Course course, User student)
+  {
+    Set<User> students = course.getStudents();
+    students.add(student);
+    course.setStudents(students);
+    courseRepository.saveAndFlush(course);
+
+    Set<Course> courses = student.getCourses();
+    courses.add(course);
+    student.setCourses(courses);
+    userRepository.saveAndFlush(student);
+
+    return course;
+  }
+
+  public Course removeStudentFromCourse(Course course, User student)
+  {
+    Set<User> students = course.getStudents();
+    students.remove(student);
+    course.setStudents(students);
+    courseRepository.saveAndFlush(course);
+
+    Set<Course> courses = student.getCourses();
+    courses.remove(course);
+    student.setCourses(courses);
+    userRepository.saveAndFlush(student);
+
+    return course;
+  }
+
+  public Course addRecipeToCourse(Course course, Recipe recipe)
+  {
+    Set<Recipe> recipes = course.getRecipes();
+    recipes.add(recipe);
+    course.setRecipes(recipes);
+    courseRepository.save(course);
+    return course;
+  }
+
+  public Course removeRecipeFromCourse(Course course, Recipe recipe)
+  {
+    Set<Recipe> recipes = course.getRecipes();
+    recipes.remove(recipe);
+    course.setRecipes(recipes);
+    courseRepository.save(course);
+    return course;
+  }
+
+  public void deleteCourse(Course course)
+  {
+    Set<User> students = course.getStudents();
+    for(User student : students)
+    {
+      Set<Course> courses = student.getCourses();
+      courses.remove(course);
+      student.setCourses(courses);
+      userRepository.saveAndFlush(student);
+    }
+
+    User prof = course.getProfessor();
+    Set<Course> profCourses = prof.getCourses();
+    profCourses.remove(course);
+    prof.setCourses(profCourses);
+    userRepository.saveAndFlush(prof);
+
+    courseRepository.delete(course);
   }
 }

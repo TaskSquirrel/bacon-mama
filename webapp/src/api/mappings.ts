@@ -46,6 +46,6 @@ export function fromAPIRecipe(
         name: recipeName,
         description,
         steps: steps.map(fromAPIStep),
-        items: items.map(fromAPIItem),
+        items: items.map(fromAPIItem)
     };
 }
