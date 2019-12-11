@@ -19,6 +19,7 @@ interface CreateRecipeModalProps {
     update: () => void;
     info?:string;
     course?: APIClassList | null;
+    options: Options[] | null;
 }
 
 interface Options {
@@ -31,12 +32,12 @@ const CreateRecipeModal: React.FC<CreateRecipeModalProps> = ({
     control,
     update,
     info,
-    course
+    course,
+    options
 }) => {
     const [name, setName] = useState<string>("");
     const { name: userName } = useUser();
     const request = useAPI();
-    const [options, setOptions] = useState<Options[]| null>(null);
     const [selected, setSelected] = useState<any[] | any>(undefined);
 
     const createControlSetter = (state: boolean) => () => control(state);
@@ -54,55 +55,9 @@ const CreateRecipeModal: React.FC<CreateRecipeModalProps> = ({
                 }
             }
         );
-    }, [request, name]);
+    }, [request]);
 
-    const getRecipes = useCallback(async () => {
-
-        const { data: {
-            status,
-            message,
-            recipes: responseRecipes
-        } } = await request<APIManyRecipeResponse>(
-            "/getRecipes",
-            {
-                method: "POST",
-                data: {
-                    username: userName,
-                    
-                }
-            }
-        );
-
-
-        if (status === "error") {
-            throw new Error(message);
-        } else {
-
-            return responseRecipes;
-        }
-    }, [request, name]);
-
-    useEffect(() => {
-
-        const updateRecipes = async () => {
-            try {
-                if (!options && info === "recipe") {
-                    const responseRecipes = await getRecipes();
-
-                    const op: Options[] = responseRecipes.map((item) => {
-                        return {key:item.id, text:item.recipeName, value:item.id};
-                    })
-
-                    setOptions(op);
-                }
-            } catch (e) {
-                // Error
-            }
-        };
-        updateRecipes();
-
-    },[options, setOptions])
-
+    
     const addStudent = useCallback(async () => {
         
         await request(
@@ -110,12 +65,12 @@ const CreateRecipeModal: React.FC<CreateRecipeModalProps> = ({
             {
                 method: "POST",
                 data: {
-                    username: name,
+                    username: selected !== undefined ? selected : "",
                     course,
                 }
             }
         );
-    }, [request, name]);
+    }, [request]);
 
     const onOptionChange = (event: SyntheticEvent<HTMLElement, Event>, {value}:DropdownProps) => {
         setSelected(value);

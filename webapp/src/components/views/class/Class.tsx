@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from "react";
 
-import { APIRecipeList, APIClassList, APIStudent } from "../../../models/API";
+import { APIRecipeList, APIClassList, APIStudent, APIManyRecipeResponse } from "../../../models/API";
 
 import useAPI from "../../hooks/useAPI";
 import useUser from "../../hooks/useUser";
@@ -16,6 +16,13 @@ import AddStudentModal from "./modals/AddStudentModal";
 import styles from "./Class.module.scss";
 import Responsive from "../../shared/Responsive";
 import { APIManyClassResponse } from './../../../models/API';
+import { Recipe } from './../../../models/recipe';
+
+interface Options {
+    key:number,
+    text: string,
+    value: number
+}
 
 const Class: React.FC = () => {
     const { name } = useUser();
@@ -28,6 +35,8 @@ const Class: React.FC = () => {
     const [addStudents, setAddStudents] = useState<boolean>(false);
     const [addRecipes, setaddRecipes] = useState<boolean>(false);
     const [index, setIndex] = useState<number>(-1);
+    const [studentOptions, setStudentOptions] = useState<Options[]| null>(null);
+    const [recipeOptions, setRecipeOptions] = useState<Options[]| null>(null);
 
     const request = useAPI();
 
@@ -87,6 +96,89 @@ const Class: React.FC = () => {
         }
     };
 
+    const getStudents = useCallback(async () => {
+        
+        const { data: {
+            status,
+            message,
+            students
+        } } = await request(
+            "/getAllStudents",
+            {
+                method: "POST",
+                data: {}
+            }
+        );
+
+
+        if (status === "error") {
+            throw new Error(message);
+        } else {
+
+            return students;
+        }
+    }, [request]);
+
+    const getRecipes = useCallback(async () => {
+
+        const { data: {
+            status,
+            message,
+            recipes: responseRecipes
+        } } = await request<APIManyRecipeResponse>(
+            "/getRecipes",
+            {
+                method: "POST",
+                data: {
+                    username: name,
+                    
+                }
+            }
+        );
+
+
+        if (status === "error") {
+            throw new Error(message);
+        } else {
+
+            return responseRecipes;
+        }
+    }, [request]);
+
+    useEffect(() => {
+
+        const updateRecipes = async () => {
+            try {
+                if (recipes) {
+                    const responseRecipes = await getRecipes();
+                    
+                    const op: Options[] = responseRecipes.map((item) => {
+                        return {key:item.id, text:item.recipeName, value:item.id};
+                    }).filter((item) => {
+                        return !recipes.some((recipe) => recipe.id === item.value);
+                    });
+
+                    setRecipeOptions(op);
+                }
+                if(students){
+                    const responseRecipes = await getStudents();
+
+                    const op: Options[] = responseRecipes.map((item:any) => {
+                        return {key:item.username, text:item.username, value:item.username};
+                    }).filter((item: any) => {
+                        return !students.some((student) => student.userName === item.value);               
+                    });
+
+
+                    setStudentOptions(op);
+                }
+            } catch (e) {
+                // Error
+            }
+        };
+        updateRecipes();
+    },[selectedClass]);
+
 
     useEffect(() => {
         const updateClasses = async () => {
@@ -135,6 +227,7 @@ const Class: React.FC = () => {
                 update={update}
                 info={'student'}
                 course={selectedClass}
+                options={studentOptions}
             />
         );
     }
@@ -150,7 +243,7 @@ const Class: React.FC = () => {
                 update={update}
                 info={'recipe'}
                 course={selectedClass}
-                
+                options={recipeOptions}
             />
         );
     }
