@@ -32,7 +32,7 @@ const Class: React.FC = () => {
             message,
             classes: responseClasses
         } } = await request<APIManyClassResponse>(
-            "/getClasses",
+            "/getCourses",
             {
                 method: "POST",
                 data: {
