@@ -235,5 +235,32 @@ public class CourseController implements BaseApiController{
       return returnMap;
     }
 
+    @CrossOrigin
+    @PostMapping(
+      path = "/removeCourse",
+      consumes = "application/json",
+      produces = "application/json"
+    )
+    Map<String, Object> removeCourse(@RequestBody Map<String, Object> body) {
+      Map<String, Object> returnMap = new HashMap<>();
+
+      CourseJson cj = new CourseJson(body);
+        beanFactory.autowireBean(cj);
+
+        Course course = cj.toModel();
+        if (course == null) {
+            JsonUtils.setStatus(returnMap, JsonUtils.ERROR, "Course couldn't be found!");
+            return returnMap;
+        }
+
+      try{
+        mu.deleteCourse(course);
+        JsonUtils.setStatus(returnMap, JsonUtils.SUCCESS);
+      } catch(Exception e){
+        JsonUtils.setStatus(returnMap, JsonUtils.ERROR, e.getMessage());
+      }
+
+      return returnMap;
+    }
 
   }
