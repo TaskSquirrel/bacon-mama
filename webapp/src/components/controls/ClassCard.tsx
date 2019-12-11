@@ -8,21 +8,22 @@ import { APIClassList } from './../../models/API';
 export interface CardProps extends React.HTMLProps<HTMLDivElement> {
     name?: string;
     description?: string;
-    id?: string;
+    index?: number;
     add?: () => void;
-    click?: (classes:APIClassList | null) => void;
+    click?: (i:number) => void;
+    color?: string;
 }
 
 const ClassCard: React.FC<CardProps> = ({
     className,
     name,
     description,
-    id,
+    index,
     click,
-    add
+    add,
+    color
 }) => {
 
-    const classes: APIClassList | null = name ? {id:1, students:["a","b"],name:"dd", recipes:[{id:1,recipeName:"hi"}]} : null;
 
     return (
         <div
@@ -30,7 +31,8 @@ const ClassCard: React.FC<CardProps> = ({
                 styles.card,
                 className
             )}
-            onClick={name ? () => {if(click) click(classes)} : add}
+            style={{backgroundColor:color}}
+            onClick={name ? () => {if(click && index != null) click(index)} : add}
         >
             {name ? (
                 <div>

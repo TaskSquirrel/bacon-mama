@@ -9,20 +9,24 @@ import ButtonBase from "../../../controls/ButtonBase";
 import { createChangeEventStateSetter } from "../../../../utils";
 
 import styles from "./CreateClassModal.module.scss";
+import { APIClassList } from './../../../../models/API';
 
 interface CreateRecipeModalProps {
-    list: any[];
+    list?: any[];
     control: (state: boolean) => void;
     update: () => void;
+    info?:string;
+    course?: APIClassList | null;
 }
 
 const CreateRecipeModal: React.FC<CreateRecipeModalProps> = ({
     control,
     update,
-    list
+    list,
+    info,
+    course
 }) => {
     const [name, setName] = useState<string>("");
-    const [description, setDescription] = useState<string>("");
     const { name: userName } = useUser();
     const request = useAPI();
 
@@ -31,12 +35,27 @@ const CreateRecipeModal: React.FC<CreateRecipeModalProps> = ({
 
     const addRecipe = useCallback(async () => {
         await request(
-            "/addCourse",
+            "/addRecipeToCourse",
             {
                 method: "POST",
                 data: {
-                    professor: userName,
-                    courseName: name,
+                    username: userName,
+                    course: name,
+                }
+            }
+        );
+    }, [request, name]);
+
+    const addStudent = useCallback(async () => {
+        console.log(course);
+        
+        await request(
+            "/addStudentToCourse",
+            {
+                method: "POST",
+                data: {
+                    username: name,
+                    course,
                 }
             }
         );
@@ -44,7 +63,7 @@ const CreateRecipeModal: React.FC<CreateRecipeModalProps> = ({
 
     const onSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
-        addRecipe().then(() =>  update());
+        const throwaway = info === "recipe" ? addRecipe().then(() =>  update()) : addStudent().then(() => update());
         control(false);
     };
 
@@ -60,11 +79,12 @@ const CreateRecipeModal: React.FC<CreateRecipeModalProps> = ({
                 <div
                     className={ styles.form }
                 >
-                    <select>
-                        {list.map((item, index) => {
-                            (<option key={index} value={item}>{item}</option>)
-                        })}
-                    </select>
+                    <TextField
+                        required
+                        placeholder="Student Name"
+                        value={ name }
+                        onChange={ createChangeEventStateSetter(setName) }
+                    />
                     <div
                         className={ styles.actions }
                     >

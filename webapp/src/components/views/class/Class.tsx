@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from "react";
 
-import { APIRecipeList, APIClassList } from "../../../models/API";
+import { APIRecipeList, APIClassList, APIStudent } from "../../../models/API";
 
 import useAPI from "../../hooks/useAPI";
 import useUser from "../../hooks/useUser";
@@ -9,6 +9,9 @@ import NavBar from "../../controls/NavBar";
 import Card from "../../controls/Card";
 import ClassCard from "../../controls/ClassCard";
 import CreateClassModal from "./modals/CreateClassModal";
+import AddStudentModal from "./modals/AddStudentModal";
+
+
 
 import styles from "./Class.module.scss";
 import Responsive from "../../shared/Responsive";
@@ -21,16 +24,19 @@ const Class: React.FC = () => {
     const [createClass, setCreateClass] = useState<boolean>(false);
     const [classes, setClasses] = useState<APIClassList[] | null>(null);
     const [selectedClass, setSelectedClass] = useState<APIClassList | null>(null);
-    const [students, setStudents] = useState<string[]  | null>(null);
+    const [students, setStudents] = useState<APIStudent[] | null>(null);
+    const [addStudents, setAddStudents] = useState<boolean>(false);
+    const [addRecipes, setaddRecipes] = useState<boolean>(false);
 
     const request = useAPI();
 
 
     const getClasses = useCallback(async () => {
+
         const { data: {
             status,
             message,
-            classes: responseClasses
+            courses: responseClasses
         } } = await request<APIManyClassResponse>(
             "/getCourses",
             {
@@ -41,22 +47,23 @@ const Class: React.FC = () => {
             }
         );
 
+
         if (status === "error") {
             throw new Error(message);
         } else {
+
             return responseClasses;
         }
     }, [request, name]);
 
-    const updateClasses = async () => {
+    const update = async () => {
         try {
-            if (!classes) {
-                const responseClasses = await getClasses();
+            const responseClasses = await getClasses();
 
-                setClasses(responseClasses.sort((a, b) => {
-                    return a.id - b.id;
-                }));
-            }
+            setClasses(responseClasses.sort((a, b) => {
+                return a.id - b.id;
+            }));
+
         } catch (e) {
             // Error
         }
@@ -66,7 +73,7 @@ const Class: React.FC = () => {
     useEffect(() => {
         const updateClasses = async () => {
             try {
-                if (!recipes) {
+                if (!classes) {
                     const responseClasses = await getClasses();
 
                     setClasses(responseClasses.sort((a, b) => {
@@ -93,113 +100,136 @@ const Class: React.FC = () => {
 
         return (
             <CreateClassModal
-                control={ setCreateClass }
-                update={ updateClasses }
+                control={setCreateClass}
+                update={update}
             />
         );
     }
 
-    const toggleClass  = ()  => {
-        setCreateClass(true);
+    const addStudentToCourse = () => {
+        if (!addStudents) {
+            return;
+        }
+
+        return (
+            <AddStudentModal
+                control={setAddStudents}
+                update={update}
+                info={'student'}
+                course={selectedClass}
+            />
+        );
     }
 
-    const selectClass = (classes: APIClassList | null) => {
-        if(classes){
-            setSelectedClass(classes);
-            setStudents(classes.students);
-            setRecipes(classes.recipes);
+    const addRecipesToCourse = () => {
+        if (!addRecipes) {
+            return;
         }
-       
+
+        return (
+            <AddStudentModal
+                control={setaddRecipes}
+                update={update}
+                info={'recipe'}
+                
+            />
+        );
+    }
+
+
+    const selectClass = (i: number) => {
+        if (classes) {
+            setSelectedClass(classes[i]);
+            setStudents(classes[i].students);
+            setRecipes(classes[i].recipes);
+        }
+
     }
 
     return (
         <div>
             <NavBar
-                click={ setC }
-                userName={ name || "User" }
+                click={setC}
+                userName={name || "User"}
             />
             <Responsive>
                 <div
-                    className={ styles.title }
+                    className={styles.title}
                 >
                     Your Courses
                 </div>
                 <div
-                    className={ styles["card-container"] }
+                    className={styles["card-container"]}
                 >
-                    { classes && classes.length === 0 && (
-                        <div>
-                            No classes found!
-                        </div>
-                    ) }
-                    { classes && classes.map((each) => (
+                    {classes && classes.map((each, index) => (
                         <ClassCard
-                            key={ each.id }
-                            id={ `${each.id}` }
-                            name={ each.name }
+                            key={each.id}
+                            index={index}
+                            name={each.courseName}
                             click={selectClass}
-                            style={{backgroundColor: selectedClass ? selectedClass.name === each.name ? 'lightblue' : 'white' : 'white' }}
+                            color={selectedClass ? selectedClass.id === each.id ? 'lightblue' : 'white' : 'white'}
                         />
-                    )) }
+                    ))}
 
-                    {<ClassCard add={toggleClass}/>}
+                    {<ClassCard add={ () => setCreateClass(true)} />}
                 </div>
 
             </Responsive>
             <br />
             <Responsive>
                 <div
-                    className={ styles.title }
+                    className={styles.title}
                 >
                     Students In the Course
                 </div>
                 <div
-                    className={ styles["card-container"] }
+                    className={styles["card-container"]}
                 >
-                    { !students  && (
+                    {!students && (
                         <div>
                             No Courses Selected!
                         </div>
-                    ) }
-                    { students && students.map((each) => (
+                    )}
+                    {students && students.map((each) => (
                         <ClassCard
-                            key={ each }
-                            name={ each }
+                            key={each.userName}
+                            name={each.userName}
                         />
-                    )) }
+                    ))}
 
-                    {selectedClass && <ClassCard add={toggleClass}/>}
+                    {selectedClass && <ClassCard add={() => setAddStudents(true)} />}
                 </div>
 
             </Responsive>
             <br />
             <Responsive>
                 <div
-                    className={ styles.title }
+                    className={styles.title}
                 >
                     Recipes In the Course
                 </div>
                 <div
-                    className={ styles["card-container"] }
+                    className={styles["card-container"]}
                 >
-                    { !recipes && (
+                    {!recipes && (
                         <div>
                             No Courses Selected!
                         </div>
-                    ) }
-                    { recipes && recipes.map((each) => (
+                    )}
+                    {recipes && recipes.map((each) => (
                         <Card
-                            key={ each.id }
-                            id={ `${each.id}` }
-                            name={ each.recipeName }
-                            description={ each.description }
+                            key={each.id}
+                            id={`${each.id}`}
+                            name={each.recipeName}
+                            description={each.description}
                         />
-                    )) }
-                    {selectedClass && <ClassCard add={toggleClass}/>}
+                    ))}
+                    {selectedClass && <ClassCard add={ () => setaddRecipes(true)} />}
                 </div>
             </Responsive>
-            { addClass() }
-            
+            {addClass()}
+            {addStudentToCourse()}
+            {addRecipesToCourse()}
         </div>
     );
 };

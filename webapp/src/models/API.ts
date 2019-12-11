@@ -42,10 +42,14 @@ export interface APIRecipe {
 
 export interface APIClassList {
     id: number;
-    name: string;
-    students: string[] | null;
-    recipes: APIRecipeList[];
+    recipes: APIRecipe[];
+    courseName:string;
+    professor:string;
+    students:APIStudent[];
+}
 
+export interface APIStudent {
+    userName : string;
 }
 
 export interface APIRecipeList {
@@ -67,7 +71,7 @@ export interface APIManyRecipeResponse extends Response {
 }
 
 export interface APIManyClassResponse extends Response {
-    classes: APIClassList[];
+    courses: APIClassList[];
 }
 
 
