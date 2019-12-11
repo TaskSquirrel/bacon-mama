@@ -20,7 +20,7 @@ public class Course
   @ManyToOne
   private User professor;
 
-  @OneToMany(mappedBy = "courses")
+  @ManyToMany
   private Set<User> students;
   
   @ManyToMany
