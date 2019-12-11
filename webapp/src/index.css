@@ -6,7 +6,7 @@ html {
 
 body {
     margin: 0;
-    font-family: "Open Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto",
+    font-family: "Source Sans Pro", -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto",
         "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans",
         "Helvetica Neue", sans-serif;
     font-size: 1rem;
@@ -20,6 +20,9 @@ code {
 }
 
 :root {
+    --error: #c44f6a;
+    --success: #08ae00;
+
     --black: #000000;
     --white: #ffffff;
     --gray: #9c9c9c;

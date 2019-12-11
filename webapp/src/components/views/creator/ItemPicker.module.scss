@@ -4,6 +4,7 @@ $divider-color: rgb(116, 116, 116);
 
 .empty {
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
 
@@ -12,6 +13,12 @@ $divider-color: rgb(116, 116, 116);
 
     color: var(--gray);
     font-size: 1.5rem;
+
+    & > div:not(:last-child) {
+        display: flex;
+
+        margin-bottom: 1rem;
+    }
 }
 
 .container {

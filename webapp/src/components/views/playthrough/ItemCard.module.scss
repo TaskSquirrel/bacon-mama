@@ -1,0 +1,45 @@
+.card {
+    overflow: hidden;
+    position: relative;
+
+    color: var(--dark);
+    font-size: 1.05rem;
+
+    padding: 0.75rem;
+    border-radius: 5px;
+
+    background-color: var(--white);
+    box-shadow: 0 0 5px 0 rgba(0, 0, 0, 0.1);
+
+    &:not(:last-child) {
+        margin-bottom: 0.5rem;
+    }
+}
+
+.details {
+    z-index: 100;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: nowrap;
+}
+
+.amount {
+    font-family: "SF Mono", monaco, monospace;
+    font-size: 0.9rem;
+}
+
+.progress {
+    z-index: 10;
+
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+
+    background-color: var(--success);
+    opacity: 0.5;
+
+    transition: transform 100ms ease-in-out;
+}

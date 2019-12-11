@@ -1,0 +1,39 @@
+.done {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    font-size: 1.5rem;
+}
+
+.error {
+    color: var(--error);
+}
+
+.container {
+    position: relative;
+
+    display: flex;
+
+    height: 100vh;
+    max-height: 100vh;
+}
+
+.left {
+    flex-basis: 25%;
+    flex-shrink: 0;
+
+    color: var(--white);
+    background-color: var(--dark);
+}
+
+.right {
+    flex-grow: 1;
+}

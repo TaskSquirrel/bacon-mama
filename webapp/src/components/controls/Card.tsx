@@ -2,6 +2,8 @@ import React from "react";
 import { Link } from "react-router-dom";
 import classNames from "classnames";
 
+import Stack from "../shared/Stack";
+
 import styles from "./Card.module.scss";
 
 export interface CardProps extends React.HTMLProps<HTMLDivElement> {
@@ -17,7 +19,7 @@ const Card: React.FC<CardProps> = ({
     id
 }) => {
     return (
-        <div
+        <Stack
             className={ classNames(
                 styles.card,
                 className
@@ -41,8 +43,13 @@ const Card: React.FC<CardProps> = ({
                 >
                     Edit
                 </Link>
+                <Link
+                    to={ `/play/${id}` }
+                >
+                    Play
+                </Link>
             </div>
-        </div>
+        </Stack>
     );
 };
 
