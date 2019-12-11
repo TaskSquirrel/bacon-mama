@@ -24,24 +24,23 @@ const Register: React.FC = () => {
 
     const onRoleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setRole(event.target.value);
-    }
+    };
 
     const onPasswordChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        if(password2 !== event.target.value){
-            setError("Password Not The Same");
+        if (password2 !== event.target.value) {
+            setError("Passwords do not match!");
+        } else {
+            setError(null);
         }
-        else{
-            setError("");
-        }
+
         setPassword(event.target.value);
     };
 
     const onPasswordChange2 = (event: React.ChangeEvent<HTMLInputElement>) => {
-        if(password !== event.target.value){
-            setError("Password Not The Same");
-        }
-        else{
-            setError("");
+        if (password !== event.target.value) {
+            setError("Passwords do not match!");
+        } else {
+            setError(null);
         }
         setPassword2(event.target.value);
     };
@@ -50,7 +49,9 @@ const Register: React.FC = () => {
         // Stop page from refreshing
         event.preventDefault();
 
-        if(error) return;
+        if (error) {
+            return;
+        }
 
         const login = async () => {
             try {
@@ -93,18 +94,18 @@ const Register: React.FC = () => {
                     <img
                         src="/assets/green-check.svg"
                     />
-                    <div className={styles.message}>
+                    <div className={ styles.message }>
                         You've successfully signed-up!
                     </div>
-                    <ButtonBase>
-                        <Link
-                            to="/sign-in"
+                    <Link
+                        to="/sign-in"
+                    >
+                        <ButtonBase
+                            className={ styles.link }
                         >
-                            <div className={styles.link}>
-                                Sign In
-                            </div>
-                        </Link>
-                    </ButtonBase>
+                            Sign-in
+                        </ButtonBase>
+                    </Link>
                 </div>
             </CenteredPane>
         );
@@ -127,13 +128,6 @@ const Register: React.FC = () => {
                     />
                     <TextField
                         required
-                        type="text"
-                        placeholder="Role"
-                        value={ role }
-                        onChange={ onRoleChange }
-                    />
-                    <TextField
-                        required
                         type="password"
                         placeholder="Password"
                         value={ password }
@@ -146,7 +140,56 @@ const Register: React.FC = () => {
                         value={ password2 }
                         onChange={ onPasswordChange2 }
                     />
-                    {error}
+                    <div>
+                        <div
+                            className={ styles.question }
+                        >
+                            Are you a...
+                        </div>
+                        <div
+                            className={ styles.roles }
+                        >
+                            <div
+                                className={ styles.choice }
+                            >
+                                <input
+                                    required
+                                    type="radio"
+                                    id="role-student"
+                                    name="role"
+                                    value="student"
+                                    onChange={ () => setRole("student") }
+                                />
+                                <label
+                                    htmlFor="role-student"
+                                >
+                                    Student
+                                </label>
+                            </div>
+                            <div
+                                className={ styles.choice }
+                            >
+                                <input
+                                    required
+                                    type="radio"
+                                    id="role-chef"
+                                    name="role"
+                                    value="professor"
+                                    onChange={ () => setRole("professor") }
+                                />
+                                <label
+                                    htmlFor="role-chef"
+                                >
+                                    Professor
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    { error && (
+                        <div>
+                            { error }
+                        </div>
+                    ) }
                     <ButtonBase
                         type="submit"
                     >
@@ -158,7 +201,7 @@ const Register: React.FC = () => {
                         <Link
                             to="/sign-in"
                         >
-                            
+
                             Sign-in Instead
                         </Link>
                     </div>

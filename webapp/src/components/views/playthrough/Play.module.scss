@@ -16,17 +16,20 @@
     right: 0;
     bottom: 0;
 
+    font-size: 1.5rem;
+
+    background-color: var(--white);
+}
+
+.inner {
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
 
     width: 60%;
+    height: 100%;;
     margin: auto;
-
-    font-size: 1.5rem;
-
-    background-color: var(--white);
 }
 
 .title {

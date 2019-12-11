@@ -73,9 +73,15 @@ public class UserController implements BaseApiController {
   Map<String, Object> addUser(@RequestBody Map<String, Object> body) {
     Map<String, Object> returnMap = new HashMap<>();
 
+    String role = "student";
+    String roleFromRequest = (String) body.get("role");
+
+    if (roleFromRequest != null) {
+      role = roleFromRequest;
+    }
+
     String username = (String) body.get("username");
     String password = (String) body.get("password");
-    String role = (String) body.get("role");
 
     if (userRepository.existsByUsername(username)) {
       JsonUtils.setStatus(returnMap, JsonUtils.ERROR, "Username already taken.");

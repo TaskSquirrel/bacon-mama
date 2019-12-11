@@ -61,7 +61,13 @@ public class RecipeController implements BaseApiController {
 
     String username = (String) body.get("username");
     String recipeName = (String) body.get("recipeName");
-    String description = (String) body.get("description");
+
+    String description = "";
+    String descriptionFromRequest = (String) body.get("description");
+
+    if (descriptionFromRequest != null) {
+      description = descriptionFromRequest;
+    }
 
     // If user doesn't exist, don't allow recipe creation.
     User user = userRepository.findByUsername(username);
@@ -120,7 +126,7 @@ public class RecipeController implements BaseApiController {
       return returnMap;
     }
 
-    if(user.getRole().equals("professor")){
+    if (user.getRole() != null && user.getRole().equals("professor")){
       List<Map<String, Object>> recipes = new ArrayList<>();
       returnMap.put("recipes", recipes);
       for (Recipe recipe : user.getRecipes()) {

@@ -154,7 +154,7 @@ public class CourseController implements BaseApiController{
       returnMap.put("students", students);
       for(User user : users)
       {
-        if(user.getRole().equals("student"))
+        if(user.getRole() == null || user.getRole().equals("student"))
         {
           Map<String, Object> tmp= new HashMap<>();
           tmp.put("username", user.getUsername());

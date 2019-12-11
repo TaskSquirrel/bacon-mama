@@ -15,7 +15,7 @@ public class CoursePersistence {
   CourseRepository courseRepository;
 
   public <T> T unpackOptional(Optional<T> op) {
-    if (op.isEmpty()) {
+    if (!op.isPresent()) {
       return null;
     } else {
       return op.get();

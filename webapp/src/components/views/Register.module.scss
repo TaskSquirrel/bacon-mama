@@ -4,6 +4,24 @@
     row-gap: 1rem;
 }
 
+.question {
+}
+
+.roles {
+    display: flex;
+}
+
+.choice {
+    flex-basis: 10rem;
+
+    display: flex;
+    align-items: center;
+
+    & > input {
+        margin-right: 0.5rem;
+    }
+}
+
 .actions {
     display: flex;
     justify-content: space-between;
@@ -16,7 +34,9 @@
 }
 
 .link {
-    color: white;
+    color: var(--white);
+
+    width: 100%;
 }
 
 .message {

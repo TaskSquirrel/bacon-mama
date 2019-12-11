@@ -24,33 +24,37 @@ const Play: React.FC = () => {
             <div
                 className={ styles.guide }
             >
-                <h1
-                    className={ styles.title }
+                <div
+                    className={ styles.inner }
                 >
-                    How to complete this recipe
-                </h1>
-                <ol
-                    className={ styles.list }
-                >
-                    <li>
-                        One item is created at each step using ingredients listed to the left
-                    </li>
-                    <li>
-                        At each step, several items are presented randomly and it's your job to
-                        correctly allocate the proper amounts!
-                    </li>
-                    <li>
-                        Be careful, though. Adding more than you need or adding the wrong
-                        ingredients will leave you with error marks!
-                    </li>
-                </ol>
-                <div>
-                    <ButtonBase
-                        className={ styles.start }
-                        onClick={ nextStep }
+                    <h1
+                        className={ styles.title }
                     >
-                        Start!
-                    </ButtonBase>
+                        How to complete this recipe
+                    </h1>
+                    <ol
+                        className={ styles.list }
+                    >
+                        <li>
+                            One item is created at each step using ingredients listed to the left
+                        </li>
+                        <li>
+                            At each step, several items are presented randomly and it's your job to
+                            correctly allocate the proper amounts!
+                        </li>
+                        <li>
+                            Be careful, though. Adding more than you need or adding the wrong
+                            ingredients will leave you with error marks!
+                        </li>
+                    </ol>
+                    <div>
+                        <ButtonBase
+                            className={ styles.start }
+                            onClick={ nextStep }
+                        >
+                            Start!
+                        </ButtonBase>
+                    </div>
                 </div>
             </div>
         );
