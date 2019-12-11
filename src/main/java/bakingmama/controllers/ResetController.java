@@ -6,9 +6,14 @@ import bakingmama.util.ModelUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.imageio.ImageIO;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
+import java.awt.image.BufferedImage;
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.IOException;
 import java.util.*;
 
 @RestController
@@ -22,6 +27,8 @@ public class ResetController implements BaseApiController {
   RecipeRepository recipeRepository;
   @Autowired
   IngredientRepository ingredientRepository;
+  @Autowired
+  ImageIP imageIP;
   @Autowired
   ModelUtils mu;
 
@@ -41,6 +48,7 @@ public class ResetController implements BaseApiController {
     try {
       utx.begin();
 
+      em.createQuery("DELETE FROM Image").executeUpdate();
       em.createQuery("DELETE FROM Ingredient").executeUpdate();
       em.createQuery("DELETE FROM Step").executeUpdate();
       em.createQuery("DELETE FROM Item").executeUpdate();
@@ -51,17 +59,15 @@ public class ResetController implements BaseApiController {
 
       this.makeUser();
       this.makeRecipe();
+      JsonUtils.setStatus(returnMap, JsonUtils.SUCCESS, "Reset successful!");
     } catch (Exception e) {
       String errorMessage = e.getMessage();
       JsonUtils.setStatus(returnMap, JsonUtils.ERROR, errorMessage);
-    } finally {
-      JsonUtils.setStatus(returnMap, JsonUtils.SUCCESS, "Reset successful!");
     }
 
     return returnMap;
   }
 
-  // Makes dummy user
   void makeUser() {
     User newUser = new User();
     newUser.setUsername("test-username");
@@ -69,17 +75,17 @@ public class ResetController implements BaseApiController {
     userRepository.save(newUser);
   }
 
-  void makeRecipe() {
+  void makeRecipe() throws Exception {
     User user = userRepository.findByUsername("test-username");
 
     // Make recipe and attach it to the user:
     Recipe newRecipe = mu.addRecipe(user, "test-recipeName", "test-recipeDescription");
 
     // Add some items for test recipe:
-    Item eggs = mu.addItem("eggs", newRecipe);
-    Item flour = mu.addItem("flour", newRecipe);
-    Item dough = mu.addItem("dough", newRecipe);
-    Item bread = mu.addItem("bread", newRecipe);
+    Item eggs = mu.addItem("eggs", newRecipe, null);
+    Item flour = mu.addItem("flour", newRecipe, null);
+    Item dough = mu.addItem("dough", newRecipe, null);
+    Item bread = mu.addItem("bread", newRecipe, null);
 
     Ingredient doughIng = mu.addIngredient(dough, null, 10d, "ounces");
     Ingredient breadIng = mu.addIngredient(bread, null, 100d, "pieces");
@@ -97,5 +103,32 @@ public class ResetController implements BaseApiController {
     mu.addIngredient(eggs, newStep1, 3d, "");
     mu.addIngredient(flour, newStep1, 500d, "grams");
     mu.addIngredient(dough, newStep2, 10d, "ounces");
+
+    // Add images to the recipe
+    try {
+      ClassLoader cl = ResetController.class.getClassLoader();
+
+      BufferedImage img;
+      File file;
+
+      file = new File(cl.getResource("static/images/eggs.jpg").getFile());
+      img = ImageIO.read(file);
+      imageIP.addImage(img, eggs);
+
+      file = new File(cl.getResource("static/images/flour.png").getFile());
+      img = ImageIO.read(file);
+      imageIP.addImage(img, flour);
+
+      file = new File(cl.getResource("static/images/dough.jpg").getFile());
+      img = ImageIO.read(file);
+      imageIP.addImage(img, dough);
+
+      file = new File(cl.getResource("static/images/bread.jpg").getFile());
+      img = ImageIO.read(file);
+      imageIP.addImage(img, bread);
+
+    } catch (Exception e) {
+      throw new Exception("Reset is messed up! Message: " + e.getMessage());
+    }
   }
 }

@@ -1,7 +1,6 @@
 package bakingmama.util;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class JsonUtils {
@@ -18,6 +17,12 @@ public class JsonUtils {
   public static void setStatus(Map<String, Object> json, String status, String message) {
     json.put(STATUS, status);
     json.put(MESSAGE, message);
+  }
+
+  public static Map<String, Object> returnSuccess() {
+    Map<String, Object> map = new HashMap<>();
+    map.put(STATUS, SUCCESS);
+    return map;
   }
 
   public static Map<String, Object> returnError(String message) {

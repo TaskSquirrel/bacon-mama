@@ -66,10 +66,11 @@ public class ModelUtils {
     return true;
   }
 
-  public Item addItem(String itemName, Recipe recipe) {
+  public Item addItem(String itemName, Recipe recipe, Image image) {
     Item item = new Item();
     item.setItemName(itemName);
     item.setRecipe(recipe);
+    item.setImage(image);
     itemRepository.save(item);
     return item;
   }

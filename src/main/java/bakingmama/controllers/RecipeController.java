@@ -31,16 +31,8 @@ public class RecipeController implements BaseApiController {
   EntityManager em;
   @Autowired
   AutowireCapableBeanFactory beanFactory;
-
-
-  Recipe unpackOptional(Long id) {
-    Optional<Recipe> optional = recipeRepository.findById(id);
-    if (!optional.isPresent()) {
-      return null;
-    } else {
-      return optional.get();
-    }
-  }
+  @Autowired
+  ImageRepository imageRepository;
 
   private Map<String, Object> recipeSuccess(RecipeJson rj) {
     Map<String, Object> map = new HashMap<>();
@@ -196,10 +188,12 @@ public class RecipeController implements BaseApiController {
       // Grab Recipe ID
       Recipe recipe = rp.findRecipe(JsonUtils.castMap(body.get("recipe")));
       // Grab Item Stuff
-      Map<String, Object> stepMap = JsonUtils.castMap(body.get("item"));
-      String itemName = (String) stepMap.get("name");
+      Map<String, Object> itemMap = JsonUtils.castMap(body.get("item"));
+      String itemName = (String) itemMap.get("name");
+      Long imageID = JsonUtils.parseId(itemMap.get("image"));
+      Image image = imageRepository.getOne(imageID);
 
-      Item newItem = mu.addItem(itemName, recipe);
+      Item newItem = mu.addItem(itemName, recipe, image);
     } catch (Exception e) {
       return JsonUtils.returnError(e.getMessage());
     }

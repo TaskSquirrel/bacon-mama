@@ -21,8 +21,11 @@ public class Item {
   private String itemName;
   private String description;
 
-  // Image related stuff (future support)
+  // Deprecated -- not using AWS
   private String imageUrl;
+
+  @OneToOne()
+  private Image image;
 
   @ManyToOne()
   private Recipe recipe;
@@ -31,6 +34,9 @@ public class Item {
     Map<String, Object> map = new HashMap<>();
     map.put("id", id);
     map.put("itemName", itemName);
+
+    if (image != null) { map.put("image", image.getId()); }
+
     return map;
   }
 }
