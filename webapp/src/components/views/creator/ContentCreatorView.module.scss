@@ -26,6 +26,7 @@
 
 .left {
     flex-basis: 25%;
+    flex-shrink: 0;
 
     overflow-y: scroll;
 

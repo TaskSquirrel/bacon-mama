@@ -21,6 +21,7 @@ code {
 
 :root {
     --error: #c44f6a;
+    --success: #08ae00;
 
     --black: #000000;
     --white: #ffffff;

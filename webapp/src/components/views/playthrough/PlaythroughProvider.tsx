@@ -18,6 +18,7 @@ export interface PlaythroughContextShape {
     currentStep: Step | null;
     selected: Item | null;
     itemState: ItemState[];
+    isLastStep: boolean;
     errorMarks: number;
     stepDone: boolean;
     select: (id: string | null) => void;
@@ -32,6 +33,7 @@ export const PlaythroughContextDefaultShape: PlaythroughContextShape = {
     stepDone: false,
     selected: null,
     itemState: [],
+    isLastStep: false,
     errorMarks: 0,
     select: noop,
     replace: noop,
@@ -56,6 +58,9 @@ const PlaythroughProvider: React.FC = ({ children }) => {
     const { setStatus } = useLoadingIndicator();
     const request = useAPI();
 
+    const isLastStep = recipe && currentStep
+        ? currentStep.sequence === recipe.steps.length - 1
+        : false;
     const selected = recipe
         ? recipe.items.find(({ id }) => selectedItem === id) || null
         : null;
@@ -244,6 +249,7 @@ const PlaythroughProvider: React.FC = ({ children }) => {
         currentStep,
         stepDone,
         itemState,
+        isLastStep,
         errorMarks,
         nextStep,
         replace: replaceItemState,

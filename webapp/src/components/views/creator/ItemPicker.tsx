@@ -132,7 +132,25 @@ const ItemPicker: React.FC = () => {
             <div
                 className={ styles.empty }
             >
-                Choose a step on the left to edit!
+                <div>
+                    Choose a step on the left to edit!
+                </div>
+                <div>
+                    <i
+                        className="fas fa-plus"
+                    />
+                    <span>
+                        Add an item
+                    </span>
+                </div>
+                <div>
+                    <i
+                        className="fas fa-play"
+                    />
+                    <span>
+                        Play through recipe
+                    </span>
+                </div>
             </div>
         );
     }

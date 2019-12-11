@@ -1,8 +1,6 @@
 .card {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-wrap: nowrap;
+    overflow: hidden;
+    position: relative;
 
     color: var(--dark);
     font-size: 1.05rem;
@@ -18,7 +16,30 @@
     }
 }
 
+.details {
+    z-index: 100;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: nowrap;
+}
+
 .amount {
     font-family: "SF Mono", monaco, monospace;
     font-size: 0.9rem;
+}
+
+.progress {
+    z-index: 10;
+
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+
+    background-color: var(--success);
+    opacity: 0.5;
+
+    transition: transform 100ms ease-in-out;
 }

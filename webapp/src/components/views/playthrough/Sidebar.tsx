@@ -22,6 +22,37 @@ const Sidebar: React.FC = () => {
         styles.empty
     );
 
+    const renderStepInfo = () => {
+        if (!currentStep) {
+            return null;
+        }
+
+        const {
+            name: stepName,
+            description: stepDescription,
+            sequence,
+        } = currentStep;
+
+        const resolvedStepName = stepName || "Untitled";
+
+        return (
+            <div
+                className={ styles.step }
+            >
+                <h2>
+                    { `Step ${sequence + 1}: ${resolvedStepName}` }
+                </h2>
+                { stepDescription && (
+                    <div
+                        className={ styles.details }
+                    >
+                        { stepDescription }
+                    </div>
+                ) }
+            </div>
+        );
+    };
+
     const renderAddedItems = () => {
         if (!recipe) {
             return null;
@@ -133,6 +164,7 @@ const Sidebar: React.FC = () => {
                                 <ItemCard
                                     title={ result.item.name }
                                     amount={ `${result.amount} ${result.unit}` }
+                                    progress={ 0.5 }
                                 />
                             )
                             : (
@@ -172,6 +204,7 @@ const Sidebar: React.FC = () => {
                     { description }
                 </div>
             </div>
+            { renderStepInfo() }
             { renderContent() }
         </div>
     );
