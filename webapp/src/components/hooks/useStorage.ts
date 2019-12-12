@@ -66,7 +66,7 @@ const useStorage = <P>(key: string, initialValue?: P) => {
         } else {
             removeItem(key);
         }
-    }, [storageItem]);
+    }, [storageItem, removeItem, setItem, ready, key, value]);
 
     return {
         ready: storageItem.ready,

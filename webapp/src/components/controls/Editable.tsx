@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useCallback } from "react";
 import classNames from "classnames";
 
 import styles from "./Editable.module.scss";
@@ -22,10 +22,13 @@ const Editable: React.FC<EditableProps> = ({
         setActive(true);
     };
 
-    const onTextBlur = () => {
-        setActive(false);
-        setInput(text);
-    };
+    const onTextBlur = useCallback(
+        () => {
+            setActive(false);
+            setInput(text);
+        },
+        [text]
+    );
 
     const onInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setInput(event.target.value);
@@ -86,7 +89,7 @@ const Editable: React.FC<EditableProps> = ({
         document.addEventListener("keydown", onEnter);
 
         return () => document.removeEventListener("keydown", onEnter);
-    }, [active, input]);
+    }, [active, input, onEnterPress, onTextBlur]);
 
     useEffect(() => {
         setInput(text);

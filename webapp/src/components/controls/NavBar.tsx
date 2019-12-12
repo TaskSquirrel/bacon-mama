@@ -11,7 +11,7 @@ import styles from "./NavBar.module.scss";
 export interface NavBarProps extends React.HTMLProps<HTMLDivElement> {
     className?: string;
     userName?: string;
-    click: () => void;
+    click?: () => void;
 }
 
 const NavBar: React.FC<NavBarProps> = ({

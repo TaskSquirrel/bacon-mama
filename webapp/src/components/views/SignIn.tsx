@@ -53,6 +53,7 @@ const SignIn: React.FC = () => {
                     className={ styles.logo }
                 >
                     <img
+                        alt="Baking Mama"
                         src="/assets/mama.png"
                     />
                 </div>

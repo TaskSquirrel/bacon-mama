@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { useParams, useRouteMatch } from "react-router";
 import { AxiosRequestConfig } from "axios";
 
@@ -97,7 +97,7 @@ const ContentCreatorProvider: React.FC = ({ children }) => {
         };
     };
 
-    const doRequest = async (
+    const doRequest = useCallback(async (
         endpoint: string,
         payload: AxiosRequestConfig
     ) => {
@@ -127,7 +127,7 @@ const ContentCreatorProvider: React.FC = ({ children }) => {
         } finally {
             setStatus(false);
         }
-    };
+    }, [request, setStatus]);
 
     const addItem = (
         name: string,
@@ -236,22 +236,6 @@ const ContentCreatorProvider: React.FC = ({ children }) => {
         );
     };
 
-    const updateRecipe = async () => {
-        try {
-            await doRequest(
-                "/getRecipe",
-                {
-                    method: "POST",
-                    data: {
-                        id: recipeID
-                    }
-                }
-            );
-        } catch (e) {
-            setError(true);
-        }
-    };
-
     const renderPlayModal = () => {
         if (!recipe || !playModal) {
             return null;
@@ -312,9 +296,25 @@ const ContentCreatorProvider: React.FC = ({ children }) => {
         // On mount fetch recipe
 
         if (!recipe && !error) {
+            const updateRecipe = async () => {
+                try {
+                    await doRequest(
+                        "/getRecipe",
+                        {
+                            method: "POST",
+                            data: {
+                                id: recipeID
+                            }
+                        }
+                    );
+                } catch (e) {
+                    setError(true);
+                }
+            };
+
             updateRecipe();
         }
-    }, [error, recipe, updateRecipe]);
+    }, [doRequest, error, recipe, recipeID]);
 
     const value: ContentCreatorContextShape = recipe
         ? {

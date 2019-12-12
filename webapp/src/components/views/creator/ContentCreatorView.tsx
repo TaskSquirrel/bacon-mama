@@ -14,9 +14,6 @@ const CreateRecipe: React.FC = () => {
     const {
         error,
         available,
-        actions: {
-            setAddItemModal
-        }
     } = useContext(ContentCreatorContext);
 
     if (!available && !error) {

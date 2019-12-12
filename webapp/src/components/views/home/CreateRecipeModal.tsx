@@ -26,7 +26,6 @@ const CreateRecipeModal: React.FC<CreateRecipeModalProps> = ({
 
     const createControlSetter = (state: boolean) => () => control(state);
 
-
     const addRecipe = useCallback(async () => {
         await request(
             "/addRecipe",
@@ -39,7 +38,7 @@ const CreateRecipeModal: React.FC<CreateRecipeModalProps> = ({
                 }
             }
         );
-    }, [request, name]);
+    }, [request, name, userName, description]);
 
     const onSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();

@@ -16,7 +16,6 @@ const Dashboard: React.FC = () => {
     const { name } = useUser();
     const [recipes, setRecipes] = useState<APIRecipeList[] | null>(null);
     const [create, setCreate] = useState<boolean>(false);
-    const [add, setAdd] = useState<boolean>(true);
 
     const request = useAPI();
 
@@ -84,9 +83,7 @@ const Dashboard: React.FC = () => {
         );
     };
 
-    const setC = useCallback(() => {
-        setCreate(true);
-    }, [create]);
+    const setC = () => setCreate(true);
 
     return (
         <div>

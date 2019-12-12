@@ -1,5 +1,5 @@
 import React, { useContext } from "react";
-import { useParams, Link, useHistory } from "react-router-dom";
+import { useParams, useHistory } from "react-router-dom";
 import classNames from "classnames";
 
 import { Step } from "../../../models/recipe";

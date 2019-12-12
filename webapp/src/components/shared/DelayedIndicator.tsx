@@ -71,6 +71,8 @@ const DelayedIndicator: React.FC<DelayedIndicatorProps> = ({
         timer = window.setTimeout(() => {
             setStatus(IndicatorState.SECOND);
         }, delay);
+
+        return () => window.clearTimeout(timer);
     }, [secondDelay, status]);
 
     if (status === IndicatorState.START) {

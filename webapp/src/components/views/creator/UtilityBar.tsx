@@ -1,5 +1,4 @@
 import React, { useContext } from "react";
-import { useHistory } from "react-router-dom";
 
 import { ContentCreatorContext } from "./ContentCreatorProvider";
 import Stack from "../../shared/Stack";
