@@ -26,6 +26,8 @@ public class ResetController implements BaseApiController {
   @Autowired
   RecipeRepository recipeRepository;
   @Autowired
+  CourseRepository courseRepository;
+  @Autowired
   IngredientRepository ingredientRepository;
   @Autowired
   ImageIP imageIP;
@@ -58,26 +60,52 @@ public class ResetController implements BaseApiController {
 
       utx.commit();
 
-      this.makeUser();
-      this.makeRecipe();
+      User prof = this.makeProf();
+      User stud = this.makeStudent();
+      Recipe rec = this.makeRecipe();
+
+      Course c = mu.addCourse(prof, "test-course");
+      c.setStudents(new HashSet<>());
+      c.setRecipes(new HashSet<>());
+      courseRepository.save(c);
+      mu.addStudentToCourse(c, stud);
+      mu.addRecipeToCourse(c, rec);
+
       JsonUtils.setStatus(returnMap, JsonUtils.SUCCESS, "Reset successful!");
     } catch (Exception e) {
       String errorMessage = e.getMessage();
+      StackTraceElement[] stes = e.getStackTrace();
+      System.out.println("Stack Trace:");
+      for (StackTraceElement ste : stes) {
+        System.out.println(ste);
+      }
       JsonUtils.setStatus(returnMap, JsonUtils.ERROR, errorMessage);
     }
 
     return returnMap;
   }
 
-  void makeUser() {
+  User makeProf() {
     User newUser = new User();
     newUser.setUsername("test-username");
     newUser.setPassword("test-password");
     newUser.setRole("professor");
+    newUser.setCourses(new HashSet<>());
     userRepository.save(newUser);
+    return newUser;
   }
 
-  void makeRecipe() throws Exception {
+  User makeStudent() {
+    User newUser = new User();
+    newUser.setUsername("test-student");
+    newUser.setPassword("test-student-pass");
+    newUser.setRole("student");
+    newUser.setCourses(new HashSet<>());
+    userRepository.save(newUser);
+    return newUser;
+  }
+
+  Recipe makeRecipe() throws Exception {
     User user = userRepository.findByUsername("test-username");
 
     // Make recipe and attach it to the user:
@@ -132,5 +160,7 @@ public class ResetController implements BaseApiController {
     } catch (Exception e) {
       throw new Exception("Reset is messed up! Message: " + e.getMessage());
     }
+
+    return newRecipe;
   }
 }

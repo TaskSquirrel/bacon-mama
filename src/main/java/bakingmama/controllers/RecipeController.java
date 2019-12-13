@@ -260,4 +260,10 @@ public class RecipeController implements BaseApiController {
     }
     return this.recipeSuccess(json);
   }
+
+  @CrossOrigin
+  @PostMapping(path = "/completeRecipe", consumes = "application/json", produces = "application/json")
+  Map<String, Object> completeRecipe(@RequestBody Map<String, Object> json) {
+
+  }
 }
