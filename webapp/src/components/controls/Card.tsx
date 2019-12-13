@@ -5,6 +5,7 @@ import classNames from "classnames";
 import Stack from "../shared/Stack";
 
 import styles from "./Card.module.scss";
+import ButtonBase from "./ButtonBase";
 
 export interface CardProps extends React.HTMLProps<HTMLDivElement> {
     name: string;
@@ -41,12 +42,28 @@ const Card: React.FC<CardProps> = ({
                 <Link
                     to={ `/edit/${id}` }
                 >
-                    Edit
+                    <ButtonBase
+                        inverted
+                        clear
+                        className={ styles.pen }
+                    >
+                        <i
+                            className="fas fa-pen"
+                        />
+                    </ButtonBase>
                 </Link>
                 <Link
                     to={ `/play/${id}` }
                 >
-                    Play
+                    <ButtonBase
+                        inverted
+                        clear
+                        className={ styles.play }
+                    >
+                        <i
+                            className="fas fa-play"
+                        />
+                    </ButtonBase>
                 </Link>
             </div>
         </Stack>

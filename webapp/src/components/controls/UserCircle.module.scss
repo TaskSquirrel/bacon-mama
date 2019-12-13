@@ -4,7 +4,7 @@
     justify-content: center;
     align-items: center;
 
-    background-color: gray;
+    background-color: rgb(200, 200, 200);
     border-radius: 50%;
     padding: 1rem;
 
@@ -17,6 +17,10 @@
 
     color: var(--white);
     font: inherit;
+
+    transform: scale(1.2);
+
+    box-shadow: 0 0.5rem 10px 0 rgba(0, 0, 0, 0.1);
 }
 
 .circle:hover {
