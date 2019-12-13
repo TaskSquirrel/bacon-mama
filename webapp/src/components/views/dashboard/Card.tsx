@@ -2,10 +2,10 @@ import React from "react";
 import { Link } from "react-router-dom";
 import classNames from "classnames";
 
-import Stack from "../shared/Stack";
+import Stack from "../../shared/Stack";
 
 import styles from "./Card.module.scss";
-import ButtonBase from "./ButtonBase";
+import ButtonBase from "../../controls/ButtonBase";
 
 export interface CardProps extends React.HTMLProps<HTMLDivElement> {
     name: string;

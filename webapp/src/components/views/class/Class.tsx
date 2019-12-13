@@ -10,7 +10,7 @@ import {
 
 import Responsive from "../../shared/Responsive";
 import NavBar from "../../controls/NavBar";
-import Card from "../../controls/Card";
+import Card from "../dashboard/Card";
 import ClassCard from "../../controls/ClassCard";
 import CreateClassModal from "./modals/CreateClassModal";
 import AddStudentModal from "./modals/AddStudentModal";

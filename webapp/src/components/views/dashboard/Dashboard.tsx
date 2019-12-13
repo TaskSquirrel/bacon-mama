@@ -1,16 +1,16 @@
 import React, { useState, useEffect, useCallback } from "react";
 
-import { APIManyRecipeResponse, APIRecipeList } from "./../../models/API";
+import { APIManyRecipeResponse, APIRecipeList } from "../../../models/API";
 
-import useAPI from "../hooks/useAPI";
-import useUser from "../hooks/useUser";
+import useAPI from "../../hooks/useAPI";
+import useUser from "../../hooks/useUser";
 
-import NavBar from "../controls/NavBar";
-import Card from "../controls/Card";
-import CreateRecipeModal from "./home/CreateRecipeModal";
+import Responsive from "../../shared/Responsive";
+import NavBar from "../../controls/NavBar";
+import Card from "./Card";
+import CreateRecipeModal from "../home/CreateRecipeModal";
 
 import styles from "./Dashboard.module.scss";
-import Responsive from "../shared/Responsive";
 
 const Dashboard: React.FC = () => {
     const { name } = useUser();

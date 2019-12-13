@@ -4,12 +4,12 @@ import requireSignedIn from "../shared/requireSignedIn";
 import Root from "../views/Root";
 import SignIn from "../views/SignIn";
 import SignOut from "../views/SignOut";
-import Dashboard from "./../views/Dashboard";
+import Dashboard from "./../views/dashboard/Dashboard";
 import ContentCreator from "../views/creator/ContentCreator";
 import Register from "../views/Register";
 import ItemsViewer from "../views/creator/ItemsViewer";
 import Playthrough from "../views/playthrough/Playthrough";
-import Class from './../views/class/Class';
+import Class from "./../views/class/Class";
 
 const routes: Route[] = [
     {
