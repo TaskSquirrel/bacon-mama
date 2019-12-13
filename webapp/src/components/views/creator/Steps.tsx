@@ -1,11 +1,17 @@
-import React, { useContext, useEffect } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import { useHistory, useParams } from "react-router-dom";
 import classNames from "classnames";
 
 import { ContentCreatorContext } from "./ContentCreatorProvider";
+import IconButton from "../../controls/IconButton";
+import ConfirmationModal from "./modals/ConfirmationModal";
 
 import styles from "./Steps.module.scss";
-import IconButton from "../../controls/IconButton";
+
+interface DeleteStepPromptState {
+    show: boolean;
+    step: string | null;
+}
 
 const Steps: React.FC = () => {
     const {
@@ -20,6 +26,9 @@ const Steps: React.FC = () => {
     } = useContext(ContentCreatorContext);
     const { push } = useHistory();
     const { sequence: sequenceParam } = useParams();
+    const [showDeletePrompt, setShowDeletePrompt] = useState<
+        DeleteStepPromptState
+    >({ show: false, step: null });
 
     const openEditStepModal = () => setEditStepModal(true);
 
@@ -33,8 +42,35 @@ const Steps: React.FC = () => {
         });
     };
 
-    const createDeleteStep = (id: string) => () => {
-        deleteStep(id);
+    const createDeleteStep = (id: string | null) => (action: boolean) => {
+        if (!id) {
+            return;
+        }
+
+        if (action) {
+            deleteStep(id);
+        }
+
+        setShowDeletePrompt({ show: false, step: null });
+    };
+
+    const createDeleteStepPromptStateChange = (
+        state: boolean, id: string
+    ) => () => {
+        setShowDeletePrompt({ show: state, step: id });
+    };
+
+    const renderDeleteStepConfirmation = () => {
+        return (
+            <ConfirmationModal
+                show={ showDeletePrompt.show }
+                title="Delete step?"
+                prompt="Are you sure you want to delete this step?"
+                cancelText="No"
+                actionText="Yes"
+                onAction={ createDeleteStep(showDeletePrompt.step) }
+            />
+        );
     };
 
     const renderAddStepAction = () => {
@@ -81,7 +117,9 @@ const Steps: React.FC = () => {
                 </IconButton>
                 <IconButton
                     className={ styles.delete }
-                    onClick={ createDeleteStep(stepID) }
+                    onClick={ createDeleteStepPromptStateChange(
+                        true, stepID
+                    ) }
                 >
                     <i
                         className="fas fa-times"
@@ -215,6 +253,7 @@ const Steps: React.FC = () => {
                 </h1>
             </div>
             { renderStepsContainer() }
+            { renderDeleteStepConfirmation() }
         </div>
     );
 };

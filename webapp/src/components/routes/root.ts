@@ -7,7 +7,6 @@ import SignOut from "../views/SignOut";
 import Dashboard from "./../views/dashboard/Dashboard";
 import ContentCreator from "../views/creator/ContentCreator";
 import Register from "../views/Register";
-import ItemsViewer from "../views/creator/ItemsViewer";
 import Playthrough from "../views/playthrough/Playthrough";
 import Class from "./../views/class/Class";
 
@@ -41,11 +40,6 @@ const routes: Route[] = [
         to: "/edit/:id/:sequence",
         exact: false,
         component: requireSignedIn()(ContentCreator)
-    },
-    {
-        to: "/items/:id/:sequence",
-        exact: true,
-        component: ItemsViewer
     },
     {
         to: "/dashboard",
