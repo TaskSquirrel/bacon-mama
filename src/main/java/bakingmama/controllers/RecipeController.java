@@ -33,6 +33,8 @@ public class RecipeController implements BaseApiController {
   AutowireCapableBeanFactory beanFactory;
   @Autowired
   ImageRepository imageRepository;
+  @Autowired
+  HistoryRepository historyRepository;
 
   private Map<String, Object> recipeSuccess(RecipeJson rj) {
     Map<String, Object> map = new HashMap<>();
@@ -264,6 +266,18 @@ public class RecipeController implements BaseApiController {
   @CrossOrigin
   @PostMapping(path = "/completeRecipe", consumes = "application/json", produces = "application/json")
   Map<String, Object> completeRecipe(@RequestBody Map<String, Object> json) {
+    try {
+      Long studentId = JsonUtils.parseId(json.get("studentId"));
+      Long courseId = JsonUtils.parseId(json.get("courseId"));
 
+      History h = new History();
+      h.setCourseId(courseId);
+      h.setStudentId(studentId);
+      h.setStatus("complete");
+      historyRepository.save(h);
+    } catch (Exception e) {
+      return JsonUtils.returnError(e.getMessage());
+    }
+    return JsonUtils.returnSuccess();
   }
 }
