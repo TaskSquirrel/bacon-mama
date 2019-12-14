@@ -236,7 +236,7 @@ public class RecipeController implements BaseApiController {
         image = null;
       }
 
-      Item newItem = mu.addItem(itemName, recipe, image);
+      Item newItem = mu.addItem(itemName, image);
     } catch (Exception e) {
       return JsonUtils.returnError(e.getMessage());
     }

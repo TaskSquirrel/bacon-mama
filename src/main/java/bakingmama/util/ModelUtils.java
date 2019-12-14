@@ -46,7 +46,6 @@ public class ModelUtils {
   public boolean deleteRecipe(Recipe recipe)
   {
     Set<Step> steps = recipe.getSteps();
-    Set<Item> items = recipe.getItems();
     for(Step step : steps)
     {
       Set<Ingredient> ingredients= step.getIngredients();
@@ -60,18 +59,13 @@ public class ModelUtils {
         ingredientRepository.delete(ingredient);
       }
     }
-    for(Item item : items)
-    {
-      itemRepository.delete(item);
-    }
     recipeRepository.delete(recipe);
     return true;
   }
 
-  public Item addItem(String itemName, Recipe recipe, Image image) {
+  public Item addItem(String itemName, Image image) {
     Item item = new Item();
     item.setItemName(itemName);
-    item.setRecipe(recipe);
     item.setImage(image);
     itemRepository.save(item);
     return item;

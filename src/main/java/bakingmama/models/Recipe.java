@@ -23,9 +23,6 @@ public class Recipe {
   @OneToMany(mappedBy = "recipe")
   private Set<Step> steps;
 
-  @OneToMany(mappedBy = "recipe")
-  private Set<Item> items;
-
   @ManyToMany
   private Set<Course> courses;
 
@@ -55,11 +52,11 @@ public class Recipe {
       stepsList.add(step.toMap());
     }
 
-    List<Map<String, Object>> itemsList = new ArrayList<>();
-    map.put("items", itemsList);
-    for (Item item : items) {
-      itemsList.add(item.toMap());
-    }
+//    List<Map<String, Object>> itemsList = new ArrayList<>();
+//    map.put("items", itemsList);
+//    for (Item item : items) {
+//      itemsList.add(item.toMap());
+//    }
     return map;
   }
 }

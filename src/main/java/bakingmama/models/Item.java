@@ -18,17 +18,14 @@ public class Item {
   @GeneratedValue(strategy = GenerationType.AUTO)
   private Long id;
 
+  @OneToOne()
+  private Image creator;
+
   private String itemName;
   private String description;
 
-  // Deprecated -- not using AWS
-  private String imageUrl;
-
   @OneToOne()
   private Image image;
-
-  @ManyToOne()
-  private Recipe recipe;
 
   public Map<String, Object> toMap() {
     Map<String, Object> map = new HashMap<>();
