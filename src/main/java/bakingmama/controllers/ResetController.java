@@ -141,23 +141,29 @@ public class ResetController implements BaseApiController {
       BufferedImage img;
       File file;
 
-      file = new File(cl.getResource("src/main/resources/static/images/eggs.jpg").getFile());
+      String addon = "src/main/resources/";
+      file = new File(cl.getResource("static/images/eggs.jpg").getFile());
       img = ImageIO.read(file);
       imageIP.addImage(img, eggs);
 
-      file = new File(cl.getResource("src/main/resources/static/images/flour.png").getFile());
+      file = new File(cl.getResource("static/images/flour.png").getFile());
       img = ImageIO.read(file);
       imageIP.addImage(img, flour);
 
-      file = new File(cl.getResource("src/main/resources/static/images/dough.jpg").getFile());
+      file = new File(cl.getResource("static/images/dough.jpg").getFile());
       img = ImageIO.read(file);
       imageIP.addImage(img, dough);
 
-      file = new File(cl.getResource("src/main/resources/static/images/bread.jpg").getFile());
+      file = new File(cl.getResource("static/images/bread.jpg").getFile());
       img = ImageIO.read(file);
       imageIP.addImage(img, bread);
 
     } catch (Exception e) {
+      StackTraceElement[] stes = e.getStackTrace();
+      System.out.println("Stack Trace (makeRecipe):");
+      for (StackTraceElement ste : stes) {
+        System.out.println(ste);
+      }
       throw new Exception("Reset is messed up! Message: " + e.getMessage());
     }
 

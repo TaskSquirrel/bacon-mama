@@ -11,8 +11,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.sql.rowset.serial.SerialBlob;
 import java.sql.Blob;
 import java.sql.SQLException;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 @RestController
 public class ItemController implements BaseApiController {
@@ -22,6 +21,8 @@ public class ItemController implements BaseApiController {
   ImageRepository imageRepository;
   @Autowired
   ItemRepository itemRepository;
+  @Autowired
+  UserRepository userRepository;
 
   @CrossOrigin
   @PostMapping(path = "/images/add", consumes = "multipart/form-data", produces = "application/json")
@@ -83,6 +84,33 @@ public class ItemController implements BaseApiController {
       itemRepository.save(item);
 
       return JsonUtils.returnSuccess();
+    } catch (Exception e) {
+      return JsonUtils.returnError(e.getMessage());
+    }
+  }
+
+  @CrossOrigin
+  @PostMapping(path = "/getItems", consumes = "application/json", produces = "application/json")
+  Map<String, Object> getItems(@RequestBody Map<String, Object> body) {
+    try {
+      List<Item> items;
+      if (body.containsKey("userId")) {
+        User creator = userRepository.getOne(JsonUtils.parseId(body.get("userId")));
+        items = itemRepository.findByCreator(creator);
+      } else {
+        // no user id
+        String term = (String) body.get("term");
+        items = itemRepository.findByItemNameContaining(term);
+      }
+
+      Map<String, Object> map = new HashMap<>();
+      List<Map<String, Object>> itemsList = new ArrayList<>();
+      map.put("items", itemsList);
+      for (Item item : items) {
+        itemsList.add(item.toMap());
+      }
+      JsonUtils.setStatus(map, JsonUtils.SUCCESS);
+      return map;
     } catch (Exception e) {
       return JsonUtils.returnError(e.getMessage());
     }
