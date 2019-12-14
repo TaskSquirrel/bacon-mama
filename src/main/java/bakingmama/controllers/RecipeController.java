@@ -140,11 +140,19 @@ public class RecipeController implements BaseApiController {
       List<Map<String, Object>> recipes = new ArrayList<>();
       returnMap.put("recipes", recipes);
       Set<Course> courses = user.getCourses();
+      List<History> userHistory = historyRepository.findByStudentId(user.getId());
       for(Course course : courses)
       {
         Set<Recipe> recipeInCourse = course.getRecipes();
         for(Recipe recipe : recipeInCourse)
         {
+          for(History history : userHistory)
+          {
+            if(history.getRecipeId() == recipe.getId())
+            {
+
+            }
+          }
           recipes.add(recipe.toMapOverview());
         }
       }
@@ -268,10 +276,10 @@ public class RecipeController implements BaseApiController {
   Map<String, Object> completeRecipe(@RequestBody Map<String, Object> json) {
     try {
       Long studentId = JsonUtils.parseId(json.get("studentId"));
-      Long courseId = JsonUtils.parseId(json.get("courseId"));
+      Long recipeId = JsonUtils.parseId(json.get("recipeId"));
 
       History h = new History();
-      h.setCourseId(courseId);
+      h.setRecipeId(recipeId);
       h.setStudentId(studentId);
       h.setStatus("complete");
       historyRepository.save(h);
