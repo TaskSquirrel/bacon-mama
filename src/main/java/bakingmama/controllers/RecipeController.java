@@ -151,13 +151,13 @@ public class RecipeController implements BaseApiController {
           {
             if(history.getRecipeId().equals(recipe.getId()))
             {
-              recipes.add(recipe.toMapOverview("complete"));
+              recipes.add(recipe.toMapOverview(true));
               inHistory = true;
               break;
             }
           }
           if(!inHistory){
-            recipes.add(recipe.toMapOverview("incomplete"));
+            recipes.add(recipe.toMapOverview(false));
           }
         }
       }

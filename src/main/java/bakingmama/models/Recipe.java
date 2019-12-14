@@ -37,7 +37,7 @@ public class Recipe {
     return map;
   }
 
-  public Map<String, Object> toMapOverview(String status) {
+  public Map<String, Object> toMapOverview(boolean status) {
     Map<String, Object> map = new HashMap<>();
     map.put("id", id);
     map.put("recipeName", recipeName);
