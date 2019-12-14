@@ -9,6 +9,7 @@ import AuraButton from "../../controls/AuraButton";
 import ItemCard from "./items/ItemCard";
 
 import styles from "./ItemPicker.module.scss";
+import useUser from "../../hooks/useUser";
 
 const ItemPicker: React.FC = () => {
     const {
@@ -23,8 +24,12 @@ const ItemPicker: React.FC = () => {
     } = useContext(ContentCreatorContext);
     const { push } = useHistory();
     const { sequence } = useParams();
+    const { role } = useUser();
 
-    const openEditStepModal = () => setEditStepModal(true);
+    const openEditStepModal = () => {
+        if(role === "student") return;
+        setEditStepModal(true);
+    };
 
     const openDependencyPicker = () => {
         push(`/edit/${recipeID}/${sequence}/deps`);
@@ -76,21 +81,22 @@ const ItemPicker: React.FC = () => {
             return (
                 <ItemCard
                     showButton
-                    key={ `${id}-${index}` }
-                    name={ name }
-                    quantity={ {
+                    key={`${id}-${index}`}
+                    name={name}
+                    quantity={{
                         amount, unit
-                    } }
-                    onCloseClick={ createOnItemCloseClick(
+                    }}
+                    onCloseClick={createOnItemCloseClick(
                         "dependency",
                         dependencyID
-                    ) }
+                    )}
                 />
             );
         });
     };
 
     const renderResult = (currentStep: Step) => {
+        if (role === "student") return;
         const { result } = currentStep;
 
         if (!result) {
@@ -98,8 +104,8 @@ const ItemPicker: React.FC = () => {
                 <AuraButton
                     shadow
                     size="large"
-                    className={ styles.button }
-                    onClick={ openResultPicker }
+                    className={styles.button}
+                    onClick={openResultPicker}
                 >
                     <i
                         className="fas fa-plus"
@@ -118,11 +124,11 @@ const ItemPicker: React.FC = () => {
         return (
             <ItemCard
                 showButton
-                name={ name }
-                quantity={ { amount, unit } }
-                onCloseClick={ createOnItemCloseClick(
+                name={name}
+                quantity={{ amount, unit }}
+                onCloseClick={createOnItemCloseClick(
                     "result", dependencyID
-                ) }
+                )}
             />
         );
     };
@@ -130,7 +136,7 @@ const ItemPicker: React.FC = () => {
     if (!step) {
         return (
             <div
-                className={ styles.empty }
+                className={styles.empty}
             >
                 <div>
                     Choose a step on the left to edit!
@@ -157,52 +163,55 @@ const ItemPicker: React.FC = () => {
 
     return (
         <div
-            className={ styles.container }
+            className={styles.container}
         >
             <div
-                className={ classNames(
+                className={classNames(
                     styles.scroller,
                     step.dependencies.length <= 2 && styles.center
-                ) }
+                )}
             >
                 <div
-                    className={ styles.dependencies }
+                    className={styles.dependencies}
                 >
-                    { renderItems(step) }
-                    <div
-                        className={ styles["add-container"] }
-                    >
-                        <AuraButton
-                            size="large"
-                            className={ styles.button }
-                            onClick={ openDependencyPicker }
+                    {renderItems(step)}
+                    {role && role !== "student" && (
+                        <div
+                            className={styles["add-container"]}
                         >
-                            <i
-                                className="fas fa-plus"
-                            />
-                        </AuraButton>
-                    </div>
+                            <AuraButton
+                                size="large"
+                                className={styles.button}
+                                onClick={openDependencyPicker}
+                            >
+                                <i
+                                    className="fas fa-plus"
+                                />
+                            </AuraButton>
+                        </div>
+                    )}
+
                 </div>
             </div>
             <div
-                className={ styles.divider }
-                onClick={ openEditStepModal }
+                className={styles.divider}
+                onClick={openEditStepModal}
             >
                 <span>
-                    { step.verb || (
+                    {step.verb || (
                         <i>
                             No action
                         </i>
-                    ) }
+                    )}
                 </span>
             </div>
             <div
-                className={ classNames(
+                className={classNames(
                     styles.scroller,
                     styles.center
-                ) }
+                )}
             >
-                { renderResult(step) }
+                {renderResult(step)}
             </div>
         </div>
     );

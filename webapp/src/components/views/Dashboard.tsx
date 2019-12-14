@@ -13,10 +13,9 @@ import styles from "./Dashboard.module.scss";
 import Responsive from "../shared/Responsive";
 
 const Dashboard: React.FC = () => {
-    const { name } = useUser();
+    const { name, role } = useUser();
     const [recipes, setRecipes] = useState<APIRecipeList[] | null>(null);
     const [create, setCreate] = useState<boolean>(false);
-    const [add, setAdd] = useState<boolean>(true);
 
     const request = useAPI();
 
@@ -93,6 +92,7 @@ const Dashboard: React.FC = () => {
             <NavBar
                 click={ setC }
                 userName={ name || "User" }
+                role={role}
             />
             <Responsive>
                 <div

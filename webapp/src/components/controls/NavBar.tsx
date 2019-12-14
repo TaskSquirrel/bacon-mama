@@ -12,50 +12,52 @@ export interface NavBarProps extends React.HTMLProps<HTMLDivElement> {
     className?: string;
     userName?: string;
     click: () => void;
+    role: string | undefined;
 }
 
 const NavBar: React.FC<NavBarProps> = ({
     className,
     userName,
     click,
+    role
 }) => {
     return (
         <Responsive
             wider
         >
             <div
-                className={ classNames(
+                className={classNames(
                     styles.navbar,
                     className
-                ) }
+                )}
             >
                 <div
-                    className={ styles.links }
+                    className={styles.links}
                 >
                     <Link
                         to="/dashboard"
                     >
                         Home
                     </Link>
-                    <Link
-                        to="/recipes"
-                    >
-                        Recipes
-                    </Link>
-                    <Link
-                        to="/class"
-                    >
-                        Class
-                    </Link>
-                    <ButtonBase
-                        onClick={ click }
-                        className={ styles.button }
-                    >
-                        Create a Recipe
-                    </ButtonBase>
+                    {role && role === "professor" && (
+                        <Link
+                            to="/class"
+                        >
+                            Class
+                            </Link>
+                    )}
+                    {role && role === "professor" && (
+                        <ButtonBase
+                            onClick={click}
+                            className={styles.button}
+                        >
+                            Create a Recipe
+                        </ButtonBase>
+                    )}
+
                 </div>
                 <UserCircle
-                    userName={ userName }
+                    userName={userName}
                 />
             </div>
         </Responsive>

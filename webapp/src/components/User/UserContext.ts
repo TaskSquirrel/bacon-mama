@@ -10,6 +10,7 @@ export interface UserContextShape {
     userID: string | null;
     validated: boolean;
     error: boolean;
+    role: string | undefined;
 }
 
 const UserContext = React.createContext<UserContextShape>({
@@ -18,6 +19,7 @@ const UserContext = React.createContext<UserContextShape>({
     token: null,
     name: null,
     userID: null,
+    role: undefined,
     validated: false,
     error: false
 });

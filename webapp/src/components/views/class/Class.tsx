@@ -17,6 +17,7 @@ import styles from "./Class.module.scss";
 import Responsive from "../../shared/Responsive";
 import { APIManyClassResponse } from './../../../models/API';
 import { Recipe } from './../../../models/recipe';
+import CreateRecipeModal from './../home/CreateRecipeModal';
 
 interface Options {
     key:number,
@@ -25,7 +26,7 @@ interface Options {
 }
 
 const Class: React.FC = () => {
-    const { name } = useUser();
+    const { name, role } = useUser();
     const [recipes, setRecipes] = useState<APIRecipeList[] | null>(null);
     const [create, setCreate] = useState<boolean>(false);
     const [createClass, setCreateClass] = useState<boolean>(false);
@@ -199,10 +200,6 @@ const Class: React.FC = () => {
     }, [getClasses, classes]);
 
 
-    const setC = useCallback(() => {
-        setCreate(true);
-    }, [create]);
-
     const addClass = () => {
         if (!createClass) {
             return;
@@ -248,6 +245,23 @@ const Class: React.FC = () => {
         );
     }
 
+    const createRecipe = () => {
+        if (!create) {
+            return;
+        }
+
+        return (
+            <CreateRecipeModal
+                control={ setCreate }
+                update={ update }
+            />
+        );
+    };
+
+    const setC = useCallback(() => {
+        setCreate(true);
+    }, [create]);
+
 
     const selectClass = (i: number) => {
         if (classes) {
@@ -273,6 +287,7 @@ const Class: React.FC = () => {
             <NavBar
                 click={setC}
                 userName={name || "User"}
+                role={role}
             />
             <Responsive>
                 <div
@@ -352,6 +367,7 @@ const Class: React.FC = () => {
             {addClass()}
             {addStudentToCourse()}
             {addRecipesToCourse()}
+            {createRecipe()}
         </div>
     );
 };

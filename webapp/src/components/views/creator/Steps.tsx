@@ -6,6 +6,7 @@ import { ContentCreatorContext } from "./ContentCreatorProvider";
 
 import styles from "./Steps.module.scss";
 import IconButton from "../../controls/IconButton";
+import useUser from "../../hooks/useUser";
 
 const Steps: React.FC = () => {
     const {
@@ -19,6 +20,7 @@ const Steps: React.FC = () => {
         }
     } = useContext(ContentCreatorContext);
     const { push } = useHistory();
+    const { role } = useUser();
     const { sequence: sequenceParam } = useParams();
 
     const openEditStepModal = () => setEditStepModal(true);
@@ -38,6 +40,7 @@ const Steps: React.FC = () => {
     };
 
     const renderAddStepAction = () => {
+        if(role === "student") return;
         return (
             <div
                 className={ styles.action }
@@ -55,6 +58,7 @@ const Steps: React.FC = () => {
     };
 
     const renderActions = (stepID: string) => {
+        if(role === "student") return;
         return (
             <div
                 className={ styles.actions }

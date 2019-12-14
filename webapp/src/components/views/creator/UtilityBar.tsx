@@ -7,6 +7,7 @@ import ButtonBase from "../../controls/ButtonBase";
 import Editable from "../../controls/Editable";
 
 import styles from "./UtilityBar.module.scss";
+import useUser from "../../hooks/useUser";
 
 const UtilityBar: React.FC = () => {
     const {
@@ -21,6 +22,8 @@ const UtilityBar: React.FC = () => {
         }
     } = useContext(ContentCreatorContext);
 
+    const { role } = useUser();
+
     const openPlayer = () => setPlayModal(true);
 
     const openAddItemModal = () => setAddItemModal(true);
@@ -31,20 +34,20 @@ const UtilityBar: React.FC = () => {
 
     return (
         <div
-            className={ styles.bar }
+            className={styles.bar}
         >
             <div
-                className={ styles.metadata }
+                className={styles.metadata}
             >
                 <Editable
-                    text={ name }
-                    className={ styles.name }
-                    onEnterPress={ onEnterPress }
+                    text={name}
+                    className={styles.name}
+                    onEnterPress={onEnterPress}
                 />
             </div>
-            <Stack
+            {role && role !== "student" && (<Stack
                 inline
-                className={ styles.actions }
+                className={styles.actions}
             >
                 <ButtonBase
                     inverted
@@ -57,7 +60,7 @@ const UtilityBar: React.FC = () => {
                 <ButtonBase
                     inverted
                     clear
-                    onClick={ openAddItemModal }
+                    onClick={openAddItemModal}
                 >
                     <i
                         className="fas fa-plus"
@@ -66,14 +69,14 @@ const UtilityBar: React.FC = () => {
                 <ButtonBase
                     inverted
                     clear
-                    onClick={ openPlayer }
+                    onClick={openPlayer}
                 >
                     <i
                         className="fas fa-play"
                     />
                 </ButtonBase>
                 <ButtonBase
-                    className={ styles.share }
+                    className={styles.share}
                 >
                     <span>
                         <i
@@ -85,6 +88,8 @@ const UtilityBar: React.FC = () => {
                     </span>
                 </ButtonBase>
             </Stack>
+            )}
+
         </div>
     );
 };
