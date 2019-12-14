@@ -97,6 +97,10 @@ public class ItemController implements BaseApiController {
       if (body.containsKey("userId")) {
         User creator = userRepository.getOne(JsonUtils.parseId(body.get("userId")));
         items = itemRepository.findByCreator(creator);
+        if (body.containsKey("term")) {
+          String term = (String) body.get("term");
+          items.removeIf(item -> !item.getItemName().contains(term));
+        }
       } else {
         // no user id
         String term = (String) body.get("term");
