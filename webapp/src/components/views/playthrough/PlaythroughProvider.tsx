@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useParams } from "react-router-dom";
 import { AxiosRequestConfig } from "axios";
 
@@ -65,7 +65,7 @@ const PlaythroughProvider: React.FC = ({ children }) => {
         ? recipe.items.find(({ id }) => selectedItem === id) || null
         : null;
 
-    const doRequest = async (
+    const doRequest = useCallback(async (
         endpoint: string,
         payload: AxiosRequestConfig
     ) => {
@@ -93,55 +93,7 @@ const PlaythroughProvider: React.FC = ({ children }) => {
         } finally {
             setStatus(false);
         }
-    };
-
-    const fetchRecipe = async () => {
-        try {
-            await doRequest(
-                "/getRecipe",
-                {
-                    method: "POST",
-                    data: {
-                        id: recipeID
-                    }
-                }
-            );
-        } catch (e) {
-            setError(true);
-        }
-    };
-
-    const checkCompletion = () => {
-        if (!currentStep) {
-            return false;
-        }
-
-        const { dependencies } = currentStep;
-
-        if (dependencies.length === 0) {
-            return true;
-        }
-
-        if (itemState.length === 0) {
-            // If there are dependencies and item state is not set then incomplete
-
-            return false;
-        }
-
-        const completedDependencies = dependencies.filter(({
-            item: { id: itemID }, amount: requiredAmount
-        }) => {
-            const inItemState = itemState.find(({ id }) => itemID === id);
-
-            if (!inItemState) {
-                return false;
-            }
-
-            return Math.abs(requiredAmount - inItemState.amount) < 0.1;
-        });
-
-        return completedDependencies.length === dependencies.length;
-    };
+    }, [request, setStatus]);
 
     const nextStep = () => {
         if (!recipe) {
@@ -224,9 +176,25 @@ const PlaythroughProvider: React.FC = ({ children }) => {
 
     useEffect(() => {
         if (!recipe && !error) {
+            const fetchRecipe = async () => {
+                try {
+                    await doRequest(
+                        "/getRecipe",
+                        {
+                            method: "POST",
+                            data: {
+                                id: recipeID
+                            }
+                        }
+                    );
+                } catch (e) {
+                    setError(true);
+                }
+            };
+
             fetchRecipe();
         }
-    }, [error, recipe, fetchRecipe]);
+    }, [error, recipe, recipeID, doRequest]);
 
     useEffect(() => {
         setItemState([]);
@@ -235,12 +203,42 @@ const PlaythroughProvider: React.FC = ({ children }) => {
     }, [currentStep]);
 
     useEffect(() => {
-        const done = checkCompletion();
+        const checkCompletion = () => {
+            if (!currentStep) {
+                return false;
+            }
 
-        if (done) {
+            const { dependencies } = currentStep;
+
+            if (dependencies.length === 0) {
+                return true;
+            }
+
+            if (itemState.length === 0) {
+                // If there are dependencies and item state is not set then incomplete
+
+                return false;
+            }
+
+            const completedDependencies = dependencies.filter(({
+                item: { id: itemID }, amount: requiredAmount
+            }) => {
+                const inItemState = itemState.find(({ id }) => itemID === id);
+
+                if (!inItemState) {
+                    return false;
+                }
+
+                return Math.abs(requiredAmount - inItemState.amount) < 0.1;
+            });
+
+            return completedDependencies.length === dependencies.length;
+        };
+
+        if (checkCompletion()) {
             setStepDone(true);
         }
-    }, [itemState]);
+    }, [itemState, currentStep]);
 
     const value: PlaythroughContextShape = {
         error,

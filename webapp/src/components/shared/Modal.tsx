@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { CSSTransition } from "react-transition-group";
 
 import Portal from "./Portal";
@@ -24,6 +24,21 @@ const Modal: React.FC<ModalProps> = ({
             onBackdropClick();
         }
     };
+
+    useEffect(() => {
+        const escape = (event: KeyboardEvent) => {
+            if (
+                event.code === "Escape"
+                && typeof onBackdropClick === "function"
+            ) {
+                onBackdropClick();
+            }
+        };
+
+        document.addEventListener("keydown", escape);
+
+        return () => document.removeEventListener("keydown", escape);
+    });
 
     if (!show) {
         return null;

@@ -1,11 +1,11 @@
 import React, { useState, useCallback } from "react";
 
-import useAPI from "../../../hooks/useAPI";
-import useUser from "../../../hooks/useUser";
-
 import Modal from "../../../shared/Modal";
 import TextField from "../../../controls/TextField";
 import ButtonBase from "../../../controls/ButtonBase";
+import useAPI from "../../../hooks/useAPI";
+import useUser from "../../../hooks/useUser";
+
 import { createChangeEventStateSetter } from "../../../../utils";
 
 import styles from "./CreateClassModal.module.scss";
@@ -26,7 +26,6 @@ const CreateRecipeModal: React.FC<CreateRecipeModalProps> = ({
 
     const createControlSetter = (state: boolean) => () => control(state);
 
-
     const addRecipe = useCallback(async () => {
         await request(
             "/addCourse",
@@ -38,7 +37,7 @@ const CreateRecipeModal: React.FC<CreateRecipeModalProps> = ({
                 }
             }
         );
-    }, [request, name]);
+    }, [request, name, userName]);
 
     const onSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();

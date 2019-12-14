@@ -25,8 +25,8 @@ const EditStep: React.FC<EditStepProps> = ({
             replaceStep
         }
     } = useContext(ContentCreatorContext);
-    const [name, setName] = useState<string>(step.name);
-    const [verb, setVerb] = useState<string>(step.verb);
+    const [name, setName] = useState<string>(step.name || "");
+    const [verb, setVerb] = useState<string>(step.verb || "");
     const [description, setDescription] = useState<string>(
         step.description || ""
     );

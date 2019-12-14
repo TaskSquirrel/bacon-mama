@@ -88,7 +88,7 @@ const Play: React.FC = () => {
         } else {
             setShownItems(shuffle(recipe.items));
         }
-    }, [currentStep]);
+    }, [currentStep, recipe]);
 
     if (!recipe) {
         // Never reached

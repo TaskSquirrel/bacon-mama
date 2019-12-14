@@ -1,31 +1,27 @@
-import React, { useState, useCallback, useEffect, SyntheticEvent } from "react";
+import React, { useState, useCallback, SyntheticEvent } from "react";
+import { Dropdown, DropdownProps } from "semantic-ui-react";
+
+import { APIClassList } from "./../../../../models/API";
 
 import useAPI from "../../../hooks/useAPI";
-import useUser from "../../../hooks/useUser";
 
 import Modal from "../../../shared/Modal";
-import TextField from "../../../controls/TextField";
 import ButtonBase from "../../../controls/ButtonBase";
-import { createChangeEventStateSetter } from "../../../../utils";
 
 import styles from "./CreateClassModal.module.scss";
-import { APIClassList, APIManyRecipeResponse } from './../../../../models/API';
-
-import { Dropdown, DropdownProps } from 'semantic-ui-react'
-
 
 interface CreateRecipeModalProps {
     control: (state: boolean) => void;
     update: () => void;
-    info?:string;
+    info?: string;
     course?: APIClassList | null;
     options: Options[] | null;
 }
 
 interface Options {
-    key:number,
-    text: string,
-    value: number
+    key: number;
+    text: string;
+    value: number;
 }
 
 const CreateRecipeModal: React.FC<CreateRecipeModalProps> = ({
@@ -35,16 +31,12 @@ const CreateRecipeModal: React.FC<CreateRecipeModalProps> = ({
     course,
     options
 }) => {
-    const [name, setName] = useState<string>("");
-    const { name: userName } = useUser();
     const request = useAPI();
     const [selected, setSelected] = useState<any[] | any>(undefined);
 
     const createControlSetter = (state: boolean) => () => control(state);
 
-
     const addRecipe = useCallback(async () => {
-        
         await request(
             "/addRecipeToCourse",
             {
@@ -55,11 +47,9 @@ const CreateRecipeModal: React.FC<CreateRecipeModalProps> = ({
                 }
             }
         );
-    }, [request]);
+    }, [request, course, selected]);
 
-    
     const addStudent = useCallback(async () => {
-        
         await request(
             "/addStudentToCourse",
             {
@@ -70,11 +60,11 @@ const CreateRecipeModal: React.FC<CreateRecipeModalProps> = ({
                 }
             }
         );
-    }, [request]);
+    }, [request, course, selected]);
 
     const onOptionChange = (event: SyntheticEvent<HTMLElement, Event>, {value}:DropdownProps) => {
         setSelected(value);
-    }
+    };
 
     const onSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();

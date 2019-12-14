@@ -44,13 +44,13 @@ export interface APIRecipe {
 export interface APIClassList {
     id: number;
     recipes: APIRecipe[];
-    courseName:string;
-    professor:string;
-    students:APIStudent[];
+    courseName: string;
+    professor: string;
+    students: APIStudent[];
 }
 
 export interface APIStudent {
-    userName : string;
+    userName: string;
 }
 
 export interface APIRecipeList {
@@ -74,7 +74,5 @@ export interface APIManyRecipeResponse extends Response {
 export interface APIManyClassResponse extends Response {
     courses: APIClassList[];
 }
-
-
 
 export type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>;

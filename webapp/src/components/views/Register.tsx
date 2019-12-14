@@ -22,10 +22,6 @@ const Register: React.FC = () => {
         setName(event.target.value);
     };
 
-    const onRoleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setRole(event.target.value);
-    };
-
     const onPasswordChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         if (password2 !== event.target.value) {
             setError("Passwords do not match!");
@@ -92,6 +88,7 @@ const Register: React.FC = () => {
                     className={ styles.stack }
                 >
                     <img
+                        alt="Done"
                         src="/assets/green-check.svg"
                     />
                     <div className={ styles.message }>

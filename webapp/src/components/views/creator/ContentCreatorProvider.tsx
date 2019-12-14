@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { useParams, useRouteMatch } from "react-router";
 import { AxiosRequestConfig } from "axios";
 
@@ -10,7 +10,7 @@ import {
 } from "../../../models/recipe";
 import { APIRecipeResponse } from "../../../models/API";
 
-import PlayModal from "./modals/PlayModal";
+import RecipeDetailsModal from "./modals/RecipeDetailsModal";
 import ItemPickerModal from "./modals/ItemPickerModal";
 import AddItemModal from "./modals/AddItemModal";
 import EditStepModal from "./modals/EditStepModal";
@@ -28,7 +28,7 @@ export interface ContentCreatorContextShape {
     items: Item[];
     steps: Step[];
     actions: {
-        setPlayModal: (state: boolean) => void,
+        setRecipeModal: (state: boolean) => void,
         setAddItemModal: (state: boolean) => void,
         setEditStepModal: (state: boolean) => void,
         addItem: (name: string, description?: string) => Promise<void> | void,
@@ -50,7 +50,7 @@ export const DEFAULT_CONTENT_CREATOR_CONTEXT: ContentCreatorContextShape = {
     items: [],
     steps: [],
     actions: {
-        setPlayModal: noop,
+        setRecipeModal: noop,
         setAddItemModal: noop,
         setEditStepModal: noop,
         addItem: noop,
@@ -67,7 +67,7 @@ export const ContentCreatorContext = React.createContext<
 
 const ContentCreatorProvider: React.FC = ({ children }) => {
     const [error, setError] = useState<boolean>(false);
-    const [playModal, setPlayModal] = useState<boolean>(false);
+    const [recipeModal, setRecipeModal] = useState<boolean>(false);
     const [addItemModal, setAddItemModal] = useState<boolean>(false);
     const [editStepModal, setEditStepModal] = useState<boolean>(false);
     const [recipe, setRecipe] = useState<Recipe | null>(null);
@@ -97,7 +97,7 @@ const ContentCreatorProvider: React.FC = ({ children }) => {
         };
     };
 
-    const doRequest = async (
+    const doRequest = useCallback(async (
         endpoint: string,
         payload: AxiosRequestConfig
     ) => {
@@ -127,7 +127,7 @@ const ContentCreatorProvider: React.FC = ({ children }) => {
         } finally {
             setStatus(false);
         }
-    };
+    }, [request, setStatus]);
 
     const addItem = (
         name: string,
@@ -236,30 +236,14 @@ const ContentCreatorProvider: React.FC = ({ children }) => {
         );
     };
 
-    const updateRecipe = async () => {
-        try {
-            await doRequest(
-                "/getRecipe",
-                {
-                    method: "POST",
-                    data: {
-                        id: recipeID
-                    }
-                }
-            );
-        } catch (e) {
-            setError(true);
-        }
-    };
-
-    const renderPlayModal = () => {
-        if (!recipe || !playModal) {
+    const renderRecipeModal = () => {
+        if (!recipe || !recipeModal) {
             return null;
         }
 
         return (
-            <PlayModal
-                control={ createModalStateSetter(setPlayModal) }
+            <RecipeDetailsModal
+                control={ createModalStateSetter(setRecipeModal) }
             />
         );
     };
@@ -312,9 +296,25 @@ const ContentCreatorProvider: React.FC = ({ children }) => {
         // On mount fetch recipe
 
         if (!recipe && !error) {
+            const updateRecipe = async () => {
+                try {
+                    await doRequest(
+                        "/getRecipe",
+                        {
+                            method: "POST",
+                            data: {
+                                id: recipeID
+                            }
+                        }
+                    );
+                } catch (e) {
+                    setError(true);
+                }
+            };
+
             updateRecipe();
         }
-    }, [error, recipe, updateRecipe]);
+    }, [doRequest, error, recipe, recipeID]);
 
     const value: ContentCreatorContextShape = recipe
         ? {
@@ -329,7 +329,7 @@ const ContentCreatorProvider: React.FC = ({ children }) => {
             items: recipe.items,
             steps: recipe.steps,
             actions: {
-                setPlayModal: createModalStateSetter(setPlayModal),
+                setRecipeModal: createModalStateSetter(setRecipeModal),
                 setAddItemModal: createModalStateSetter(setAddItemModal),
                 setEditStepModal: createModalStateSetter(setEditStepModal),
                 addItem, addStep, replaceStep, deleteStep,
@@ -347,7 +347,7 @@ const ContentCreatorProvider: React.FC = ({ children }) => {
                 value={ value }
             >
                 { children }
-                { renderPlayModal() }
+                { renderRecipeModal() }
                 { renderSelectItemModal() }
                 { renderAddItemModal() }
                 { renderEditStep() }

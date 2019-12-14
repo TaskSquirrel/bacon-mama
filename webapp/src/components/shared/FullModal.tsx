@@ -23,7 +23,7 @@ const FullModal: React.FC<FullModalProps> = ({
 
     useEffect(() => {
         const onKeyDown = (event: KeyboardEvent) => {
-            if (event.keyCode === 27) {
+            if (event.code === "Escape") {
                 close();
             }
         };

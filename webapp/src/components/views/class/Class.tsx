@@ -6,7 +6,6 @@ import useAPI from "../../hooks/useAPI";
 import useUser from "../../hooks/useUser";
 
 import NavBar from "../../controls/NavBar";
-import Card from "../../controls/Card";
 import ClassCard from "../../controls/ClassCard";
 import CreateClassModal from "./modals/CreateClassModal";
 import AddStudentModal from "./modals/AddStudentModal";
@@ -18,6 +17,7 @@ import Responsive from "../../shared/Responsive";
 import { APIManyClassResponse } from './../../../models/API';
 import { Recipe } from './../../../models/recipe';
 import CreateRecipeModal from './../home/CreateRecipeModal';
+import Card from "../dashboard/Card";
 
 interface Options {
     key:number,

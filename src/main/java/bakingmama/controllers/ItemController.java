@@ -29,6 +29,10 @@ public class ItemController implements BaseApiController {
     try {
       byte[] bytes = file.getBytes();
       Image image = imageIP.addImage(bytes);
+      if (image == null) {
+        throw new Exception("Error in addImage() -- failed to add image.");
+      }
+
       Map<String, Object> returnMap = new HashMap<>();
       returnMap.put("id", image.getId());
       JsonUtils.setStatus(returnMap, JsonUtils.SUCCESS);
