@@ -146,14 +146,19 @@ public class RecipeController implements BaseApiController {
         Set<Recipe> recipeInCourse = course.getRecipes();
         for(Recipe recipe : recipeInCourse)
         {
+          boolean inHistory = false;
           for(History history : userHistory)
           {
-            if(history.getRecipeId() == recipe.getId())
+            if(history.getRecipeId().equals(recipe.getId()))
             {
-
+              recipes.add(recipe.toMapOverview("complete"));
+              inHistory = true;
+              break;
             }
           }
-          recipes.add(recipe.toMapOverview());
+          if(!inHistory){
+            recipes.add(recipe.toMapOverview("incomplete"));
+          }
         }
       }
     }
