@@ -1,5 +1,7 @@
 @import "../../styles/colors";
 
+$primary: map-get($colors, "primary");
+
 .base {
     all: unset;
     box-sizing: border-box;
@@ -20,6 +22,7 @@
     border-radius: 5px;
 
     transition:
+        color 150ms ease-in-out,
         border-color 150ms ease-in-out,
         background-color 150ms ease-in-out;
 
@@ -32,6 +35,16 @@
 
     &:focus {
         outline: -webkit-focus-ring-color auto 5px;
+    }
+
+    &:disabled,
+    &:disabled:hover {
+        $border: rgba($primary, 0.2);
+
+        color: var(--primary);
+
+        background-color: $border;
+        border-color: transparent;
     }
 
     &.inverted {

@@ -8,6 +8,7 @@ import styles from "./ItemCard.module.scss";
 export interface ItemCardProps {
     name: string;
     showButton?: boolean;
+    image?: string;
     quantity?: {
         amount: number,
         unit: string

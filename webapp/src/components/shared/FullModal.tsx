@@ -83,7 +83,9 @@ const FullModal: React.FC<FullModalProps> = ({
                             </button>
                         </div>
                     </div>
-                    <div>
+                    <div
+                        className={ styles.content }
+                    >
                         { children }
                     </div>
                 </div>

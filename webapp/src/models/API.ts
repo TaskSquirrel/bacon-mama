@@ -30,6 +30,7 @@ export interface APIItem {
     id: number;
     itemName: string;
     description?: string;
+    image?: number;
 }
 
 export interface APIRecipe {
@@ -38,6 +39,10 @@ export interface APIRecipe {
     description?: string;
     steps: APIStep[];
     items: APIItem[];
+}
+
+export interface APIImageResponse extends Response {
+    id: number;
 }
 
 export interface APIClassList {

@@ -30,11 +30,12 @@ function fromAPIStep(
 }
 
 function fromAPIItem(
-    { id, itemName }: APIItem
+    { id, itemName, image }: APIItem
 ): Item {
     return {
         id: `${id}`,
-        name: itemName
+        name: itemName,
+        image,
     };
 }
 

@@ -1,6 +1,5 @@
 import React, { useState, useContext } from "react";
 import { useParams, useHistory } from "react-router-dom";
-import classNames from "classnames";
 
 import { Item, Step, Dependency } from "../../../../models/recipe";
 
@@ -10,8 +9,13 @@ import TextField from "../../../controls/TextField";
 import FullModal from "../../../shared/FullModal";
 import Responsive from "../../../shared/Responsive";
 import Stack from "../../../shared/Stack";
+import ItemPickerItem from "./ItemPickerItem";
 
-import { isNumber } from "../../../../utils";
+import {
+    isNumber,
+    createChangeEventStateSetter,
+    getImageURL
+} from "../../../../utils";
 
 import styles from "./ItemPickerModal.module.scss";
 import modalStyles from "./modals.module.scss";
@@ -31,6 +35,7 @@ const ItemPickerModal: React.FC<ItemPickerModalProps> = ({
             replaceStep
         }
     } = useContext(ContentCreatorContext);
+    const [query, setQuery] = useState<string>("");
     const [selected, setSelected] = useState<string | null>(null);
     const [amount, setAmount] = useState<string>("");
     const [unit, setUnit] = useState<string>("");
@@ -47,17 +52,7 @@ const ItemPickerModal: React.FC<ItemPickerModalProps> = ({
         ? "Add a dependency"
         : "Choose result item";
 
-    const close = () => {
-        push(`/edit/${recipeID}/${stepSequence}`);
-    };
-
-    const onAmountChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setAmount(event.target.value);
-    };
-
-    const onUnitChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setUnit(event.target.value);
-    };
+    const close = () => push(`/edit/${recipeID}/${stepSequence}`);
 
     const onSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
@@ -135,32 +130,42 @@ const ItemPickerModal: React.FC<ItemPickerModalProps> = ({
 
     const createSelectItem = (id: string) => () => setSelected(id);
 
-    const renderItems = () => {
-        return items.map(({
-            id, name
-        }) => {
+    const renderItems = () => items
+        .filter(({ name }) => {
+            const lowerCaseQuery = query.toLowerCase();
+            const lowerCaseName = name.toLowerCase();
+
+            return lowerCaseName.startsWith(lowerCaseQuery);
+        })
+        .map(({ id, name, image }) => {
             return (
-                <div
+                <ItemPickerItem
                     key={ id }
-                    className={ classNames(
-                        styles.item,
-                        selected === id && styles.selected
-                    ) }
+                    selected={ selected === id }
+                    image={ image ? getImageURL(`${image}`) : undefined }
+                    name={ name }
                     onClick={ createSelectItem(id) }
-                >
-                    { name }
-                </div>
+                />
             );
         });
-    };
 
     const renderItemsContainer = () => {
         if (items.length > 0) {
+            const renderableItems = renderItems();
+
+            if (renderableItems.length === 0) {
+                return (
+                    <div>
+                        { `"${query}" not found!` }
+                    </div>
+                );
+            }
+
             return (
                 <div
                     className={ styles.items }
                 >
-                    { renderItems() }
+                    { renderableItems }
                 </div>
             );
         }
@@ -186,7 +191,7 @@ const ItemPickerModal: React.FC<ItemPickerModalProps> = ({
                     <div
                         className={ modalStyles.form }
                     >
-                        <div>
+                        <Stack>
                             <Stack
                                 className={ styles.header }
                             >
@@ -206,26 +211,47 @@ const ItemPickerModal: React.FC<ItemPickerModalProps> = ({
                             >
                                 <TextField
                                     required
+                                    type="text"
                                     placeholder="Amount"
                                     className={ styles.amount }
                                     value={ amount }
-                                    onChange={ onAmountChange }
+                                    onChange={ createChangeEventStateSetter(
+                                        setAmount
+                                    ) }
                                 />
                                 <TextField
                                     required
+                                    type="text"
                                     placeholder="Unit"
                                     value={ unit }
-                                    onChange={ onUnitChange }
+                                    onChange={ createChangeEventStateSetter(
+                                        setUnit
+                                    ) }
                                 />
                                 <div>
                                     { renderSuggestion() }
                                 </div>
                             </Stack>
-                        </div>
+                        </Stack>
                         <Stack>
-                            <h3>
-                                Available items
-                            </h3>
+                            <div
+                                className={ styles.inline }
+                            >
+                                <h3>
+                                    Available items
+                                </h3>
+                                <div>
+                                    <TextField
+                                        type="text"
+                                        placeholder="Filter"
+                                        className={ styles.search }
+                                        value={ query }
+                                        onChange={ createChangeEventStateSetter (
+                                            setQuery
+                                        ) }
+                                    />
+                                </div>
+                            </div>
                             { exists && (
                                 <div
                                     className={ styles.error }
