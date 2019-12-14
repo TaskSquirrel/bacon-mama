@@ -132,9 +132,10 @@ const Steps: React.FC = () => {
     const renderStepsList = () => steps
         .sort(({ sequence: a }, { sequence: b }) => a - b)
         .map(({
-            id, name, description, sequence, verb
+            id, name, description, sequence
         }) => {
             const isActive = `${sequence}` === sequenceParam;
+            const incomplete = !name || !description;
             const onStepClick = () => {
                 push(`/edit/${recipeID}/${sequence}`);
             };
@@ -190,6 +191,15 @@ const Steps: React.FC = () => {
                                 </div>
                             ) }
                         </div>
+                        { !isActive && incomplete && (
+                            <div
+                                className={ styles.caution }
+                            >
+                                <i
+                                    className="fas fa-exclamation-triangle"
+                                />
+                            </div>
+                        ) }
                     </div>
                     { isActive && renderActions(id) }
                 </li>

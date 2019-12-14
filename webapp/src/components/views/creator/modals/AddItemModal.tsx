@@ -28,6 +28,7 @@ const AddItem: React.FC<AddItemProps> = ({
     } = useContext(ContentCreatorContext);
     const [name, setName] = useState<string>("");
     const [description, setDescription] = useState<string>("");
+    const [files, setFiles] = useState<FileList | null>(null);
 
     const itemNameAlreadyInUse = items.find(
         ({ name: itemName }) => itemName === name
@@ -77,7 +78,10 @@ const AddItem: React.FC<AddItemProps> = ({
                             setDescription
                         ) }
                     />
-                    <Upload />
+                    <Upload
+                        files={ files }
+                        setFiles={ setFiles }
+                    />
                     <div
                         className={ styles.actions }
                     >

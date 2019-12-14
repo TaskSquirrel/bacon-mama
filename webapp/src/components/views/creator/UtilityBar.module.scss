@@ -40,6 +40,11 @@
         font-size: 1.2rem;
 
         width: 3rem;
+
+        &:focus,
+        &:hover {
+            background-color: rgba(0, 0, 0, 0.1);
+        }
     }
 }
 

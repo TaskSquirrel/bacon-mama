@@ -1,5 +1,5 @@
 import React from "react";
-import { Route as Path, Switch, RouteComponentProps } from "react-router-dom";
+import { Route as Path, Switch, RouteComponentProps, Redirect } from "react-router-dom";
 
 import { Route } from "../../models/Router";
 
@@ -46,9 +46,8 @@ const AppRouter: React.FC<AppRouterProps> = ({
         <Switch>
             { renderRoutes() }
             { fallback && (
-                <Path
-                    exact
-                    path="/404"
+                <Redirect
+                    to="/404"
                 />
             ) }
         </Switch>

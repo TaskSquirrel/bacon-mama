@@ -3,11 +3,13 @@ import React from "react";
 import styles from "./Upload.module.scss";
 
 interface UploadProps {
+    files?: FileList | null;
     setFiles?: (files: FileList | null) => void;
 }
 
 const Upload: React.FC<UploadProps> = ({
-    setFiles
+    files,
+    setFiles,
 }) => {
     const onUploadChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         if (typeof setFiles === "function") {
@@ -15,14 +17,28 @@ const Upload: React.FC<UploadProps> = ({
         }
     };
 
-    return (
-        <div
-            className={ styles.upload }
-        >
+    const renderContents = () => {
+        if (files) {
+            return (
+                <div>
+                    You got files!
+                </div>
+            );
+        }
+
+        return (
             <input
                 type="file"
                 onChange={ onUploadChange }
             />
+        );
+    };
+
+    return (
+        <div
+            className={ styles.upload }
+        >
+            { renderContents() }
         </div>
     );
 };
