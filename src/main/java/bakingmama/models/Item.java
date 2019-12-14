@@ -19,7 +19,7 @@ public class Item {
   private Long id;
 
   @OneToOne()
-  private Image creator;
+  private User creator;
 
   private String itemName;
   private String description;

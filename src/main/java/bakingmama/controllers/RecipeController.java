@@ -228,6 +228,8 @@ public class RecipeController implements BaseApiController {
       Map<String, Object> itemMap = JsonUtils.castMap(body.get("item"));
       String itemName = (String) itemMap.get("name");
 
+      User creator = userRepository.getOne(JsonUtils.parseId(body.get("userId")));
+
       Image image;
       if (itemMap.containsKey("image")) {
         Long imageID = JsonUtils.parseId(itemMap.get("image"));
@@ -236,7 +238,7 @@ public class RecipeController implements BaseApiController {
         image = null;
       }
 
-      Item newItem = mu.addItem(itemName, image);
+      Item newItem = mu.addItem(itemName, image, creator);
     } catch (Exception e) {
       return JsonUtils.returnError(e.getMessage());
     }

@@ -63,10 +63,11 @@ public class ModelUtils {
     return true;
   }
 
-  public Item addItem(String itemName, Image image) {
+  public Item addItem(String itemName, Image image, User creator) {
     Item item = new Item();
     item.setItemName(itemName);
     item.setImage(image);
+    item.setCreator(creator);
     itemRepository.save(item);
     return item;
   }
