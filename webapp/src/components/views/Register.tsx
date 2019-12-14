@@ -4,12 +4,16 @@ import { Link } from "react-router-dom";
 import CenteredPane from "../CenteredPane";
 import TextField from "../controls/TextField";
 import ButtonBase from "../controls/ButtonBase";
+import Spinner from "../shared/Spinner";
+import useLoadingIndicator from "../hooks/useLoadingIndicator";
 
 import APIClient from "../../api/APIClient";
+import { randomRange } from "../../utils";
 
 import styles from "./Register.module.scss";
 
 const Register: React.FC = () => {
+    const { status: loading, setStatus } = useLoadingIndicator();
     const [name, setName] = useState<string>("");
     const [role, setRole] = useState<string>("");
     const [password, setPassword] = useState<string>("");
@@ -49,7 +53,7 @@ const Register: React.FC = () => {
             return;
         }
 
-        const login = async () => {
+        const signUp = async () => {
             try {
                 const { data: {
                     status,
@@ -74,11 +78,13 @@ const Register: React.FC = () => {
             } catch (e) {
                 setError(e.message);
             } finally {
+                setStatus(false);
                 setDone(true);
             }
         };
 
-        login();
+        setStatus(true);
+        setTimeout(signUp, 1000 + randomRange(250));
     };
 
     if (done && !error) {
@@ -189,8 +195,15 @@ const Register: React.FC = () => {
                     ) }
                     <ButtonBase
                         type="submit"
+                        disabled={ loading }
                     >
-                        Register
+                        { loading
+                            ? (
+                                <Spinner
+                                    className={ styles.spinner }
+                                />
+                            )
+                            : "Sign up" }
                     </ButtonBase>
                     <div
                         className={ styles.actions }
@@ -198,7 +211,6 @@ const Register: React.FC = () => {
                         <Link
                             to="/sign-in"
                         >
-
                             Sign-in Instead
                         </Link>
                     </div>

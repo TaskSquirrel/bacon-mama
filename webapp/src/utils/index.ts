@@ -22,6 +22,13 @@ export const getImageURL = (image: string) => {
     return `http://${getAPIURL()}/images/${image}`;
 };
 
+export const randomRange = (range: number) => {
+    const num = Math.random() * range;
+    const result = num - range / 2;
+
+    return result;
+};
+
 export const createChangeEventStateSetter = (
     setter: React.Dispatch<React.SetStateAction<string>>
 ) => (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
