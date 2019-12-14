@@ -68,6 +68,9 @@ const CreateRecipeModal: React.FC<CreateRecipeModalProps> = ({
 
     const onSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
+        if(!selected){
+            return;
+        }
         if(info === "recipe"){
             addRecipe().then(() =>  update());
         }

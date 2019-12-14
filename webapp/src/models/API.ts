@@ -71,6 +71,10 @@ export interface APIManyRecipeResponse extends Response {
     recipes: APIRecipeList[];
 }
 
+export interface APIClassResponse extends Response {
+    course: APIClassList;
+}
+
 export interface APIManyClassResponse extends Response {
     courses: APIClassList[];
 }

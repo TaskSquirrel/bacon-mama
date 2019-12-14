@@ -14,10 +14,11 @@ import AddStudentModal from "./modals/AddStudentModal";
 
 import styles from "./Class.module.scss";
 import Responsive from "../../shared/Responsive";
-import { APIManyClassResponse } from './../../../models/API';
+import { APIManyClassResponse, APIClassResponse } from './../../../models/API';
 import { Recipe } from './../../../models/recipe';
 import CreateRecipeModal from './../home/CreateRecipeModal';
 import Card from "../dashboard/Card";
+import StudentCard from "../../controls/StudentCard";
 
 interface Options {
     key:number,
@@ -118,7 +119,7 @@ const Class: React.FC = () => {
 
             return students;
         }
-    }, [request]);
+    }, []);
 
     const getRecipes = useCallback(async () => {
 
@@ -144,41 +145,41 @@ const Class: React.FC = () => {
 
             return responseRecipes;
         }
-    }, [request]);
+    }, []);
+
+    const updateOptions = async () => {
+        try {
+            if (recipes) {
+                const responseRecipes = await getRecipes();
+                
+                const op: Options[] = responseRecipes.map((item) => {
+                    return {key:item.id, text:item.recipeName, value:item.id};
+                }).filter((item) => {
+                    return !recipes.some((recipe) => recipe.id === item.value);
+                });
+
+                setRecipeOptions(op);
+            }
+            if(students){
+                const responseStudents = await getStudents();
+
+                const op: Options[] = responseStudents.map((item:any) => {
+                    return {key:item.username, text:item.username, value:item.username};
+                }).filter((item: any) => {
+                    return !students.some((student) => student.userName === item.value);               
+                });
+
+
+                setStudentOptions(op);
+            }
+        } catch (e) {
+            // Error
+        }
+    };
 
     useEffect(() => {
-
-        const updateRecipes = async () => {
-            try {
-                if (recipes) {
-                    const responseRecipes = await getRecipes();
-                    
-                    const op: Options[] = responseRecipes.map((item) => {
-                        return {key:item.id, text:item.recipeName, value:item.id};
-                    }).filter((item) => {
-                        return !recipes.some((recipe) => recipe.id === item.value);
-                    });
-
-                    setRecipeOptions(op);
-                }
-                if(students){
-                    const responseRecipes = await getStudents();
-
-                    const op: Options[] = responseRecipes.map((item:any) => {
-                        return {key:item.username, text:item.username, value:item.username};
-                    }).filter((item: any) => {
-                        return !students.some((student) => student.userName === item.value);               
-                    });
-
-
-                    setStudentOptions(op);
-                }
-            } catch (e) {
-                // Error
-            }
-        };
-        updateRecipes();
-    },[selectedClass]);
+        updateOptions();
+    },[selectedClass, recipes, students]);
 
 
     useEffect(() => {
@@ -279,8 +280,81 @@ const Class: React.FC = () => {
             }));
             setRecipes(classes[i].recipes.sort((a,b) => a.id-b.id));
         }
-
     }
+
+    const removeStudentFromCourse = useCallback(async (username: string) => {
+
+        const { data: {
+            status,
+            message,
+            course: responseClasses
+        } } = await request<APIClassResponse>(
+            "/removeStudentFromCourse",
+            {
+                method: "POST",
+                data: {
+                    username: username,
+                    course: selectedClass
+                }
+            }
+        );
+
+
+        if (status === "error") {
+            throw new Error(message);
+        } else {
+            setSelectedClass(responseClasses);
+            update();
+        }
+    }, [request, name]);
+
+    const removeClassFromCourse = useCallback(async (courseID: number) => {
+
+        const { data: {
+            status,
+            message,
+        } } = await request(
+            "/removeCourse",
+            {
+                method: "POST",
+                data: {
+                    id: courseID
+                }
+            }
+        );
+
+
+        if (status === "error") {
+            throw new Error(message);
+        } else {
+            setSelectedClass(null);
+            setStudents(null);
+            setRecipes(null);
+            update();
+        }
+    }, [request, name]);
+
+    const removeRecipeFromCourse = useCallback(async (id:string) => {
+        const { data: {
+            status,
+            message,
+        } } = await request(
+            "/removeRecipeFromCourse",
+            {
+                method: "POST",
+                data: {
+                    recipe: {id},
+                    course: {id:selectedClass ? selectedClass.id : ''}
+                }
+            }
+        );
+
+        if (status === "error") {
+            throw new Error(message);
+        } else {
+            update();
+        }
+    }, [request, name]);
 
     return (
         <div>
@@ -302,8 +376,10 @@ const Class: React.FC = () => {
                         <ClassCard
                             key={each.id}
                             index={index}
+                            classid={each.id}
                             name={each.courseName}
                             click={selectClass}
+                            remove={removeClassFromCourse}
                             color={selectedClass ? selectedClass.id === each.id ? 'lightblue' : 'white' : 'white'}
                         />
                     ))}
@@ -328,13 +404,14 @@ const Class: React.FC = () => {
                         </div>
                     )}
                     {students && students.map((each) => (
-                        <ClassCard
+                        <StudentCard
                             key={each.userName}
                             name={each.userName}
+                            remove={removeStudentFromCourse}
                         />
                     ))}
 
-                    {selectedClass && <ClassCard add={() => setAddStudents(true)} />}
+                    {selectedClass && <StudentCard add={() => setAddStudents(true)} />}
                 </div>
 
             </Responsive>
@@ -346,7 +423,7 @@ const Class: React.FC = () => {
                     Recipes In the Course
                 </div>
                 <div
-                    className={styles["card-container"]}
+                    className={styles["card-container2"]}
                 >
                     {!recipes && (
                         <div>
@@ -359,6 +436,8 @@ const Class: React.FC = () => {
                             id={`${each.id}`}
                             name={each.recipeName}
                             description={each.description}
+                            remove={removeRecipeFromCourse}
+                            role={role}
                         />
                     ))}
                     {selectedClass && <ClassCard add={ () => setaddRecipes(true)} />}

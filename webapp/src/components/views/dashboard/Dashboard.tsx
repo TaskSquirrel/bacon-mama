@@ -83,7 +83,31 @@ const Dashboard: React.FC = () => {
         );
     };
 
+    
+
     const setC = () => setCreate(true);
+
+    const removeRecipe = useCallback(async (id: string) => {
+        const { data: {
+            status,
+            message,
+            recipes: responseRecipes
+        } } = await request<APIManyRecipeResponse>(
+            "/deleteRecipe",
+            {
+                method: "POST",
+                data: {
+                    recipe: {id:parseInt(id)}
+                }
+            }
+        );
+
+        if (status === "error") {
+            throw new Error(message);
+        } else {
+            update();
+        }
+    }, [request, name]);
 
     return (
         <div>
@@ -112,6 +136,8 @@ const Dashboard: React.FC = () => {
                             id={ `${each.id}` }
                             name={ each.recipeName }
                             description={ each.description }
+                            role={role}
+                            remove={removeRecipe}
                         />
                     )) }
                 </div>

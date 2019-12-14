@@ -64,3 +64,16 @@
         color: var(--secondary);
     }
 }
+.button {
+    position: absolute;
+    top: 0;
+    right: 0;
+
+    transform: translate(0%, 0%) scale(0);
+
+    transition: transform 150ms ease-in-out;
+
+    &.hovering {
+        transform: translate(0%, 0%) scale(1);
+    }
+}

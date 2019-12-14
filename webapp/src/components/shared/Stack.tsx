@@ -7,16 +7,22 @@ interface StackProps {
     className?: string;
     inline?: boolean;
     gap?: "big" | "bigger";
+    onMouseOver?: () => void;
+    onMouseOut?: () => void;
 }
 
 const Stack: React.FC<StackProps> = ({
     className,
     inline,
     gap,
+    onMouseOver,
+    onMouseOut,
     ...props
 }) => {
     return (
         <div
+            onMouseOver={onMouseOver}
+            onMouseOut={onMouseOut}
             { ...props }
             className={ classNames(
                 inline

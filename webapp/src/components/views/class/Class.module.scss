@@ -12,3 +12,9 @@
     grid-template-rows: auto;
     grid-template-columns: repeat(4, 1fr);
 }
+
+.card-container2 {
+    display: flex;
+    flex-wrap: wrap;
+}
+
