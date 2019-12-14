@@ -37,6 +37,8 @@ const Dashboard: React.FC = () => {
         if (status === "error") {
             throw new Error(message);
         } else {
+            console.log(responseRecipes);
+            
             return responseRecipes;
         }
     }, [request, name]);
@@ -77,27 +79,26 @@ const Dashboard: React.FC = () => {
 
         return (
             <CreateRecipeModal
-                control={ setCreate }
-                update={ update }
+                control={setCreate}
+                update={update}
             />
         );
     };
 
-    
+
 
     const setC = () => setCreate(true);
 
     const removeRecipe = useCallback(async (id: string) => {
         const { data: {
             status,
-            message,
-            recipes: responseRecipes
-        } } = await request<APIManyRecipeResponse>(
+            message
+        } } = await request(
             "/deleteRecipe",
             {
                 method: "POST",
                 data: {
-                    recipe: {id:parseInt(id)}
+                    recipe: { id: parseInt(id) }
                 }
             }
         );
@@ -112,37 +113,98 @@ const Dashboard: React.FC = () => {
     return (
         <div>
             <NavBar
-                click={ setC }
-                userName={ name || "User" }
+                click={setC}
+                userName={name || "User"}
                 role={role}
             />
-            <Responsive>
-                <div
-                    className={ styles.title }
-                >
-                    Your Recipes
+            {role === "student" && (
+                <Responsive>
+                    <div
+                        className={styles.title}
+                    >
+                        Your Completed Recipes
                 </div>
-                <div
-                    className={ styles["card-container"] }
-                >
-                    { recipes && recipes.length === 0 && (
-                        <div>
-                            No recipes found!
+                    <div
+                        className={styles["card-container"]}
+                    >
+                        {recipes && recipes.filter(each => each.status).length === 0 && (
+                            <div>
+                                No completed recipes found!
                         </div>
-                    ) }
-                    { recipes && recipes.map((each) => (
-                        <Card
-                            key={ each.id }
-                            id={ `${each.id}` }
-                            name={ each.recipeName }
-                            description={ each.description }
-                            role={role}
-                            remove={removeRecipe}
-                        />
-                    )) }
+                        )}
+                        {recipes && recipes.filter((each) => each.status).map((each) => (
+                            <Card
+                                key={each.id}
+                                id={`${each.id}`}
+                                name={each.recipeName}
+                                description={each.description}
+                                role={role}
+                                remove={removeRecipe}
+                            />
+                        ))}
+                    </div>
+                </Responsive>
+            )}
+            <br />
+            {role === "student" && (
+                <Responsive>
+                    <div
+                        className={styles.title}
+                    >
+                        Your Incompleted Recipes
                 </div>
-            </Responsive>
-            { createRecipe() }
+                    <div
+                        className={styles["card-container"]}
+                    >
+                        {recipes && recipes.filter(each => !each.status).length === 0 && (
+                            <div>
+                                No incompleted recipes found!
+                        </div>
+                        )}
+                        {recipes && recipes.filter(each => !each.status).map((each) => (
+                            <Card
+                                key={each.id}
+                                id={`${each.id}`}
+                                name={each.recipeName}
+                                description={each.description}
+                                role={role}
+                                remove={removeRecipe}
+                            />
+                        ))}
+                    </div>
+                </Responsive>
+            )}
+
+            {role === "professor" && (
+                <Responsive>
+                    <div
+                        className={styles.title}
+                    >
+                        Your Recipes
+                </div>
+                    <div
+                        className={styles["card-container"]}
+                    >
+                        {recipes && recipes.length === 0 && (
+                            <div>
+                                No recipes found!
+                        </div>
+                        )}
+                        {recipes && recipes.map((each) => (
+                            <Card
+                                key={each.id}
+                                id={`${each.id}`}
+                                name={each.recipeName}
+                                description={each.description}
+                                role={role}
+                                remove={removeRecipe}
+                            />
+                        ))}
+                    </div>
+                </Responsive>
+            )}
+
+            {createRecipe()}
         </div>
     );
 };

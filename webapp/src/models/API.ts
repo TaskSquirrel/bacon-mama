@@ -57,6 +57,7 @@ export interface APIRecipeList {
     id: number;
     recipeName: string;
     description?: string;
+    status?: boolean;
 }
 
 export interface APIStudentResponse extends Response {
