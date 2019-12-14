@@ -33,6 +33,8 @@ public class RecipeController implements BaseApiController {
   AutowireCapableBeanFactory beanFactory;
   @Autowired
   ImageRepository imageRepository;
+  @Autowired
+  HistoryRepository historyRepository;
 
   private Map<String, Object> recipeSuccess(RecipeJson rj) {
     Map<String, Object> map = new HashMap<>();
@@ -138,12 +140,25 @@ public class RecipeController implements BaseApiController {
       List<Map<String, Object>> recipes = new ArrayList<>();
       returnMap.put("recipes", recipes);
       Set<Course> courses = user.getCourses();
+      List<History> userHistory = historyRepository.findByStudentId(user.getId());
       for(Course course : courses)
       {
         Set<Recipe> recipeInCourse = course.getRecipes();
         for(Recipe recipe : recipeInCourse)
         {
-          recipes.add(recipe.toMapOverview());
+          boolean inHistory = false;
+          for(History history : userHistory)
+          {
+            if(history.getRecipeId().equals(recipe.getId()))
+            {
+              recipes.add(recipe.toMapOverview(true));
+              inHistory = true;
+              break;
+            }
+          }
+          if(!inHistory){
+            recipes.add(recipe.toMapOverview(false));
+          }
         }
       }
     }
@@ -259,5 +274,23 @@ public class RecipeController implements BaseApiController {
       return JsonUtils.returnError(e.getMessage());
     }
     return this.recipeSuccess(json);
+  }
+
+  @CrossOrigin
+  @PostMapping(path = "/completeRecipe", consumes = "application/json", produces = "application/json")
+  Map<String, Object> completeRecipe(@RequestBody Map<String, Object> json) {
+    try {
+      Long studentId = JsonUtils.parseId(json.get("studentId"));
+      Long recipeId = JsonUtils.parseId(json.get("recipeId"));
+
+      History h = new History();
+      h.setRecipeId(recipeId);
+      h.setStudentId(studentId);
+      h.setStatus("complete");
+      historyRepository.save(h);
+    } catch (Exception e) {
+      return JsonUtils.returnError(e.getMessage());
+    }
+    return JsonUtils.returnSuccess();
   }
 }
