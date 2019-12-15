@@ -13,7 +13,8 @@ export interface CardProps extends React.HTMLProps<HTMLDivElement> {
     name: string;
     description?: string;
     id: string;
-    role?: string | undefined;
+    role?: "student" | "professor";
+    status?: string;
     remove?: (i: string) => void;
 }
 
@@ -23,13 +24,39 @@ const Card: React.FC<CardProps> = ({
     description,
     id,
     role,
-    remove
+    status,
+    remove,
 }) => {
     const [hovering, setHovering] = useState<boolean>(false);
     const [showDeletePrompt, setShowDeletePrompt] = useState<boolean>(false);
 
+    const isStudent = role === "student";
+
     const createHoveringSetter = (state: boolean) => () => {
         setHovering(state);
+    };
+
+    const renderCompleted = () => {
+        if (!isStudent) {
+            return null;
+        }
+
+        const icon = status
+            ? "fas fa-check-circle"
+            : "fas fa-times-circle";
+
+        return (
+            <div
+                className={ classNames(
+                    styles.icon,
+                    status && styles.completed
+                ) }
+            >
+                <i
+                    className={ icon }
+                />
+            </div>
+        );
     };
 
     const renderDeleteStepConfirmation = () => {
@@ -95,18 +122,25 @@ const Card: React.FC<CardProps> = ({
                 { description }
             </div>
             <div
-                className={ styles.edit }
+                className={ styles.actions }
             >
-                <Link to={ `/edit/${id}` }>
-                    <ButtonBase inverted clear className={ styles.pen }>
-                        <i className="fas fa-pen" />
-                    </ButtonBase>
-                </Link>
-                <Link to={ `/play/${id}` }>
-                    <ButtonBase inverted clear className={ styles.play }>
-                        <i className="fas fa-play" />
-                    </ButtonBase>
-                </Link>
+                <div>
+                    { renderCompleted() }
+                </div>
+                <div
+                    className={ styles.edit }
+                >
+                    <Link to={ `/edit/${id}` }>
+                        <ButtonBase inverted clear className={ styles.pen }>
+                            <i className="fas fa-pen" />
+                        </ButtonBase>
+                    </Link>
+                    <Link to={ `/play/${id}` }>
+                        <ButtonBase inverted clear className={ styles.play }>
+                            <i className="fas fa-play" />
+                        </ButtonBase>
+                    </Link>
+                </div>
             </div>
             { renderButton() }
             { renderDeleteStepConfirmation() }

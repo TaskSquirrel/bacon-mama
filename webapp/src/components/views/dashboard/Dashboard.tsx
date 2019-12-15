@@ -18,6 +18,8 @@ const Dashboard: React.FC = () => {
     const [create, setCreate] = useState<boolean>(false);
     const request = useAPI();
 
+    const isStudent = role === "student";
+
     const update = useCallback(async () => {
         try {
             const {
@@ -84,77 +86,35 @@ const Dashboard: React.FC = () => {
     return (
         <div>
             <NavBar click={ setC } userName={ name || "User" } role={ role } />
-            { role === "student" && (
-                <Responsive>
-                    <div className={ styles.title }>Your Completed Recipes</div>
-                    <div className={ styles["card-container"] }>
-                        { recipes &&
-                            recipes.filter((each) => each.status).length ===
-                                0 && <div>No completed recipes found!</div> }
-                        { recipes &&
-                            recipes
-                                .filter((each) => each.status)
-                                .map((each) => (
-                                    <Card
-                                        key={ each.id }
-                                        id={ `${each.id}` }
-                                        name={ each.recipeName }
-                                        description={ each.description }
-                                        role={ role }
-                                        remove={ removeRecipe }
-                                    />
-                                )) }
-                    </div>
-                </Responsive>
-            ) }
-            { role === "student" && (
-                <Responsive>
-                    <div className={ styles.title }>Your Incompleted Recipes</div>
-                    <div className={ styles["card-container"] }>
-                        { recipes &&
-                            recipes.filter((each) => !each.status).length ===
-                                0 && <div>No incompleted recipes found!</div> }
-                        { recipes &&
-                            recipes
-                                .filter((each) => !each.status)
-                                .map((each) => (
-                                    <Card
-                                        key={ each.id }
-                                        id={ `${each.id}` }
-                                        name={ each.recipeName }
-                                        description={ each.description }
-                                        role={ role }
-                                        remove={ removeRecipe }
-                                    />
-                                )) }
-                    </div>
-                </Responsive>
-            ) }
-            { role === "professor" && (
-                <Responsive>
-                    <div className={ styles.title }>Your Recipes</div>
-                    { recipes && recipes.length > 0
-                        ? (
-                            <div className={ styles["card-container"] }>
-                                { recipes.map((each) => (
-                                    <Card
-                                        key={ each.id }
-                                        id={ `${each.id}` }
-                                        name={ each.recipeName }
-                                        description={ each.description }
-                                        role={ role }
-                                        remove={ removeRecipe }
-                                    />
-                                )) }
-                            </div>
-                        )
-                        : (
-                            <div>
-                                No recipes to show!
-                            </div>
-                        ) }
-                </Responsive>
-            ) }
+            <Responsive>
+                <div
+                    className={ styles.title }
+                >
+                    { isStudent
+                        ? "Assigned Recipes"
+                        : "Your Recipes" }
+                </div>
+                { recipes && recipes.length > 0
+                    ? (
+                        <div className={ styles["card-container"] }>
+                            { recipes.map((each) => (
+                                <Card
+                                    key={ each.id }
+                                    id={ `${each.id}` }
+                                    name={ each.recipeName }
+                                    description={ each.description }
+                                    role={ role }
+                                    remove={ removeRecipe }
+                                />
+                            )) }
+                        </div>
+                    )
+                    : (
+                        <div>
+                            No recipes to show!
+                        </div>
+                    ) }
+            </Responsive>
             { renderCreateRecipe() }
         </div>
     );

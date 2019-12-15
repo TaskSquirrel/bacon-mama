@@ -102,7 +102,7 @@ const Class: React.FC = () => {
         const { data: {
             status,
             message,
-            students
+            students: responseStudents
         } } = await request(
             "/getAllStudents",
             {
@@ -114,8 +114,7 @@ const Class: React.FC = () => {
         if (status === "error") {
             throw new Error(message);
         } else {
-
-            return students;
+            return responseStudents;
         }
     }, []);
 
@@ -217,7 +216,7 @@ const Class: React.FC = () => {
             <AddStudentModal
                 control={ setAddStudents }
                 update={ update }
-                info={"student"}
+                info={ "student" }
                 course={ selectedClass }
                 options={ studentOptions }
             />
@@ -233,7 +232,7 @@ const Class: React.FC = () => {
             <AddStudentModal
                 control={ setaddRecipes }
                 update={ update }
-                info={"recipe"}
+                info={ "recipe" }
                 course={ selectedClass }
                 options={ recipeOptions }
             />
@@ -363,15 +362,15 @@ const Class: React.FC = () => {
                 <div
                     className={ styles["card-container"] }
                 >
-                    { classes && classes.map((each, index) => (
+                    { classes && classes.map((each, i) => (
                         <ClassCard
                             key={ each.id }
-                            index={ index }
+                            index={ i }
                             classid={ each.id }
                             name={ each.courseName }
                             click={ selectClass }
                             remove={ removeClassFromCourse }
-                            color={ selectedClass ? selectedClass.id === each.id ? "lightblue" : "white" : "white"}
+                            color={ selectedClass ? selectedClass.id === each.id ? "lightblue" : "white" : "white" }
                         />
                     )) }
 
@@ -379,7 +378,6 @@ const Class: React.FC = () => {
                 </div>
 
             </Responsive>
-            <br />
             <Responsive>
                 <div
                     className={ styles.title }
@@ -404,9 +402,7 @@ const Class: React.FC = () => {
 
                     { selectedClass && <StudentCard add={ () => setAddStudents(true) } /> }
                 </div>
-
             </Responsive>
-            <br />
             <Responsive>
                 <div
                     className={ styles.title }
