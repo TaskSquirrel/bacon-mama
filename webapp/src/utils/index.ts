@@ -18,7 +18,7 @@ export const getAPIURL = () => {
     return USE_URL;
 };
 
-export const getImageURL = (image: string) => {
+export const getImageURL = (image: string | number) => {
     return `http://${getAPIURL()}/images/${image}`;
 };
 
