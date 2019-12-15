@@ -7,13 +7,15 @@ import styles from "./TopLevelLoadingIndicator.module.scss";
 import Portal from "./Portal";
 
 export interface TopLevelLoadingIndicatorContextShape {
+    status: boolean;
     setStatus: (loading: boolean) => void;
 }
 
 export const TopLevelLoadingIndicatorContext = React.createContext<
     TopLevelLoadingIndicatorContextShape
 >({
-    setStatus: noop
+    status: false,
+    setStatus: noop,
 });
 
 const TopLevelLoadingIndicator: React.FC = ({
@@ -56,7 +58,8 @@ const TopLevelLoadingIndicator: React.FC = ({
     }, [loading]);
 
     const value: TopLevelLoadingIndicatorContextShape = {
-        setStatus
+        status: loading,
+        setStatus,
     };
 
     return (

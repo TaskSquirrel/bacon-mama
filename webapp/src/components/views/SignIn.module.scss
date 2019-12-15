@@ -28,10 +28,14 @@
 }
 
 .link {
-    color: white;
+    color: var(--white);
 }
 
 .message {
-    margin:auto;
+    margin: auto;
     padding: 1rem;
+}
+
+.spinner {
+    font-size: inherit;
 }

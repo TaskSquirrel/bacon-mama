@@ -8,6 +8,7 @@ import styles from "./ItemCard.module.scss";
 export interface ItemCardProps {
     name: string;
     showButton?: boolean;
+    image?: string;
     quantity?: {
         amount: number,
         unit: string
@@ -16,13 +17,11 @@ export interface ItemCardProps {
 }
 
 const ItemCard: React.FC<ItemCardProps> = ({
-    name, showButton, quantity, onCloseClick
+    name, showButton, image, quantity, onCloseClick
 }) => {
     const [hovering, setHovering] = useState<boolean>(false);
 
-    const createHoveringSetter = (state: boolean) => () => {
-        setHovering(state);
-    };
+    const createHoveringSetter = (state: boolean) => () => setHovering(state);
 
     const renderButton = () => {
         return (
@@ -69,8 +68,18 @@ const ItemCard: React.FC<ItemCardProps> = ({
         >
             { showButton && renderButton() }
             <div
-                className={ styles.image }
-            />
+                className={ classNames(
+                    styles.image,
+                    !image && styles.none
+                ) }
+            >
+                { image && (
+                    <img
+                        alt={ name }
+                        src={ image }
+                    />
+                ) }
+            </div>
             { renderDetails() }
         </div>
     );

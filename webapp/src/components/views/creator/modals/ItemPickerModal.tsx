@@ -1,6 +1,5 @@
 import React, { useState, useContext } from "react";
 import { useParams, useHistory } from "react-router-dom";
-import classNames from "classnames";
 
 import { Item, Step, Dependency } from "../../../../models/recipe";
 
@@ -10,8 +9,13 @@ import TextField from "../../../controls/TextField";
 import FullModal from "../../../shared/FullModal";
 import Responsive from "../../../shared/Responsive";
 import Stack from "../../../shared/Stack";
+import ItemPickerItem from "./ItemPickerItem";
 
-import { isNumber } from "../../../../utils";
+import {
+    isNumber,
+    createChangeEventStateSetter,
+    getImageURL
+} from "../../../../utils";
 
 import styles from "./ItemPickerModal.module.scss";
 import modalStyles from "./modals.module.scss";
@@ -31,38 +35,35 @@ const ItemPickerModal: React.FC<ItemPickerModalProps> = ({
             replaceStep
         }
     } = useContext(ContentCreatorContext);
+    const [query, setQuery] = useState<string>("");
     const [selected, setSelected] = useState<string | null>(null);
     const [amount, setAmount] = useState<string>("");
     const [unit, setUnit] = useState<string>("");
     const { id: recipeID, sequence: stepSequence } = useParams();
     const { push } = useHistory();
 
-    const { dependencies } = currentStep;
+    const { dependencies, result } = currentStep;
 
-    const exists = dependencies.find(
-        ({ item: { id: itemID } }) => itemID === selected
-    );
+    const choosingDependency = pick === "dependencies";
 
-    const title = pick === "dependencies"
+    const exists = choosingDependency
+        ? dependencies.find(
+            ({ item: { id: itemID } }) => itemID === selected
+        )
+        : result && result.id === selected;
+
+    const title = choosingDependency
         ? "Add a dependency"
         : "Choose result item";
 
-    const close = () => {
-        push(`/edit/${recipeID}/${stepSequence}`);
-    };
+    const submitReady = selected && amount && unit && isNumber(amount);
 
-    const onAmountChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setAmount(event.target.value);
-    };
-
-    const onUnitChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setUnit(event.target.value);
-    };
+    const close = () => push(`/edit/${recipeID}/${stepSequence}`);
 
     const onSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
 
-        if (!selected || !amount || !unit || !isNumber(amount)) {
+        if (!submitReady) {
             return;
         }
 
@@ -135,32 +136,42 @@ const ItemPickerModal: React.FC<ItemPickerModalProps> = ({
 
     const createSelectItem = (id: string) => () => setSelected(id);
 
-    const renderItems = () => {
-        return items.map(({
-            id, name
-        }) => {
+    const renderItems = () => items
+        .filter(({ name }) => {
+            const lowerCaseQuery = query.toLowerCase();
+            const lowerCaseName = name.toLowerCase();
+
+            return lowerCaseName.startsWith(lowerCaseQuery);
+        })
+        .map(({ id, name, image }) => {
             return (
-                <div
+                <ItemPickerItem
                     key={ id }
-                    className={ classNames(
-                        styles.item,
-                        selected === id && styles.selected
-                    ) }
+                    selected={ selected === id }
+                    image={ image ? getImageURL(`${image}`) : undefined }
+                    name={ name }
                     onClick={ createSelectItem(id) }
-                >
-                    { name }
-                </div>
+                />
             );
         });
-    };
 
     const renderItemsContainer = () => {
         if (items.length > 0) {
+            const renderableItems = renderItems();
+
+            if (renderableItems.length === 0) {
+                return (
+                    <div>
+                        { `"${query}" not found!` }
+                    </div>
+                );
+            }
+
             return (
                 <div
                     className={ styles.items }
                 >
-                    { renderItems() }
+                    { renderableItems }
                 </div>
             );
         }
@@ -168,6 +179,52 @@ const ItemPickerModal: React.FC<ItemPickerModalProps> = ({
         return (
             <div>
                 You did not add any items to this recipe yet!
+            </div>
+        );
+    };
+
+    const renderActions = () => {
+        const getSelectedItemName = () => {
+            const itemDetails = items
+                .find(({ id }) => id === selected);
+
+            if (itemDetails) {
+                return itemDetails.name;
+            }
+
+            return null;
+        };
+
+        return (
+            <div
+                className={ styles.actions }
+            >
+                <div
+                    className={ styles.details }
+                >
+                { submitReady
+                    ? (
+                        <>
+                            <div
+                                className={ styles["details-amount"] }
+                            >
+                                { `${amount} ${unit}` }
+                            </div>
+                            <div
+                                className={ styles["details-name"] }
+                            >
+                                { getSelectedItemName() }
+                            </div>
+                        </>
+                    )
+                    : "Pick an item!" }
+                </div>
+                <ButtonBase
+                    type="submit"
+                    disabled={ !submitReady }
+                >
+                    Add
+                </ButtonBase>
             </div>
         );
     };
@@ -184,66 +241,82 @@ const ItemPickerModal: React.FC<ItemPickerModalProps> = ({
                     onSubmit={ onSubmit }
                 >
                     <div
-                        className={ modalStyles.form }
+                        className={ styles.container }
                     >
-                        <div>
-                            <Stack
-                                className={ styles.header }
-                            >
-                                <h3>
-                                    Measurement
-                                </h3>
+                        <div
+                            className={ modalStyles.form }
+                        >
+                            <Stack>
                                 <div
-                                    className={ styles.description }
+                                    className={ styles.inline }
                                 >
-                                    Describe how much of an item you want to add including its unit.
-                                    Amounts are rounded to the nearest tenth.
+                                    <h3>
+                                        Available items
+                                    </h3>
+                                    <div>
+                                        <TextField
+                                            type="text"
+                                            placeholder="Search"
+                                            className={ styles.search }
+                                            value={ query }
+                                            onChange={ createChangeEventStateSetter (
+                                                setQuery
+                                            ) }
+                                        />
+                                    </div>
                                 </div>
+                                { exists && (
+                                    <div
+                                        className={ styles.error }
+                                    >
+                                        Item is already added as a dependency in this step!
+                                    </div>
+                                ) }
+                                { renderItemsContainer() }
                             </Stack>
-                            <Stack
-                                inline
-                                className={ styles.measurement }
-                            >
-                                <TextField
-                                    required
-                                    placeholder="Amount"
-                                    className={ styles.amount }
-                                    value={ amount }
-                                    onChange={ onAmountChange }
-                                />
-                                <TextField
-                                    required
-                                    placeholder="Unit"
-                                    value={ unit }
-                                    onChange={ onUnitChange }
-                                />
-                                <div>
-                                    { renderSuggestion() }
-                                </div>
+                            <Stack>
+                                <Stack
+                                    className={ styles.header }
+                                >
+                                    <h3>
+                                        Measurement
+                                    </h3>
+                                    <div
+                                        className={ styles.description }
+                                    >
+                                        How much do you want to add?
+                                    </div>
+                                </Stack>
+                                <Stack
+                                    inline
+                                    className={ styles.measurement }
+                                >
+                                    <TextField
+                                        required
+                                        type="text"
+                                        placeholder="Amount"
+                                        className={ styles.amount }
+                                        value={ amount }
+                                        onChange={ createChangeEventStateSetter(
+                                            setAmount
+                                        ) }
+                                    />
+                                    <TextField
+                                        required
+                                        type="text"
+                                        placeholder="Unit"
+                                        value={ unit }
+                                        onChange={ createChangeEventStateSetter(
+                                            setUnit
+                                        ) }
+                                    />
+                                    <div>
+                                        { renderSuggestion() }
+                                    </div>
+                                </Stack>
                             </Stack>
                         </div>
-                        <Stack>
-                            <h3>
-                                Available items
-                            </h3>
-                            { exists && (
-                                <div
-                                    className={ styles.error }
-                                >
-                                    Item is already added as a dependency in this step!
-                                </div>
-                            ) }
-                            { renderItemsContainer() }
-                        </Stack>
-                    </div>
-                    <div
-                        className={ styles.actions }
-                    >
-                        <ButtonBase
-                            type="submit"
-                        >
-                            Add
-                        </ButtonBase>
+                        { renderActions() }
                     </div>
                 </form>
             </Responsive>

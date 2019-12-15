@@ -8,7 +8,7 @@ export interface Item {
     id: string;
     name: string;
     description?: string;
-    image?: string;
+    image?: number;
 }
 
 export interface Dependency {

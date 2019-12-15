@@ -25,6 +25,8 @@ const UtilityBar: React.FC = () => {
     const { push } = useHistory();
     const [showPrompt, setShowPrompt] = useState<boolean>(false);
 
+    const exit = () => push("/");
+
     const createPrompStateSetter = (state: boolean) => () =>
         setShowPrompt(state);
 
@@ -100,14 +102,15 @@ const UtilityBar: React.FC = () => {
                 </ButtonBase>
                 <ButtonBase
                     className={ styles.share }
+                    onClick={ exit }
                 >
                     <span>
                         <i
-                            className="fas fa-share"
+                            className="fas fa-sign-out-alt"
                         />
                     </span>
                     <span>
-                        Share
+                        Exit
                     </span>
                 </ButtonBase>
             </Stack>

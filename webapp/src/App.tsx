@@ -19,6 +19,7 @@ const App: React.FC = () => {
                 <UserProvider>
                     <TopLevelLoadingIndicator>
                         <AppRouter
+                            fallback
                             routes={ routes }
                         />
                     </TopLevelLoadingIndicator>
