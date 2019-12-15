@@ -78,13 +78,27 @@ const Sidebar: React.FC = () => {
     };
 
     const renderDependencies = (dependencies: Dependency[]) => {
-        return dependencies.map(({ id, item: { name: itemName }, amount, unit }) => (
-            <ItemCard
-                key={ id }
-                title={ itemName }
-                amount={ `${amount} ${unit}` }
-            />
-        ));
+        return dependencies.map(({
+            id, item: { id: dependencyItemID, name: itemName }, amount, unit
+        }) => {
+            const progressState = itemState
+                .find(({ id: itemID }) => itemID === dependencyItemID);
+
+            let progress = 0;
+
+            if (progressState) {
+                progress = progressState.amount / amount;
+            }
+
+            return (
+                <ItemCard
+                    key={ id }
+                    title={ itemName }
+                    amount={ `${amount} ${unit}` }
+                    progress={ progress }
+                />
+            );
+        });
     };
 
     const renderContent = () => {

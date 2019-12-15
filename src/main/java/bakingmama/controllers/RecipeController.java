@@ -228,12 +228,13 @@ public class RecipeController implements BaseApiController {
       Map<String, Object> itemMap = JsonUtils.castMap(body.get("item"));
       String itemName = (String) itemMap.get("name");
 
-      Image image;
+      Image image = null;
       if (itemMap.containsKey("image")) {
-        Long imageID = JsonUtils.parseId(itemMap.get("image"));
-        image = imageRepository.getOne(imageID);
-      } else {
-        image = null;
+        Object imageValue = itemMap.get("image");
+        if (imageValue != null) {
+          Long imageID = JsonUtils.parseId(itemMap.get("image"));
+          image = imageRepository.getOne(imageID);
+        }
       }
 
       Item newItem = mu.addItem(itemName, recipe, image);

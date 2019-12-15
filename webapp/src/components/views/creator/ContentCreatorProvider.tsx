@@ -31,7 +31,9 @@ export interface ContentCreatorContextShape {
         setRecipeModal: (state: boolean) => void,
         setAddItemModal: (state: boolean) => void,
         setEditStepModal: (state: boolean) => void,
-        addItem: (name: string, description?: string) => Promise<void> | void,
+        addItem: (
+            name: string, description?: string, imageID?: number | string | null
+        ) => Promise<void> | void,
         addStep: (step: Omit<Step, "id">) => Promise<void> | void,
         replaceStep: (step: Step) => Promise<void> | void,
         deleteStep: (stepID: string) => Promise<void> | void,
@@ -131,7 +133,8 @@ const ContentCreatorProvider: React.FC = ({ children }) => {
 
     const addItem = (
         name: string,
-        description?: string
+        description?: string,
+        imageID?: number | string | null
     ) => {
         doRequest(
             "/addItem",
@@ -143,7 +146,8 @@ const ContentCreatorProvider: React.FC = ({ children }) => {
                     },
                     item: {
                         name,
-                        description
+                        description,
+                        image: imageID,
                     }
                 }
             }

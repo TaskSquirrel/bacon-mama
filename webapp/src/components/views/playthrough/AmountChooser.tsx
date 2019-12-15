@@ -8,10 +8,12 @@ import usePlaythrough from "./usePlaythrough";
 import styles from "./Play.module.scss";
 
 interface AmountChooserProps {
+    amountRequired?: number;
     replace: (amount: number) => void;
 }
 
 const AmountChooser: React.FC<AmountChooserProps> = ({
+    amountRequired,
     replace,
 }) => {
     const amounts = [0.1, 1, 5, 10, 50, 100];

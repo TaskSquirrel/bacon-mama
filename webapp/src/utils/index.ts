@@ -4,6 +4,31 @@ export async function noop() {
     // noop
 }
 
+export const getAPIURL = () => {
+    const {
+        REACT_APP_API: API_URL,
+        REACT_APP_API_PROD: PROD,
+        NODE_ENV
+    } = process.env;
+    const IN_PRODUCTION = NODE_ENV === "production";
+    const URL = IN_PRODUCTION ? PROD : API_URL;
+
+    const USE_URL = URL || "localhost:8080/api";
+
+    return USE_URL;
+};
+
+export const getImageURL = (image: string | number) => {
+    return `http://${getAPIURL()}/images/${image}`;
+};
+
+export const randomRange = (range: number) => {
+    const num = Math.random() * range;
+    const result = num - range / 2;
+
+    return result;
+};
+
 export const createChangeEventStateSetter = (
     setter: React.Dispatch<React.SetStateAction<string>>
 ) => (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {

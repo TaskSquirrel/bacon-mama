@@ -8,6 +8,8 @@ import { ContentCreatorContext } from "./ContentCreatorProvider";
 import AuraButton from "../../controls/AuraButton";
 import ItemCard from "./items/ItemCard";
 
+import { getImageURL } from "../../../utils";
+
 import styles from "./ItemPicker.module.scss";
 import useUser from "../../hooks/useUser";
 
@@ -16,6 +18,7 @@ const ItemPicker: React.FC = () => {
         metadata: {
             id: recipeID
         },
+        items,
         currentStep: step,
         actions: {
             replaceStep,
@@ -78,12 +81,18 @@ const ItemPicker: React.FC = () => {
             },
             index
         ) => {
+            const item = items
+                .find(({ id: itemID }) => itemID === id);
+
             return (
                 <ItemCard
                     showButton
-                    key={`${id}-${index}`}
-                    name={name}
-                    quantity={{
+                    key={ `${id}-${index}` }
+                    name={ name }
+                    image={ item && item.image
+                        ? getImageURL(item.image)
+                        : undefined }
+                    quantity={ {
                         amount, unit
                     }}
                     onCloseClick={createOnItemCloseClick(

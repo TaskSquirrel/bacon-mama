@@ -8,7 +8,8 @@ import Dashboard from "./../views/dashboard/Dashboard";
 import ContentCreator from "../views/creator/ContentCreator";
 import Register from "../views/Register";
 import Playthrough from "../views/playthrough/Playthrough";
-import Class from "./../views/class/Class";
+import Class from "../views/class/Class";
+import NotFound from "../views/not-found/NotFound";
 
 const routes: Route[] = [
     {
@@ -55,6 +56,11 @@ const routes: Route[] = [
         to: "/class",
         exact: true,
         component: requireSignedIn()(Class)
+    },
+    {
+        to: "/404",
+        exact: true,
+        component: NotFound
     },
 ];
 

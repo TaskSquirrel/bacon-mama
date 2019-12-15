@@ -6,13 +6,15 @@ import useUser from "../hooks/useUser";
 import CenteredPane from "../CenteredPane";
 import TextField from "../controls/TextField";
 import ButtonBase from "../controls/ButtonBase";
-
+import Spinner from "../shared/Spinner";
 import useLoadingIndicator from "../hooks/useLoadingIndicator";
+
+import { randomRange } from "../../utils";
 
 import styles from "./SignIn.module.scss";
 
 const SignIn: React.FC = () => {
-    const { setStatus } = useLoadingIndicator();
+    const { status, setStatus } = useLoadingIndicator();
     const { signIn } = useUser();
     const [name, setName] = useState<string>("");
     const [password, setPassword] = useState<string>("");
@@ -32,7 +34,6 @@ const SignIn: React.FC = () => {
 
         const login = async () => {
             try {
-                setStatus(true);
                 await signIn(name, password);
             } catch (e) {
                 setError(e.message);
@@ -41,7 +42,8 @@ const SignIn: React.FC = () => {
             }
         };
 
-        login();
+        setStatus(true);
+        setTimeout(login, 1000 + randomRange(250));
     };
 
     return (
@@ -77,8 +79,15 @@ const SignIn: React.FC = () => {
                     { error }
                     <ButtonBase
                         type="submit"
+                        disabled={ status }
                     >
-                        Sign in
+                        { status
+                            ? (
+                                <Spinner
+                                    className={ styles.spinner }
+                                />
+                            )
+                            : "Sign in" }
                     </ButtonBase>
                     <div
                         className={ styles.actions }

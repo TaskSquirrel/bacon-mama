@@ -1,0 +1,39 @@
+@import "../../styles/colors";
+
+$primary: map-get($colors, "primary");
+
+.upload {
+    position: relative;
+
+    color: var(--primary);
+
+    border: 1px dashed var(--primary);
+    border-radius: 5px;
+    background-color: rgba($primary, 0.1);
+
+    padding: 0.65rem 1rem;
+}
+
+.input {
+    cursor: pointer;
+
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+
+    width: 100%;
+    height: 100%;
+
+    opacity: 0;
+}
+
+.file {
+    display: flex;
+    justify-content: space-between;
+}
+
+.icon {
+    margin-right: 1rem;
+}
