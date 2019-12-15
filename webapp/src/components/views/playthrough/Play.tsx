@@ -61,19 +61,15 @@ const Play: React.FC = () => {
     };
 
     const renderFeedback = () => {
-        let mainText;
-
-        if (!selected) {
-            mainText = "Select an item!";
-        } else {
-            mainText = `Selected ${selected.name}...`;
-        }
-
         return (
-            <div>
-                <h1>
-                    { mainText }
-                </h1>
+            <div
+                className={ styles.feedback }
+            >
+                { selected && selected.name && (
+                    <h1>
+                        { `${selected.name}` }
+                    </h1>
+                ) }
             </div>
         );
     };
@@ -101,11 +97,6 @@ const Play: React.FC = () => {
         <div
             className={ styles.container }
         >
-            <button
-                onClick={ nextStep }
-            >
-                Next
-            </button>
             { !currentStep && renderInstructions() }
             { currentStep && renderFeedback() }
             { currentStep && (

@@ -1,5 +1,6 @@
 import React, { useState, useContext } from "react";
 import { useParams, useHistory } from "react-router-dom";
+import classNames from "classnames";
 
 import { Item, Step, Dependency } from "../../../../models/recipe";
 
@@ -244,7 +245,10 @@ const ItemPickerModal: React.FC<ItemPickerModalProps> = ({
                         className={ styles.container }
                     >
                         <div
-                            className={ modalStyles.form }
+                            className={ classNames(
+                                modalStyles.form,
+                                styles.form
+                            ) }
                         >
                             <Stack>
                                 <div
