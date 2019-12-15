@@ -13,6 +13,7 @@ public class InterceptorConfig extends WebMvcConfigurerAdapter {
 				.addPathPatterns("/api/addRecipe")
 				.addPathPatterns("/api/editRecipe")
 				.addPathPatterns("/api/deleteRecipe")
+                .addPathPatterns("/api/completeRecipe")
 				.addPathPatterns("/api/addStep")
 				.addPathPatterns("/api/editStep")
 				.addPathPatterns("/api/deleteStep")

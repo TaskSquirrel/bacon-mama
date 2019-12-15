@@ -36,6 +36,7 @@ public class TokenInterceptor extends HandlerInterceptorAdapter {
             TokenUtils.UserToken check = TokenUtils.verifyAndDecode(token);
 
             LoggerFactory.getLogger(LoggerFactory.class).info(check.getUserName());
+            LoggerFactory.getLogger(LoggerFactory.class).info(check.getUserID());
 
             request.setAttribute("userID", check.getUserID());
             request.setAttribute("userName", check.getUserName());

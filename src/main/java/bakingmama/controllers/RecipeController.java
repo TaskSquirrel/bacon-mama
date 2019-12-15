@@ -149,6 +149,12 @@ public class RecipeController implements BaseApiController {
           boolean inHistory = false;
           for(History history : userHistory)
           {
+            Long historyID = history.getRecipeId();
+
+            if (historyID == null) {
+                continue;
+            }
+
             if(history.getRecipeId().equals(recipe.getId()))
             {
               recipes.add(recipe.toMapOverview(true));
@@ -279,10 +285,14 @@ public class RecipeController implements BaseApiController {
 
   @CrossOrigin
   @PostMapping(path = "/completeRecipe", consumes = "application/json", produces = "application/json")
-  Map<String, Object> completeRecipe(@RequestBody Map<String, Object> json) {
+  Map<String, Object> completeRecipe(@RequestBody Map<String, Object> json, @RequestAttribute("userID") String userID) {
     try {
-      Long studentId = JsonUtils.parseId(json.get("studentId"));
+      Long studentId = JsonUtils.parseId(userID);
       Long recipeId = JsonUtils.parseId(json.get("recipeId"));
+
+      if (studentId == null || recipeId == null) {
+        throw new Exception("Failed to add history!");
+      }
 
       History h = new History();
       h.setRecipeId(recipeId);

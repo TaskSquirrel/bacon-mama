@@ -49,7 +49,7 @@ public class UserController implements BaseApiController {
     } else {
       String token = JWT.create()
         .withClaim("username", username)
-        .withClaim("userID", user.getId())
+        .withClaim("userID", user.getId().toString())
         .withClaim("role", user.getRole())
         .sign(TokenUtils.getAlgorithm());
 
