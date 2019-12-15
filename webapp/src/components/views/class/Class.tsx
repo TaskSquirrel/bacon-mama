@@ -1,29 +1,32 @@
 import React, { useState, useEffect, useCallback } from "react";
 
-import { APIRecipeList, APIClassList, APIStudent, APIManyRecipeResponse } from "../../../models/API";
+import {
+    APIRecipeList,
+    APIClassList,
+    APIStudent,
+    APIManyRecipeResponse,
+    APIManyClassResponse,
+    APIClassResponse
+} from "../../../models/API";
 
 import useAPI from "../../hooks/useAPI";
 import useUser from "../../hooks/useUser";
 
+import Responsive from "../../shared/Responsive";
+import CreateRecipeModal from "./../home/CreateRecipeModal";
+import Card from "../dashboard/Card";
+import StudentCard from "../../controls/StudentCard";
 import NavBar from "../../controls/NavBar";
 import ClassCard from "../../controls/ClassCard";
 import CreateClassModal from "./modals/CreateClassModal";
 import AddStudentModal from "./modals/AddStudentModal";
 
-
-
 import styles from "./Class.module.scss";
-import Responsive from "../../shared/Responsive";
-import { APIManyClassResponse, APIClassResponse } from './../../../models/API';
-import { Recipe } from './../../../models/recipe';
-import CreateRecipeModal from './../home/CreateRecipeModal';
-import Card from "../dashboard/Card";
-import StudentCard from "../../controls/StudentCard";
 
 interface Options {
-    key:number,
-    text: string,
-    value: number
+    key: number;
+    text: string;
+    value: number;
 }
 
 const Class: React.FC = () => {
@@ -42,7 +45,6 @@ const Class: React.FC = () => {
 
     const request = useAPI();
 
-
     const getClasses = useCallback(async () => {
 
         const { data: {
@@ -59,7 +61,6 @@ const Class: React.FC = () => {
             }
         );
 
-
         if (status === "error") {
             throw new Error(message);
         } else {
@@ -71,27 +72,26 @@ const Class: React.FC = () => {
     const update = async () => {
         try {
             let responseClasses = await getClasses();
-            
+
             responseClasses = responseClasses.sort((a, b) => {
                 return a.id - b.id;
-            })
+            });
 
             setClasses(responseClasses);
 
-            if(selectedClass){
-                setStudents(responseClasses[index].students.sort((a,b) => {
-                    if(a.userName > b.userName){
+            if (selectedClass) {
+                setStudents(responseClasses[index].students.sort((a, b) => {
+                    if (a.userName > b.userName) {
                         return 1;
                     }
-                    if(a.userName < b.userName){
+                    if (a.userName < b.userName) {
                         return -1;
                     }
-    
+
                     return 0;
                 }));
-                setRecipes(responseClasses[index].recipes.sort((a,b) => a.id-b.id));
+                setRecipes(responseClasses[index].recipes.sort((a, b) => a.id - b.id));
             }
-            
 
         } catch (e) {
             // Error
@@ -99,7 +99,6 @@ const Class: React.FC = () => {
     };
 
     const getStudents = useCallback(async () => {
-        
         const { data: {
             status,
             message,
@@ -111,7 +110,6 @@ const Class: React.FC = () => {
                 data: {}
             }
         );
-
 
         if (status === "error") {
             throw new Error(message);
@@ -133,11 +131,10 @@ const Class: React.FC = () => {
                 method: "POST",
                 data: {
                     username: name,
-                    
+
                 }
             }
         );
-
 
         if (status === "error") {
             throw new Error(message);
@@ -151,24 +148,23 @@ const Class: React.FC = () => {
         try {
             if (recipes) {
                 const responseRecipes = await getRecipes();
-                
+
                 const op: Options[] = responseRecipes.map((item) => {
-                    return {key:item.id, text:item.recipeName, value:item.id};
+                    return {key: item.id, text: item.recipeName, value: item.id};
                 }).filter((item) => {
                     return !recipes.some((recipe) => recipe.id === item.value);
                 });
 
                 setRecipeOptions(op);
             }
-            if(students){
+            if (students) {
                 const responseStudents = await getStudents();
 
-                const op: Options[] = responseStudents.map((item:any) => {
-                    return {key:item.username, text:item.username, value:item.username};
+                const op: Options[] = responseStudents.map((item: any) => {
+                    return {key: item.username, text: item.username, value: item.username};
                 }).filter((item: any) => {
-                    return !students.some((student) => student.userName === item.value);               
+                    return !students.some((student) => student.userName === item.value);
                 });
-
 
                 setStudentOptions(op);
             }
@@ -179,8 +175,7 @@ const Class: React.FC = () => {
 
     useEffect(() => {
         updateOptions();
-    },[selectedClass, recipes, students]);
-
+    }, [selectedClass, recipes, students]);
 
     useEffect(() => {
         const updateClasses = async () => {
@@ -200,7 +195,6 @@ const Class: React.FC = () => {
         updateClasses();
     }, [getClasses, classes]);
 
-
     const addClass = () => {
         if (!createClass) {
             return;
@@ -208,11 +202,11 @@ const Class: React.FC = () => {
 
         return (
             <CreateClassModal
-                control={setCreateClass}
-                update={update}
+                control={ setCreateClass }
+                update={ update }
             />
         );
-    }
+    };
 
     const addStudentToCourse = () => {
         if (!addStudents) {
@@ -221,14 +215,14 @@ const Class: React.FC = () => {
 
         return (
             <AddStudentModal
-                control={setAddStudents}
-                update={update}
-                info={'student'}
-                course={selectedClass}
-                options={studentOptions}
+                control={ setAddStudents }
+                update={ update }
+                info={"student"}
+                course={ selectedClass }
+                options={ studentOptions }
             />
         );
-    }
+    };
 
     const addRecipesToCourse = () => {
         if (!addRecipes) {
@@ -237,14 +231,14 @@ const Class: React.FC = () => {
 
         return (
             <AddStudentModal
-                control={setaddRecipes}
-                update={update}
-                info={'recipe'}
-                course={selectedClass}
-                options={recipeOptions}
+                control={ setaddRecipes }
+                update={ update }
+                info={"recipe"}
+                course={ selectedClass }
+                options={ recipeOptions }
             />
         );
-    }
+    };
 
     const createRecipe = () => {
         if (!create) {
@@ -263,24 +257,23 @@ const Class: React.FC = () => {
         setCreate(true);
     }, [create]);
 
-
     const selectClass = (i: number) => {
         if (classes) {
             setIndex(i);
             setSelectedClass(classes[i]);
-            setStudents(classes[i].students.sort((a,b) => {
-                if(a.userName > b.userName){
+            setStudents(classes[i].students.sort((a, b) => {
+                if (a.userName > b.userName) {
                     return 1;
                 }
-                if(a.userName < b.userName){
+                if (a.userName < b.userName) {
                     return -1;
                 }
 
                 return 0;
             }));
-            setRecipes(classes[i].recipes.sort((a,b) => a.id-b.id));
+            setRecipes(classes[i].recipes.sort((a, b) => a.id - b.id));
         }
-    }
+    };
 
     const removeStudentFromCourse = useCallback(async (username: string) => {
 
@@ -293,12 +286,11 @@ const Class: React.FC = () => {
             {
                 method: "POST",
                 data: {
-                    username: username,
+                    username,
                     course: selectedClass
                 }
             }
         );
-
 
         if (status === "error") {
             throw new Error(message);
@@ -323,7 +315,6 @@ const Class: React.FC = () => {
             }
         );
 
-
         if (status === "error") {
             throw new Error(message);
         } else {
@@ -334,7 +325,7 @@ const Class: React.FC = () => {
         }
     }, [request, name]);
 
-    const removeRecipeFromCourse = useCallback(async (id:string) => {
+    const removeRecipeFromCourse = useCallback(async (id: string) => {
         const { data: {
             status,
             message,
@@ -344,7 +335,7 @@ const Class: React.FC = () => {
                 method: "POST",
                 data: {
                     recipe: {id},
-                    course: {id:selectedClass ? selectedClass.id : ''}
+                    course: {id: selectedClass ? selectedClass.id : ""}
                 }
             }
         );
@@ -359,94 +350,94 @@ const Class: React.FC = () => {
     return (
         <div>
             <NavBar
-                click={setC}
-                userName={name || "User"}
-                role={role}
+                click={ setC }
+                userName={ name || "User" }
+                role={ role }
             />
             <Responsive>
                 <div
-                    className={styles.title}
+                    className={ styles.title }
                 >
                     Your Courses
                 </div>
                 <div
-                    className={styles["card-container"]}
+                    className={ styles["card-container"] }
                 >
-                    {classes && classes.map((each, index) => (
+                    { classes && classes.map((each, index) => (
                         <ClassCard
-                            key={each.id}
-                            index={index}
-                            classid={each.id}
-                            name={each.courseName}
-                            click={selectClass}
-                            remove={removeClassFromCourse}
-                            color={selectedClass ? selectedClass.id === each.id ? 'lightblue' : 'white' : 'white'}
+                            key={ each.id }
+                            index={ index }
+                            classid={ each.id }
+                            name={ each.courseName }
+                            click={ selectClass }
+                            remove={ removeClassFromCourse }
+                            color={ selectedClass ? selectedClass.id === each.id ? "lightblue" : "white" : "white"}
                         />
-                    ))}
+                    )) }
 
-                    {<ClassCard add={ () => setCreateClass(true)} />}
+                    { <ClassCard add={ () => setCreateClass(true) } /> }
                 </div>
 
             </Responsive>
             <br />
             <Responsive>
                 <div
-                    className={styles.title}
+                    className={ styles.title }
                 >
                     Students In the Course
                 </div>
                 <div
-                    className={styles["card-container"]}
+                    className={ styles["card-container"] }
                 >
-                    {!students && (
+                    { !students && (
                         <div>
                             No Courses Selected!
                         </div>
-                    )}
-                    {students && students.map((each) => (
+                    ) }
+                    { students && students.map((each) => (
                         <StudentCard
-                            key={each.userName}
-                            name={each.userName}
-                            remove={removeStudentFromCourse}
+                            key={ each.userName }
+                            name={ each.userName }
+                            remove={ removeStudentFromCourse }
                         />
-                    ))}
+                    )) }
 
-                    {selectedClass && <StudentCard add={() => setAddStudents(true)} />}
+                    { selectedClass && <StudentCard add={ () => setAddStudents(true) } /> }
                 </div>
 
             </Responsive>
             <br />
             <Responsive>
                 <div
-                    className={styles.title}
+                    className={ styles.title }
                 >
                     Recipes In the Course
                 </div>
                 <div
-                    className={styles["card-container2"]}
+                    className={ styles["card-container2"] }
                 >
-                    {!recipes && (
+                    { !recipes && (
                         <div>
                             No Courses Selected!
                         </div>
-                    )}
-                    {recipes && recipes.map((each) => (
+                    ) }
+                    { recipes && recipes.map((each) => (
                         <Card
-                            key={each.id}
-                            id={`${each.id}`}
-                            name={each.recipeName}
-                            description={each.description}
-                            remove={removeRecipeFromCourse}
-                            role={role}
+                            key={ each.id }
+                            id={ `${each.id}` }
+                            name={ each.recipeName }
+                            description={ each.description }
+                            remove={ removeRecipeFromCourse }
+                            role={ role }
                         />
-                    ))}
-                    {selectedClass && <ClassCard add={ () => setaddRecipes(true)} />}
+                    )) }
+                    { selectedClass && <ClassCard add={ () => setaddRecipes(true) } /> }
                 </div>
             </Responsive>
-            {addClass()}
-            {addStudentToCourse()}
-            {addRecipesToCourse()}
-            {createRecipe()}
+            { addClass() }
+            { addStudentToCourse() }
+            { addRecipesToCourse() }
+            { createRecipe() }
         </div>
     );
 };

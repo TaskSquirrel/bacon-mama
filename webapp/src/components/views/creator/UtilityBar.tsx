@@ -39,7 +39,7 @@ const UtilityBar: React.FC = () => {
     const onEnterPress = (text: string) => replaceRecipe(text, description);
 
     const action = (confirmed: boolean) => {
-        if (confirmed) {
+        if(confirmed) {
             push(`/play/${id}`);
         } else {
             setShowPrompt(false);
@@ -60,20 +60,20 @@ const UtilityBar: React.FC = () => {
 
     return (
         <div
-            className={styles.bar}
+            className={ styles.bar }
         >
             <div
-                className={styles.metadata}
+                className={ styles.metadata }
             >
                 <Editable
-                    text={name}
-                    className={styles.name}
-                    onEnterPress={onEnterPress}
+                    text={ name }
+                    className={ styles.name }
+                    onEnterPress={ onEnterPress }
                 />
             </div>
-            {role && role !== "student" && (<Stack
+            { role && role !== "student" && (<Stack
                 inline
-                className={styles.actions}
+                className={ styles.actions }
             >
                 <ButtonBase
                     inverted
@@ -87,7 +87,7 @@ const UtilityBar: React.FC = () => {
                 <ButtonBase
                     inverted
                     clear
-                    onClick={openAddItemModal}
+                    onClick={ openAddItemModal }
                 >
                     <i
                         className="fas fa-plus"
@@ -116,7 +116,7 @@ const UtilityBar: React.FC = () => {
                     </span>
                 </ButtonBase>
             </Stack>
-            )}
+            ) }
             { renderPlayPrompt() }
         </div>
     );

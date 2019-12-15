@@ -14,31 +14,24 @@ import styles from "./Dashboard.module.scss";
 
 const Dashboard: React.FC = () => {
     const { name, role } = useUser();
-    const [recipes, setRecipes] = useState<APIRecipeList[] | null>(null);
+    const [recipes, setRecipes] = useState<APIRecipeList[]>([]);
     const [create, setCreate] = useState<boolean>(false);
 
     const request = useAPI();
 
     const getRecipes = useCallback(async () => {
-        const { data: {
-            status,
-            message,
-            recipes: responseRecipes
-        } } = await request<APIManyRecipeResponse>(
-            "/getRecipes",
-            {
-                method: "POST",
-                data: {
-                    username: name
-                }
+        const {
+            data: { status, message, recipes: responseRecipes }
+        } = await request<APIManyRecipeResponse>("/getRecipes", {
+            method: "POST",
+            data: {
+                username: name
             }
-        );
+        });
 
         if (status === "error") {
             throw new Error(message);
         } else {
-            console.log(responseRecipes);
-            
             return responseRecipes;
         }
     }, [request, name]);
@@ -46,9 +39,11 @@ const Dashboard: React.FC = () => {
     const update = async () => {
         try {
             const responseRecipes = await getRecipes();
-            setRecipes(responseRecipes.sort((a, b) => {
-                return a.id - b.id;
-            }));
+            setRecipes(
+                responseRecipes.sort((a, b) => {
+                    return a.id - b.id;
+                })
+            );
         } catch (e) {
             // Error
         }
@@ -60,9 +55,11 @@ const Dashboard: React.FC = () => {
                 if (!recipes) {
                     const responseRecipes = await getRecipes();
 
-                    setRecipes(responseRecipes.sort((a, b) => {
-                        return a.id - b.id;
-                    }));
+                    setRecipes(
+                        responseRecipes.sort((a, b) => {
+                            return a.id - b.id;
+                        })
+                    );
                 }
             } catch (e) {
                 // Error
@@ -77,134 +74,107 @@ const Dashboard: React.FC = () => {
             return;
         }
 
-        return (
-            <CreateRecipeModal
-                control={setCreate}
-                update={update}
-            />
-        );
+        return <CreateRecipeModal control={ setCreate } update={ update } />;
     };
-
-
 
     const setC = () => setCreate(true);
 
-    const removeRecipe = useCallback(async (id: string) => {
-        const { data: {
-            status,
-            message
-        } } = await request(
-            "/deleteRecipe",
-            {
+    const removeRecipe = useCallback(
+        async (id: string) => {
+            const {
+                data: { status, message }
+            } = await request("/deleteRecipe", {
                 method: "POST",
                 data: {
                     recipe: { id: parseInt(id) }
                 }
-            }
-        );
+            });
 
-        if (status === "error") {
-            throw new Error(message);
-        } else {
-            update();
-        }
-    }, [request, name]);
+            if (status === "error") {
+                throw new Error(message);
+            } else {
+                update();
+            }
+        },
+        [request, name]
+    );
 
     return (
         <div>
-            <NavBar
-                click={setC}
-                userName={name || "User"}
-                role={role}
-            />
-            {role === "student" && (
+            <NavBar click={ setC } userName={ name || "User" } role={ role } />
+            { role === "student" && (
                 <Responsive>
-                    <div
-                        className={styles.title}
-                    >
-                        Your Completed Recipes
-                </div>
-                    <div
-                        className={styles["card-container"]}
-                    >
-                        {recipes && recipes.filter(each => each.status).length === 0 && (
-                            <div>
-                                No completed recipes found!
-                        </div>
-                        )}
-                        {recipes && recipes.filter((each) => each.status).map((each) => (
-                            <Card
-                                key={each.id}
-                                id={`${each.id}`}
-                                name={each.recipeName}
-                                description={each.description}
-                                role={role}
-                                remove={removeRecipe}
-                            />
-                        ))}
+                    <div className={ styles.title }>Your Completed Recipes</div>
+                    <div className={ styles["card-container"] }>
+                        { recipes &&
+                            recipes.filter((each) => each.status).length ===
+                                0 && <div>No completed recipes found!</div> }
+                        { recipes &&
+                            recipes
+                                .filter((each) => each.status)
+                                .map((each) => (
+                                    <Card
+                                        key={ each.id }
+                                        id={ `${each.id}` }
+                                        name={ each.recipeName }
+                                        description={ each.description }
+                                        role={ role }
+                                        remove={ removeRecipe }
+                                    />
+                                )) }
                     </div>
                 </Responsive>
-            )}
-            <br />
-            {role === "student" && (
+            ) }
+            { role === "student" && (
                 <Responsive>
-                    <div
-                        className={styles.title}
-                    >
-                        Your Incompleted Recipes
-                </div>
-                    <div
-                        className={styles["card-container"]}
-                    >
-                        {recipes && recipes.filter(each => !each.status).length === 0 && (
-                            <div>
-                                No incompleted recipes found!
-                        </div>
-                        )}
-                        {recipes && recipes.filter(each => !each.status).map((each) => (
-                            <Card
-                                key={each.id}
-                                id={`${each.id}`}
-                                name={each.recipeName}
-                                description={each.description}
-                                role={role}
-                                remove={removeRecipe}
-                            />
-                        ))}
+                    <div className={ styles.title }>Your Incompleted Recipes</div>
+                    <div className={ styles["card-container"] }>
+                        { recipes &&
+                            recipes.filter((each) => !each.status).length ===
+                                0 && <div>No incompleted recipes found!</div> }
+                        { recipes &&
+                            recipes
+                                .filter((each) => !each.status)
+                                .map((each) => (
+                                    <Card
+                                        key={ each.id }
+                                        id={ `${each.id}` }
+                                        name={ each.recipeName }
+                                        description={ each.description }
+                                        role={ role }
+                                        remove={ removeRecipe }
+                                    />
+                                )) }
                     </div>
                 </Responsive>
-            )}
+            ) }
 
-            {role === "professor" && (
+            { role === "professor" && (
                 <Responsive>
-                    <div
-                        className={styles.title}
-                    >
-                        Your Recipes
-                </div>
-                    <div
-                        className={styles["card-container"]}
-                    >
-                        {recipes && recipes.length === 0 && (
+                    <div className={ styles.title }>Your Recipes</div>
+                    { recipes && recipes.length > 0
+                        ? (
+                            <div className={ styles["card-container"] }>
+                                { recipes.map((each) => (
+                                    <Card
+                                        key={ each.id }
+                                        id={ `${each.id}` }
+                                        name={ each.recipeName }
+                                        description={ each.description }
+                                        role={ role }
+                                        remove={ removeRecipe }
+                                    />
+                                )) }
+                            </div>
+                        )
+                        : (
                             <div>
-                                No recipes found!
-                        </div>
-                        )}
-                        {recipes && recipes.map((each) => (
-                            <Card
-                                key={each.id}
-                                id={`${each.id}`}
-                                name={each.recipeName}
-                                description={each.description}
-                                role={role}
-                                remove={removeRecipe}
-                            />
-                        ))}
-                    </div>
+                                No recipes to show!
+                            </div>
+                        ) }
                 </Responsive>
-            )}
-
-            {createRecipe()}
+            ) }
+            { createRecipe() }
         </div>
     );
 };

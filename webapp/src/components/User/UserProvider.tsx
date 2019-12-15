@@ -11,7 +11,7 @@ interface UserData {
     token: string | null;
     name: string;
     userID: string;
-    role: string;
+    role: "student" | "professor";
 }
 
 /**
@@ -54,7 +54,7 @@ const UserProvider: React.FC = ({ children }) => {
                     }
                 }
             );
-            console.log(role);
+
             if (status === "error") {
                 throw new Error(message);
             } else {
@@ -124,7 +124,7 @@ const UserProvider: React.FC = ({ children }) => {
         token: value ? value.token : null,
         name: value ? value.name : null,
         userID: value ? value.userID : null,
-        role: value ? value.role : undefined, 
+        role: value ? value.role : "student",
     };
 
     return (

@@ -7,7 +7,7 @@ export interface APIUserLogin extends Response {
     token: string;
     name: string;
     userID: string;
-    role: string;
+    role: "student" | "professor";
 }
 
 export interface APIDependency {
