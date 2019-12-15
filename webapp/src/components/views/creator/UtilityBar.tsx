@@ -27,6 +27,8 @@ const UtilityBar: React.FC = () => {
     const [showPrompt, setShowPrompt] = useState<boolean>(false);
     const { role } = useUser();
 
+    const isStudent = role === "student";
+
     const exit = () => push("/");
 
     const createPrompStateSetter = (state: boolean) => () =>
@@ -39,7 +41,7 @@ const UtilityBar: React.FC = () => {
     const onEnterPress = (text: string) => replaceRecipe(text, description);
 
     const action = (confirmed: boolean) => {
-        if(confirmed) {
+        if (confirmed) {
             push(`/play/${id}`);
         } else {
             setShowPrompt(false);
@@ -58,20 +60,17 @@ const UtilityBar: React.FC = () => {
         );
     };
 
-    return (
-        <div
-            className={ styles.bar }
-        >
-            <div
-                className={ styles.metadata }
-            >
-                <Editable
-                    text={ name }
-                    className={ styles.name }
-                    onEnterPress={ onEnterPress }
-                />
-            </div>
-            { role && role !== "student" && (<Stack
+    const renderActions = () => {
+        if (isStudent) {
+            return (
+                <div>
+                    PREVIEW MODE
+                </div>
+            );
+        }
+
+        return (
+            <Stack
                 inline
                 className={ styles.actions }
             >
@@ -116,7 +115,24 @@ const UtilityBar: React.FC = () => {
                     </span>
                 </ButtonBase>
             </Stack>
-            ) }
+        );
+    };
+
+    return (
+        <div
+            className={ styles.bar }
+        >
+            <div
+                className={ styles.metadata }
+            >
+                <Editable
+                    disabled={ isStudent }
+                    text={ name }
+                    className={ styles.name }
+                    onEnterPress={ onEnterPress }
+                />
+            </div>
+            { renderActions() }
             { renderPlayPrompt() }
         </div>
     );

@@ -4,12 +4,14 @@ import classNames from "classnames";
 import styles from "./Editable.module.scss";
 
 interface EditableProps {
+    disabled?: boolean;
     className?: string;
     text: string;
     onEnterPress?: (text: string) => void;
 }
 
 const Editable: React.FC<EditableProps> = ({
+    disabled,
     className,
     text,
     onEnterPress
@@ -19,7 +21,9 @@ const Editable: React.FC<EditableProps> = ({
     const [input, setInput] = useState<string>(text);
 
     const onTextClick = () => {
-        setActive(true);
+        if (!disabled) {
+            setActive(true);
+        }
     };
 
     const onTextBlur = useCallback(
@@ -77,6 +81,10 @@ const Editable: React.FC<EditableProps> = ({
         }
 
         const onEnter = (event: KeyboardEvent) => {
+            if (disabled) {
+                return;
+            }
+
             if (event.code === "Enter") {
                 onTextBlur();
 
@@ -89,7 +97,7 @@ const Editable: React.FC<EditableProps> = ({
         document.addEventListener("keydown", onEnter);
 
         return () => document.removeEventListener("keydown", onEnter);
-    }, [active, input, onEnterPress, onTextBlur]);
+    }, [disabled, active, input, onEnterPress, onTextBlur]);
 
     useEffect(() => {
         setInput(text);
@@ -99,6 +107,7 @@ const Editable: React.FC<EditableProps> = ({
         <div
             className={ classNames(
                 styles.container,
+                disabled && styles.disabled,
                 active && styles.active,
                 className
             ) }

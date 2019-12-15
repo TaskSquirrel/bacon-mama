@@ -32,6 +32,8 @@ const Steps: React.FC = () => {
         DeleteStepPromptState
     >({ show: false, step: null });
 
+    const isStudent = role === "student";
+
     const openEditStepModal = () => setEditStepModal(true);
 
     const add = () => {
@@ -76,7 +78,10 @@ const Steps: React.FC = () => {
     };
 
     const renderAddStepAction = () => {
-        if(role === "student") return;
+        if (isStudent) {
+            return;
+        }
+
         return (
             <div
                 className={ styles.action }
@@ -94,7 +99,10 @@ const Steps: React.FC = () => {
     };
 
     const renderActions = (stepID: string) => {
-        if(role === "student") return;
+        if (isStudent) {
+            return;
+        }
+
         return (
             <div
                 className={ styles.actions }
@@ -195,7 +203,7 @@ const Steps: React.FC = () => {
                                 </div>
                             ) }
                         </div>
-                        { !isActive && incomplete && (
+                        { !isActive && incomplete && !isStudent && (
                             <div
                                 className={ styles.caution }
                             >

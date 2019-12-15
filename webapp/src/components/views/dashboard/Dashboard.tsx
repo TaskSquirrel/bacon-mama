@@ -14,67 +14,43 @@ import styles from "./Dashboard.module.scss";
 
 const Dashboard: React.FC = () => {
     const { name, role } = useUser();
-    const [recipes, setRecipes] = useState<APIRecipeList[]>([]);
+    const [recipes, setRecipes] = useState<APIRecipeList[] | null>(null);
     const [create, setCreate] = useState<boolean>(false);
-
     const request = useAPI();
 
-    const getRecipes = useCallback(async () => {
-        const {
-            data: { status, message, recipes: responseRecipes }
-        } = await request<APIManyRecipeResponse>("/getRecipes", {
-            method: "POST",
-            data: {
-                username: name
-            }
-        });
-
-        if (status === "error") {
-            throw new Error(message);
-        } else {
-            return responseRecipes;
-        }
-    }, [request, name]);
-
-    const update = async () => {
+    const update = useCallback(async () => {
         try {
-            const responseRecipes = await getRecipes();
-            setRecipes(
-                responseRecipes.sort((a, b) => {
-                    return a.id - b.id;
-                })
-            );
+            const {
+                data: { status, message, recipes: responseRecipes }
+            } = await request<APIManyRecipeResponse>("/getRecipes", {
+                method: "POST",
+                data: {
+                    username: name
+                }
+            });
+
+            if (status === "OK") {
+                setRecipes(
+                    responseRecipes.sort((a, b) => {
+                        return a.id - b.id;
+                    })
+                );
+            } else {
+                throw new Error(message);
+            }
         } catch (e) {
             // Error
         }
-    };
+    }, [name, request]);
 
-    useEffect(() => {
-        const updateRecipes = async () => {
-            try {
-                if (!recipes) {
-                    const responseRecipes = await getRecipes();
-
-                    setRecipes(
-                        responseRecipes.sort((a, b) => {
-                            return a.id - b.id;
-                        })
-                    );
-                }
-            } catch (e) {
-                // Error
-            }
-        };
-
-        updateRecipes();
-    }, [getRecipes, recipes]);
-
-    const createRecipe = () => {
+    const renderCreateRecipe = () => {
         if (!create) {
             return;
         }
 
-        return <CreateRecipeModal control={ setCreate } update={ update } />;
+        return (
+            <CreateRecipeModal control={ setCreate } update={ update } />
+        );
     };
 
     const setC = () => setCreate(true);
@@ -96,8 +72,14 @@ const Dashboard: React.FC = () => {
                 update();
             }
         },
-        [request, name]
+        [request, update]
     );
+
+    useEffect(() => {
+        if (recipes === null) {
+            update();
+        }
+    }, [recipes, update]);
 
     return (
         <div>
@@ -148,7 +130,6 @@ const Dashboard: React.FC = () => {
                     </div>
                 </Responsive>
             ) }
-
             { role === "professor" && (
                 <Responsive>
                     <div className={ styles.title }>Your Recipes</div>
@@ -174,7 +155,7 @@ const Dashboard: React.FC = () => {
                         ) }
                 </Responsive>
             ) }
-            { createRecipe() }
+            { renderCreateRecipe() }
         </div>
     );
 };

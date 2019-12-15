@@ -10,12 +10,14 @@
 
     transition: background-color 100ms ease-in-out;
 
-    &:hover {
-        background-color: rgba($black, 0.03);
-    }
+    &:not(.disabled) {
+        &:hover {
+            background-color: rgba($black, 0.03);
+        }
 
-    &.active {
-        background-color: rgba($black, 0.1);
+        &.active {
+            background-color: rgba($black, 0.1);
+        }
     }
 }
 
