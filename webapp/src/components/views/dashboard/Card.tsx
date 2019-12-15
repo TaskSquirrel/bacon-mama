@@ -14,7 +14,7 @@ export interface CardProps extends React.HTMLProps<HTMLDivElement> {
     description?: string;
     id: string;
     role?: "student" | "professor";
-    status?: string;
+    status?: "complete" | "incomplete";
     remove?: (i: string) => void;
 }
 
@@ -41,7 +41,7 @@ const Card: React.FC<CardProps> = ({
             return null;
         }
 
-        const icon = status
+        const icon = status === "complete"
             ? "fas fa-check-circle"
             : "fas fa-times-circle";
 
@@ -49,7 +49,7 @@ const Card: React.FC<CardProps> = ({
             <div
                 className={ classNames(
                     styles.icon,
-                    status && styles.completed
+                    status === "complete" && styles.completed
                 ) }
             >
                 <i

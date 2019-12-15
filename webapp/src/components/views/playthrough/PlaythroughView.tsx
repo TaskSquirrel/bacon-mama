@@ -1,16 +1,17 @@
-import React from "react";
+import React, { useEffect } from "react";
+import { Link } from "react-router-dom";
 import classNames from "classnames";
 
 import DelayedIndicator from "../../shared/DelayedIndicator";
 import Stack from "../../shared/Stack";
 import Sidebar from "./Sidebar";
 import Play from "./Play";
+import ButtonBase from "../../controls/ButtonBase";
 
+import useAPI from "../../hooks/useAPI";
 import usePlaythrough from "./usePlaythrough";
 
 import styles from "./PlaythroughView.module.scss";
-import { Link } from "react-router-dom";
-import ButtonBase from "../../controls/ButtonBase";
 
 const PlaythroughView: React.FC = () => {
     const {
@@ -20,6 +21,33 @@ const PlaythroughView: React.FC = () => {
         errorMarks,
         isLastStep,
     } = usePlaythrough();
+    const request = useAPI();
+
+    useEffect(() => {
+        if (!recipe) {
+            return;
+        }
+
+        if (isLastStep && stepDone) {
+            const saveHistory = async () => {
+                const { data: { status } } = await request(
+                    "/completeRecipe",
+                    {
+                        method: "POST",
+                        data: {
+                            recipeId: recipe.id
+                        }
+                    }
+                );
+
+                if (status !== "OK") {
+                    // Error
+                }
+            };
+
+            saveHistory();
+        }
+    }, [isLastStep, stepDone]);
 
     if (error) {
         return (

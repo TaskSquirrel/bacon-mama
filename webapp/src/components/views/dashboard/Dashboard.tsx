@@ -97,16 +97,27 @@ const Dashboard: React.FC = () => {
                 { recipes && recipes.length > 0
                     ? (
                         <div className={ styles["card-container"] }>
-                            { recipes.map((each) => (
-                                <Card
-                                    key={ each.id }
-                                    id={ `${each.id}` }
-                                    name={ each.recipeName }
-                                    description={ each.description }
-                                    role={ role }
-                                    remove={ removeRecipe }
-                                />
-                            )) }
+                            { recipes.map((each) => {
+                                let showStatus: "complete" | "incomplete" | null = null;
+
+                                if (isStudent) {
+                                    showStatus = each.status
+                                        ? "complete"
+                                        : "incomplete";
+                                }
+
+                                return (
+                                    <Card
+                                        key={ each.id }
+                                        id={ `${each.id}` }
+                                        name={ each.recipeName }
+                                        description={ each.description }
+                                        role={ role }
+                                        remove={ removeRecipe }
+                                        status={ showStatus || undefined }
+                                    />
+                                );
+                            }) }
                         </div>
                     )
                     : (

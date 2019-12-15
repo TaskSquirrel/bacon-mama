@@ -61,11 +61,35 @@ const UtilityBar: React.FC = () => {
     };
 
     const renderActions = () => {
+        const exitButton = (
+            <ButtonBase
+                className={ styles.share }
+                onClick={ exit }
+            >
+                <span>
+                    <i
+                        className="fas fa-sign-out-alt"
+                    />
+                </span>
+                <span>
+                    Exit
+                </span>
+            </ButtonBase>
+        );
+
         if (isStudent) {
             return (
-                <div>
-                    PREVIEW MODE
-                </div>
+                <Stack
+                    inline
+                    className={ styles.actions }
+                >
+                    <div>
+                        PREVIEW MODE
+                    </div>
+                    <div>
+                        { exitButton }
+                    </div>
+                </Stack>
             );
         }
 
@@ -101,19 +125,7 @@ const UtilityBar: React.FC = () => {
                         className="fas fa-play"
                     />
                 </ButtonBase>
-                <ButtonBase
-                    className={ styles.share }
-                    onClick={ exit }
-                >
-                    <span>
-                        <i
-                            className="fas fa-sign-out-alt"
-                        />
-                    </span>
-                    <span>
-                        Exit
-                    </span>
-                </ButtonBase>
+                { exitButton }
             </Stack>
         );
     };
