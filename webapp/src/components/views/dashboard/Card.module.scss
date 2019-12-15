@@ -48,6 +48,20 @@
     margin-bottom: 1rem;
 }
 
+.actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+}
+
+.icon {
+    color: var(--error);
+
+    &.completed {
+        color: var(--success);
+    }
+}
+
 .edit {
     display: flex;
     justify-content: flex-end;
@@ -63,5 +77,19 @@
     .pen,
     .play {
         color: var(--secondary);
+    }
+}
+
+.button {
+    position: absolute;
+    top: 0;
+    right: 0;
+
+    transform: translate(0%, 0%) scale(0);
+
+    transition: transform 150ms ease-in-out;
+
+    &.hovering {
+        transform: translate(0%, 0%) scale(1);
     }
 }

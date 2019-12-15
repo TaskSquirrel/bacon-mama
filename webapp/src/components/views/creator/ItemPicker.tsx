@@ -7,6 +7,7 @@ import { Step } from "../../../models/recipe";
 import { ContentCreatorContext } from "./ContentCreatorProvider";
 import AuraButton from "../../controls/AuraButton";
 import ItemCard from "./items/ItemCard";
+import useUser from "../../hooks/useUser";
 
 import { getImageURL } from "../../../utils";
 
@@ -26,8 +27,15 @@ const ItemPicker: React.FC = () => {
     } = useContext(ContentCreatorContext);
     const { push } = useHistory();
     const { sequence } = useParams();
+    const { role } = useUser();
 
-    const openEditStepModal = () => setEditStepModal(true);
+    const isStudent = role === "student";
+
+    const openEditStepModal = () => {
+        if (!isStudent) {
+            setEditStepModal(true);
+        }
+    };
 
     const openDependencyPicker = () => {
         push(`/edit/${recipeID}/${sequence}/deps`);
@@ -87,9 +95,7 @@ const ItemPicker: React.FC = () => {
                     image={ item && item.image
                         ? getImageURL(item.image)
                         : undefined }
-                    quantity={ {
-                        amount, unit
-                    } }
+                    quantity={ { amount, unit } }
                     onCloseClick={ createOnItemCloseClick(
                         "dependency",
                         dependencyID
@@ -100,6 +106,10 @@ const ItemPicker: React.FC = () => {
     };
 
     const renderResult = (currentStep: Step) => {
+        if (isStudent) {
+            return;
+        }
+
         const { result } = currentStep;
 
         if (!result) {
@@ -135,6 +145,16 @@ const ItemPicker: React.FC = () => {
             />
         );
     };
+
+    if (isStudent) {
+        return (
+            <div
+                className={ styles.empty }
+            >
+                Previewing recipe as a student
+            </div>
+        );
+    }
 
     if (!step) {
         return (
@@ -178,19 +198,21 @@ const ItemPicker: React.FC = () => {
                     className={ styles.dependencies }
                 >
                     { renderItems(step) }
-                    <div
-                        className={ styles["add-container"] }
-                    >
-                        <AuraButton
-                            size="large"
-                            className={ styles.button }
-                            onClick={ openDependencyPicker }
+                    { role && !isStudent && (
+                        <div
+                            className={ styles["add-container"] }
                         >
-                            <i
-                                className="fas fa-plus"
-                            />
-                        </AuraButton>
-                    </div>
+                            <AuraButton
+                                size="large"
+                                className={ styles.button }
+                                onClick={ openDependencyPicker }
+                            >
+                                <i
+                                    className="fas fa-plus"
+                                />
+                            </AuraButton>
+                        </div>
+                    ) }
                 </div>
             </div>
             <div

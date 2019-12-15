@@ -11,6 +11,7 @@ interface UserData {
     token: string | null;
     name: string;
     userID: string;
+    role: "student" | "professor";
 }
 
 /**
@@ -41,6 +42,7 @@ const UserProvider: React.FC = ({ children }) => {
                 message,
                 token,
                 userID,
+                role,
                 name: userName
             } } = await APIClient.request<APIUserLogin>(
                 "/login",
@@ -57,7 +59,7 @@ const UserProvider: React.FC = ({ children }) => {
                 throw new Error(message);
             } else {
                 await setValue({
-                    token, userID, name: userName,
+                    token, userID, name: userName, role
                 });
             }
         } catch (e) {
@@ -68,7 +70,11 @@ const UserProvider: React.FC = ({ children }) => {
     const signOut = async () => remove();
 
     useEffect(() => {
-        if (preflightRequestCompleted || !ready || !value) {
+        if (!ready) {
+            return;
+        }
+
+        if (preflightRequestCompleted || !value) {
             // Do not need to validate user (not logged in).
             // Or if storage hasn't loaded yet.
             setPreflightRequestCompleted(true);
@@ -78,7 +84,6 @@ const UserProvider: React.FC = ({ children }) => {
 
         const dispatchPreflightValidation = async () => {
             try {
-                console.log("Dispatching");
                 const { data: {
                     status
                 } } = await APIClient.request(
@@ -121,7 +126,8 @@ const UserProvider: React.FC = ({ children }) => {
         validated: preflightRequestCompleted,
         token: value ? value.token : null,
         name: value ? value.name : null,
-        userID: value ? value.userID : null
+        userID: value ? value.userID : null,
+        role: value ? value.role : "student",
     };
 
     return (

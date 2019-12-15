@@ -8,6 +8,7 @@ import Editable from "../../controls/Editable";
 import ConfirmationModal from "./modals/ConfirmationModal";
 
 import styles from "./UtilityBar.module.scss";
+import useUser from "../../hooks/useUser";
 
 const UtilityBar: React.FC = () => {
     const {
@@ -24,6 +25,9 @@ const UtilityBar: React.FC = () => {
     } = useContext(ContentCreatorContext);
     const { push } = useHistory();
     const [showPrompt, setShowPrompt] = useState<boolean>(false);
+    const { role } = useUser();
+
+    const isStudent = role === "student";
 
     const exit = () => push("/");
 
@@ -56,19 +60,16 @@ const UtilityBar: React.FC = () => {
         );
     };
 
-    return (
-        <div
-            className={ styles.bar }
-        >
-            <div
-                className={ styles.metadata }
-            >
-                <Editable
-                    text={ name }
-                    className={ styles.name }
-                    onEnterPress={ onEnterPress }
-                />
-            </div>
+    const renderActions = () => {
+        if (isStudent) {
+            return (
+                <div>
+                    PREVIEW MODE
+                </div>
+            );
+        }
+
+        return (
             <Stack
                 inline
                 className={ styles.actions }
@@ -114,6 +115,24 @@ const UtilityBar: React.FC = () => {
                     </span>
                 </ButtonBase>
             </Stack>
+        );
+    };
+
+    return (
+        <div
+            className={ styles.bar }
+        >
+            <div
+                className={ styles.metadata }
+            >
+                <Editable
+                    disabled={ isStudent }
+                    text={ name }
+                    className={ styles.name }
+                    onEnterPress={ onEnterPress }
+                />
+            </div>
+            { renderActions() }
             { renderPlayPrompt() }
         </div>
     );

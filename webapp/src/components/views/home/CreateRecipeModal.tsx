@@ -1,11 +1,12 @@
 import React, { useState, useCallback } from "react";
 
-import useAPI from "../../hooks/useAPI";
-import useUser from "../../hooks/useUser";
-
 import Modal from "../../shared/Modal";
 import TextField from "../../controls/TextField";
 import ButtonBase from "../../controls/ButtonBase";
+import TextArea from "../../controls/TextArea";
+import useAPI from "../../hooks/useAPI";
+import useUser from "../../hooks/useUser";
+
 import { createChangeEventStateSetter } from "../../../utils";
 
 import styles from "./CreateRecipeModal.module.scss";
@@ -49,7 +50,7 @@ const CreateRecipeModal: React.FC<CreateRecipeModalProps> = ({
     return (
         <Modal
             show
-            title="Make your recipe"
+            title="What's the recipe?"
             onBackdropClick={ createControlSetter(false) }
         >
             <form
@@ -64,7 +65,7 @@ const CreateRecipeModal: React.FC<CreateRecipeModalProps> = ({
                         value={ name }
                         onChange={ createChangeEventStateSetter(setName) }
                     />
-                    <TextField
+                    <TextArea
                         placeholder="Recipe Description"
                         value={ description }
                         onChange={ createChangeEventStateSetter(setDescription) }

@@ -7,6 +7,7 @@ export interface APIUserLogin extends Response {
     token: string;
     name: string;
     userID: string;
+    role: "student" | "professor";
 }
 
 export interface APIDependency {
@@ -61,6 +62,7 @@ export interface APIRecipeList {
     id: number;
     recipeName: string;
     description?: string;
+    status?: boolean;
 }
 
 export interface APIStudentResponse extends Response {
@@ -73,6 +75,10 @@ export interface APIRecipeResponse extends Response {
 
 export interface APIManyRecipeResponse extends Response {
     recipes: APIRecipeList[];
+}
+
+export interface APIClassResponse extends Response {
+    course: APIClassList;
 }
 
 export interface APIManyClassResponse extends Response {

@@ -5,18 +5,21 @@ import {
     APIClassList,
     APIStudent,
     APIManyRecipeResponse,
-    APIManyClassResponse
+    APIManyClassResponse,
+    APIClassResponse
 } from "../../../models/API";
-
-import Responsive from "../../shared/Responsive";
-import NavBar from "../../controls/NavBar";
-import Card from "../dashboard/Card";
-import ClassCard from "../../controls/ClassCard";
-import CreateClassModal from "./modals/CreateClassModal";
-import AddStudentModal from "./modals/AddStudentModal";
 
 import useAPI from "../../hooks/useAPI";
 import useUser from "../../hooks/useUser";
+
+import Responsive from "../../shared/Responsive";
+import CreateRecipeModal from "./../home/CreateRecipeModal";
+import Card from "../dashboard/Card";
+import StudentCard from "../../controls/StudentCard";
+import NavBar from "../../controls/NavBar";
+import ClassCard from "../../controls/ClassCard";
+import CreateClassModal from "./modals/CreateClassModal";
+import AddStudentModal from "./modals/AddStudentModal";
 
 import styles from "./Class.module.scss";
 
@@ -27,8 +30,9 @@ interface Options {
 }
 
 const Class: React.FC = () => {
-    const { name } = useUser();
+    const { name, role } = useUser();
     const [recipes, setRecipes] = useState<APIRecipeList[] | null>(null);
+    const [create, setCreate] = useState<boolean>(false);
     const [createClass, setCreateClass] = useState<boolean>(false);
     const [classes, setClasses] = useState<APIClassList[] | null>(null);
     const [selectedClass, setSelectedClass] = useState<APIClassList | null>(null);
@@ -80,16 +84,15 @@ const Class: React.FC = () => {
                     if (a.userName > b.userName) {
                         return 1;
                     }
-
                     if (a.userName < b.userName) {
                         return -1;
                     }
 
                     return 0;
                 }));
-
                 setRecipes(responseClasses[index].recipes.sort((a, b) => a.id - b.id));
             }
+
         } catch (e) {
             // Error
         }
@@ -113,9 +116,10 @@ const Class: React.FC = () => {
         } else {
             return responseStudents;
         }
-    }, [request]);
+    }, []);
 
     const getRecipes = useCallback(async () => {
+
         const { data: {
             status,
             message,
@@ -126,6 +130,7 @@ const Class: React.FC = () => {
                 method: "POST",
                 data: {
                     username: name,
+
                 }
             }
         );
@@ -133,50 +138,43 @@ const Class: React.FC = () => {
         if (status === "error") {
             throw new Error(message);
         } else {
+
             return responseRecipes;
         }
-    }, [request, name]);
+    }, []);
+
+    const updateOptions = async () => {
+        try {
+            if (recipes) {
+                const responseRecipes = await getRecipes();
+
+                const op: Options[] = responseRecipes.map((item) => {
+                    return {key: item.id, text: item.recipeName, value: item.id};
+                }).filter((item) => {
+                    return !recipes.some((recipe) => recipe.id === item.value);
+                });
+
+                setRecipeOptions(op);
+            }
+            if (students) {
+                const responseStudents = await getStudents();
+
+                const op: Options[] = responseStudents.map((item: any) => {
+                    return {key: item.username, text: item.username, value: item.username};
+                }).filter((item: any) => {
+                    return !students.some((student) => student.userName === item.value);
+                });
+
+                setStudentOptions(op);
+            }
+        } catch (e) {
+            // Error
+        }
+    };
 
     useEffect(() => {
-        const updateRecipes = async () => {
-            try {
-                if (recipes) {
-                    const responseRecipes = await getRecipes();
-
-                    const op: Options[] = responseRecipes.map((item) => {
-                        return {
-                            key: item.id,
-                            text: item.recipeName,
-                            value: item.id
-                        };
-                    }).filter((item) => {
-                        return !recipes.some((recipe) => recipe.id === item.value);
-                    });
-
-                    setRecipeOptions(op);
-                }
-
-                if (students) {
-                    const responseRecipes = await getStudents();
-
-                    const op: Options[] = responseRecipes.map((item: any) => {
-                        return {
-                            key: item.username,
-                            text: item.username,
-                            value: item.username
-                        };
-                    }).filter((item: any) => {
-                        return !students.some((student) => student.userName === item.value);
-                    });
-
-                    setStudentOptions(op);
-                }
-            } catch (e) {
-                // Error
-            }
-        };
-        updateRecipes();
-    }, [selectedClass, getRecipes, getStudents, recipes, students]);
+        updateOptions();
+    }, [selectedClass, recipes, students]);
 
     useEffect(() => {
         const updateClasses = async () => {
@@ -218,7 +216,7 @@ const Class: React.FC = () => {
             <AddStudentModal
                 control={ setAddStudents }
                 update={ update }
-                info="student"
+                info={ "student" }
                 course={ selectedClass }
                 options={ studentOptions }
             />
@@ -234,12 +232,29 @@ const Class: React.FC = () => {
             <AddStudentModal
                 control={ setaddRecipes }
                 update={ update }
-                info="recipe"
+                info={ "recipe" }
                 course={ selectedClass }
                 options={ recipeOptions }
             />
         );
     };
+
+    const createRecipe = () => {
+        if (!create) {
+            return;
+        }
+
+        return (
+            <CreateRecipeModal
+                control={ setCreate }
+                update={ update }
+            />
+        );
+    };
+
+    const setC = useCallback(() => {
+        setCreate(true);
+    }, [create]);
 
     const selectClass = (i: number) => {
         if (classes) {
@@ -249,22 +264,94 @@ const Class: React.FC = () => {
                 if (a.userName > b.userName) {
                     return 1;
                 }
-
                 if (a.userName < b.userName) {
                     return -1;
                 }
 
                 return 0;
             }));
-
             setRecipes(classes[i].recipes.sort((a, b) => a.id - b.id));
         }
     };
 
+    const removeStudentFromCourse = useCallback(async (username: string) => {
+
+        const { data: {
+            status,
+            message,
+            course: responseClasses
+        } } = await request<APIClassResponse>(
+            "/removeStudentFromCourse",
+            {
+                method: "POST",
+                data: {
+                    username,
+                    course: selectedClass
+                }
+            }
+        );
+
+        if (status === "error") {
+            throw new Error(message);
+        } else {
+            setSelectedClass(responseClasses);
+            update();
+        }
+    }, [request, name]);
+
+    const removeClassFromCourse = useCallback(async (courseID: number) => {
+
+        const { data: {
+            status,
+            message,
+        } } = await request(
+            "/removeCourse",
+            {
+                method: "POST",
+                data: {
+                    id: courseID
+                }
+            }
+        );
+
+        if (status === "error") {
+            throw new Error(message);
+        } else {
+            setSelectedClass(null);
+            setStudents(null);
+            setRecipes(null);
+            update();
+        }
+    }, [request, name]);
+
+    const removeRecipeFromCourse = useCallback(async (id: string) => {
+        const { data: {
+            status,
+            message,
+        } } = await request(
+            "/removeRecipeFromCourse",
+            {
+                method: "POST",
+                data: {
+                    recipe: {id},
+                    course: {id: selectedClass ? selectedClass.id : ""}
+                }
+            }
+        );
+
+        if (status === "error") {
+            throw new Error(message);
+        } else {
+            update();
+        }
+    }, [request, name]);
+
     return (
         <div>
             <NavBar
+                click={ setC }
                 userName={ name || "User" }
+                role={ role }
             />
             <Responsive>
                 <div
@@ -275,23 +362,22 @@ const Class: React.FC = () => {
                 <div
                     className={ styles["card-container"] }
                 >
-                    { classes && classes.map((each, idx) => (
+                    { classes && classes.map((each, i) => (
                         <ClassCard
                             key={ each.id }
-                            index={ idx }
+                            index={ i }
+                            classid={ each.id }
                             name={ each.courseName }
                             click={ selectClass }
-                            color={ selectedClass
-                                ? selectedClass.id === each.id ? "lightblue" : "white"
-                                : "white"
-                            }
+                            remove={ removeClassFromCourse }
+                            color={ selectedClass ? selectedClass.id === each.id ? "lightblue" : "white" : "white" }
                         />
                     )) }
-                    <ClassCard add={ () => setCreateClass(true)} />
+
+                    { <ClassCard add={ () => setCreateClass(true) } /> }
                 </div>
 
             </Responsive>
-            <br />
             <Responsive>
                 <div
                     className={ styles.title }
@@ -307,16 +393,16 @@ const Class: React.FC = () => {
                         </div>
                     ) }
                     { students && students.map((each) => (
-                        <ClassCard
+                        <StudentCard
                             key={ each.userName }
                             name={ each.userName }
+                            remove={ removeStudentFromCourse }
                         />
                     )) }
-                    { selectedClass && <ClassCard add={ () => setAddStudents(true) } /> }
-                </div>
 
+                    { selectedClass && <StudentCard add={ () => setAddStudents(true) } /> }
+                </div>
             </Responsive>
-            <br />
             <Responsive>
                 <div
                     className={ styles.title }
@@ -324,7 +410,7 @@ const Class: React.FC = () => {
                     Recipes In the Course
                 </div>
                 <div
-                    className={ styles["card-container"] }
+                    className={ styles["card-container2"] }
                 >
                     { !recipes && (
                         <div>
@@ -337,14 +423,17 @@ const Class: React.FC = () => {
                             id={ `${each.id}` }
                             name={ each.recipeName }
                             description={ each.description }
+                            remove={ removeRecipeFromCourse }
+                            role={ role }
                         />
                     )) }
-                    { selectedClass && <ClassCard add={ () => setaddRecipes(true)} />}
+                    { selectedClass && <ClassCard add={ () => setaddRecipes(true) } /> }
                 </div>
             </Responsive>
             { addClass() }
             { addStudentToCourse() }
             { addRecipesToCourse() }
+            { createRecipe() }
         </div>
     );
 };

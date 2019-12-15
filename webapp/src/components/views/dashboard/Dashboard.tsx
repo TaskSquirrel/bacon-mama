@@ -13,109 +13,109 @@ import CreateRecipeModal from "../home/CreateRecipeModal";
 import styles from "./Dashboard.module.scss";
 
 const Dashboard: React.FC = () => {
-    const { name } = useUser();
+    const { name, role } = useUser();
     const [recipes, setRecipes] = useState<APIRecipeList[] | null>(null);
     const [create, setCreate] = useState<boolean>(false);
-
     const request = useAPI();
 
-    const getRecipes = useCallback(async () => {
-        const { data: {
-            status,
-            message,
-            recipes: responseRecipes
-        } } = await request<APIManyRecipeResponse>(
-            "/getRecipes",
-            {
+    const isStudent = role === "student";
+
+    const update = useCallback(async () => {
+        try {
+            const {
+                data: { status, message, recipes: responseRecipes }
+            } = await request<APIManyRecipeResponse>("/getRecipes", {
                 method: "POST",
                 data: {
                     username: name
                 }
+            });
+
+            if (status === "OK") {
+                setRecipes(
+                    responseRecipes.sort((a, b) => {
+                        return a.id - b.id;
+                    })
+                );
+            } else {
+                throw new Error(message);
             }
-        );
-
-        if (status === "error") {
-            throw new Error(message);
-        } else {
-            return responseRecipes;
-        }
-    }, [request, name]);
-
-    const update = async () => {
-        try {
-            const responseRecipes = await getRecipes();
-            setRecipes(responseRecipes.sort((a, b) => {
-                return a.id - b.id;
-            }));
         } catch (e) {
             // Error
         }
-    };
+    }, [name, request]);
 
-    useEffect(() => {
-        const updateRecipes = async () => {
-            try {
-                if (!recipes) {
-                    const responseRecipes = await getRecipes();
-
-                    setRecipes(responseRecipes.sort((a, b) => {
-                        return a.id - b.id;
-                    }));
-                }
-            } catch (e) {
-                // Error
-            }
-        };
-
-        updateRecipes();
-    }, [getRecipes, recipes]);
-
-    const createRecipe = () => {
+    const renderCreateRecipe = () => {
         if (!create) {
             return;
         }
 
         return (
-            <CreateRecipeModal
-                control={ setCreate }
-                update={ update }
-            />
+            <CreateRecipeModal control={ setCreate } update={ update } />
         );
     };
 
     const setC = () => setCreate(true);
 
+    const removeRecipe = useCallback(
+        async (id: string) => {
+            const {
+                data: { status, message }
+            } = await request("/deleteRecipe", {
+                method: "POST",
+                data: {
+                    recipe: { id: parseInt(id) }
+                }
+            });
+
+            if (status === "error") {
+                throw new Error(message);
+            } else {
+                update();
+            }
+        },
+        [request, update]
+    );
+
+    useEffect(() => {
+        if (recipes === null) {
+            update();
+        }
+    }, [recipes, update]);
+
     return (
         <div>
-            <NavBar
-                click={ setC }
-                userName={ name || "User" }
-            />
+            <NavBar click={ setC } userName={ name || "User" } role={ role } />
             <Responsive>
                 <div
                     className={ styles.title }
                 >
-                    Your Recipes
+                    { isStudent
+                        ? "Assigned Recipes"
+                        : "Your Recipes" }
                 </div>
-                <div
-                    className={ styles["card-container"] }
-                >
-                    { recipes && recipes.length === 0 && (
+                { recipes && recipes.length > 0
+                    ? (
+                        <div className={ styles["card-container"] }>
+                            { recipes.map((each) => (
+                                <Card
+                                    key={ each.id }
+                                    id={ `${each.id}` }
+                                    name={ each.recipeName }
+                                    description={ each.description }
+                                    role={ role }
+                                    remove={ removeRecipe }
+                                />
+                            )) }
+                        </div>
+                    )
+                    : (
                         <div>
-                            No recipes found!
+                            No recipes to show!
                         </div>
                     ) }
-                    { recipes && recipes.map((each) => (
-                        <Card
-                            key={ each.id }
-                            id={ `${each.id}` }
-                            name={ each.recipeName }
-                            description={ each.description }
-                        />
-                    )) }
-                </div>
             </Responsive>
-            { createRecipe() }
+            { renderCreateRecipe() }
         </div>
     );
 };

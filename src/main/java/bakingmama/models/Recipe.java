@@ -37,6 +37,15 @@ public class Recipe {
     return map;
   }
 
+  public Map<String, Object> toMapOverview(boolean status) {
+    Map<String, Object> map = new HashMap<>();
+    map.put("id", id);
+    map.put("recipeName", recipeName);
+    map.put("description", description);
+    map.put("status", status);
+    return map;
+  }
+
   public Map<String, Object> toMap() {
     Map<String, Object> map = this.toMapOverview();
 

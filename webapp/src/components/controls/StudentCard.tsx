@@ -7,24 +7,16 @@ import AuraButton from "./AuraButton";
 export interface CardProps extends React.HTMLProps<HTMLDivElement> {
     name?: string;
     description?: string;
-    index?: number;
     add?: () => void;
-    click?: (i: number) => void;
-    color?: string;
-    remove?: (i: number) => void;
-    classid?: number ;
+    remove?: (userName: string) => void;
 }
 
-const ClassCard: React.FC<CardProps> = ({
+const StudentCard: React.FC<CardProps> = ({
     className,
     name,
     description,
-    index,
-    click,
     add,
-    remove,
-    color,
-    classid
+    remove
 }) => {
 
     const [hovering, setHovering] = useState<boolean>(false);
@@ -40,7 +32,7 @@ const ClassCard: React.FC<CardProps> = ({
                     styles.button,
                     hovering && styles.hovering
                 ) }
-                onClick={() => {if(remove && classid) remove(classid)}}
+                onClick={() => {if(name && remove) remove(name)}}
                 
             >
                 <i
@@ -58,8 +50,7 @@ const ClassCard: React.FC<CardProps> = ({
             ) }
             onMouseOver={createHoveringSetter(true)}
             onMouseOut={createHoveringSetter(false)}
-            style={ { backgroundColor: color } }
-            onClick={ name ? () => { if (click && index != null) click(index) } : add }
+            onClick={ name ? () => { } : add }
         >
             { name ? (
                 <div>
@@ -80,4 +71,4 @@ const ClassCard: React.FC<CardProps> = ({
     );
 };
 
-export default ClassCard;
+export default StudentCard;

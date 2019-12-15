@@ -7,6 +7,7 @@ import IconButton from "../../controls/IconButton";
 import ConfirmationModal from "./modals/ConfirmationModal";
 
 import styles from "./Steps.module.scss";
+import useUser from "../../hooks/useUser";
 
 interface DeleteStepPromptState {
     show: boolean;
@@ -25,10 +26,13 @@ const Steps: React.FC = () => {
         }
     } = useContext(ContentCreatorContext);
     const { push } = useHistory();
+    const { role } = useUser();
     const { sequence: sequenceParam } = useParams();
     const [showDeletePrompt, setShowDeletePrompt] = useState<
         DeleteStepPromptState
     >({ show: false, step: null });
+
+    const isStudent = role === "student";
 
     const openEditStepModal = () => setEditStepModal(true);
 
@@ -74,6 +78,10 @@ const Steps: React.FC = () => {
     };
 
     const renderAddStepAction = () => {
+        if (isStudent) {
+            return;
+        }
+
         return (
             <div
                 className={ styles.action }
@@ -91,6 +99,10 @@ const Steps: React.FC = () => {
     };
 
     const renderActions = (stepID: string) => {
+        if (isStudent) {
+            return;
+        }
+
         return (
             <div
                 className={ styles.actions }
@@ -191,7 +203,7 @@ const Steps: React.FC = () => {
                                 </div>
                             ) }
                         </div>
-                        { !isActive && incomplete && (
+                        { !isActive && incomplete && !isStudent && (
                             <div
                                 className={ styles.caution }
                             >
