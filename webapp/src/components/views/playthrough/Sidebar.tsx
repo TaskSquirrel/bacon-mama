@@ -1,10 +1,12 @@
 import React from "react";
+import { Link } from "react-router-dom";
 import classNames from "classnames";
 
 import { Dependency } from "../../../models/recipe";
 
 import Stack from "../../shared/Stack";
 import ItemCard from "./ItemCard";
+import ButtonBase from "../../controls/ButtonBase";
 import usePlaythrough from "./usePlaythrough";
 
 import styles from "./Sidebar.module.scss";
@@ -116,7 +118,10 @@ const Sidebar: React.FC = () => {
 
         return (
             <div
-                className={ styles.step }
+                className={ classNames(
+                    styles.step,
+                    styles.score
+                ) }
             >
                 { errorMarks > 0 && (
                     <Stack
@@ -178,7 +183,6 @@ const Sidebar: React.FC = () => {
                                 <ItemCard
                                     title={ result.item.name }
                                     amount={ `${result.amount} ${result.unit}` }
-                                    progress={ 0.5 }
                                 />
                             )
                             : (
@@ -220,6 +224,17 @@ const Sidebar: React.FC = () => {
             </div>
             { renderStepInfo() }
             { renderContent() }
+            <div>
+                <Link
+                    to="/"
+                >
+                    <ButtonBase
+                        className={ styles.exit }
+                    >
+                        Exit
+                    </ButtonBase>
+                </Link>
+            </div>
         </div>
     );
 };

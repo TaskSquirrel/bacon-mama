@@ -47,7 +47,7 @@ const PlaythroughView: React.FC = () => {
 
             saveHistory();
         }
-    }, [isLastStep, stepDone]);
+    }, [isLastStep, stepDone, recipe, request]);
 
     if (error) {
         return (

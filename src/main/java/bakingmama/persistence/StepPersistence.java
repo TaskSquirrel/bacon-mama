@@ -87,12 +87,12 @@ public class StepPersistence {
 
       // Shifted the step up: move things in between it down
       if (newSequence > oldSequence && s.getSequence() > oldSequence && s.getSequence() <= newSequence) {
-        step.setSequence(step.getSequence() - 1);
+        s.setSequence(s.getSequence() - 1);
       // Shifted the step down
       } else if (newSequence < oldSequence && s.getSequence() < oldSequence && s.getSequence() >= newSequence) {
-        step.setSequence(step.getSequence() + 1);
+        s.setSequence(s.getSequence() + 1);
       }
-      stepRepository.save(step);
+      stepRepository.save(s);
     }
 
     return true;
@@ -110,6 +110,10 @@ public class StepPersistence {
     // Edit step and save into DB
     Step step = stepJson.toModel();
     Integer oldSequence = step.getSequence();
+    // Block this shit
+    if (stepJson.getSequence() < 0 || stepJson.getSequence() >= step.getRecipe().getSteps().size()) {
+      return false;
+    }
     step.edit(stepJson.getVerb(), stepJson.getSequence(), stepJson.getDescription(), addResultIngredient(ingredientJson, step), stepJson.getTitle());
     stepRepository.save(step);
 

@@ -21,6 +21,7 @@ const Steps: React.FC = () => {
         metadata: { id: recipeID },
         actions: {
             addStep,
+            replaceStep,
             deleteStep,
             setEditStepModal,
         }
@@ -43,6 +44,20 @@ const Steps: React.FC = () => {
             result: null,
             verb: "mix",
             sequence: steps.length
+        });
+    };
+
+    const createMoveStep = (id: string, sequence: number) => () => {
+        const step = steps
+            .find(({ id: stepID }) => stepID === id);
+
+        if (!step) {
+            return;
+        }
+
+        replaceStep({
+            ...step,
+            sequence
         });
     };
 
@@ -98,7 +113,7 @@ const Steps: React.FC = () => {
         );
     };
 
-    const renderActions = (stepID: string) => {
+    const renderActions = (stepID: string, sequence: number) => {
         if (isStudent) {
             return;
         }
@@ -117,12 +132,15 @@ const Steps: React.FC = () => {
                 </IconButton>
                 <IconButton
                     className={ styles.up }
+                    onClick={ createMoveStep(stepID, sequence - 1) }
                 >
                     <i
                         className="fas fa-arrow-up"
                     />
                 </IconButton>
-                <IconButton>
+                <IconButton
+                    onClick={ createMoveStep(stepID, sequence + 1) }
+                >
                     <i
                         className="fas fa-arrow-down"
                     />
@@ -213,7 +231,7 @@ const Steps: React.FC = () => {
                             </div>
                         ) }
                     </div>
-                    { isActive && renderActions(id) }
+                    { isActive && renderActions(id, sequence) }
                 </li>
             );
         });
