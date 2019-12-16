@@ -110,6 +110,10 @@ public class StepPersistence {
     // Edit step and save into DB
     Step step = stepJson.toModel();
     Integer oldSequence = step.getSequence();
+    // Block this shit
+    if (stepJson.getSequence() < 0 || stepJson.getSequence() >= step.getRecipe().getSteps().size()) {
+      return false;
+    }
     step.edit(stepJson.getVerb(), stepJson.getSequence(), stepJson.getDescription(), addResultIngredient(ingredientJson, step), stepJson.getTitle());
     stepRepository.save(step);
 
