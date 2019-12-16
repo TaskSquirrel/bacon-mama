@@ -87,12 +87,12 @@ public class StepPersistence {
 
       // Shifted the step up: move things in between it down
       if (newSequence > oldSequence && s.getSequence() > oldSequence && s.getSequence() <= newSequence) {
-        step.setSequence(step.getSequence() - 1);
+        s.setSequence(s.getSequence() - 1);
       // Shifted the step down
       } else if (newSequence < oldSequence && s.getSequence() < oldSequence && s.getSequence() >= newSequence) {
-        step.setSequence(step.getSequence() + 1);
+        s.setSequence(s.getSequence() + 1);
       }
-      stepRepository.save(step);
+      stepRepository.save(s);
     }
 
     return true;
