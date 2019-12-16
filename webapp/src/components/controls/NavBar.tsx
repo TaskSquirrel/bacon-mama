@@ -1,5 +1,5 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 import classNames from "classnames";
 
 import Responsive from "../shared/Responsive";
@@ -21,44 +21,60 @@ const NavBar: React.FC<NavBarProps> = ({
     click,
     role
 }) => {
+    const { push } = useHistory();
+
+    const goHome = () => push("/");
+
     return (
-        <Responsive
-            wider
-        >
+        <Responsive>
             <div
-                className={classNames(
+                className={ classNames(
                     styles.navbar,
                     className
-                )}
+                ) }
             >
                 <div
-                    className={styles.links}
+                    className={ styles.image }
+                    onClick={ goHome }
                 >
-                    <Link
-                        to="/dashboard"
-                    >
-                        Home
-                    </Link>
-                    {role && role === "professor" && (
-                        <Link
-                            to="/class"
-                        >
-                            Class
-                            </Link>
-                    )}
-                    {role && role === "professor" && (
-                        <ButtonBase
-                            onClick={click}
-                            className={styles.button}
-                        >
-                            Create a Recipe
-                        </ButtonBase>
-                    )}
-
+                    <img
+                        alt="Baking Mama"
+                        src="/assets/mama.png"
+                        className={ styles.logo }
+                    />
                 </div>
-                <UserCircle
-                    userName={userName}
-                />
+                <div
+                    className={ styles.right }
+                >
+                    <div
+                        className={ styles.links }
+                    >
+                        <Link
+                            to="/dashboard"
+                        >
+                            Home
+                        </Link>
+                        { role && role === "professor" && (
+                            <Link
+                                to="/class"
+                            >
+                                Class
+                            </Link>
+                        ) }
+                        { role && role === "professor" && (
+                            <ButtonBase
+                                onClick={ click }
+                                className={ styles.button }
+                            >
+                                Create a Recipe
+                            </ButtonBase>
+                        ) }
+
+                    </div>
+                    <UserCircle
+                        userName={ userName }
+                    />
+                </div>
             </div>
         </Responsive>
     );

@@ -4,17 +4,21 @@
     font-size: 2rem;
     font-weight: bold;
 
-    margin-bottom: 2rem;
+    margin-bottom: 1rem;
 }
 
-.card-container {
-    display: grid;
-    grid-template-rows: auto;
-    grid-template-columns: repeat(4, 1fr);
+.section:not(:last-child) {
+    margin-bottom: 3rem;
 }
 
+.card-container,
 .card-container2 {
     display: flex;
     flex-wrap: wrap;
+
+    margin: -0.5rem;
 }
 
+.selected {
+    background-color: rgba(0, 0, 0, 0.1);
+}

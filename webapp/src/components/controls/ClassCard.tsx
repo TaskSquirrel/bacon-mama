@@ -26,7 +26,6 @@ const ClassCard: React.FC<CardProps> = ({
     color,
     classid
 }) => {
-
     const [hovering, setHovering] = useState<boolean>(false);
 
     const createHoveringSetter = (state: boolean) => () => {
@@ -41,7 +40,7 @@ const ClassCard: React.FC<CardProps> = ({
                     hovering && styles.hovering
                 ) }
                 onClick={() => {if(remove && classid) remove(classid)}}
-                
+
             >
                 <i
                     className="fas fa-times"
@@ -73,9 +72,16 @@ const ClassCard: React.FC<CardProps> = ({
                     >
                         { description }
                     </div>
-                    {renderButton()}
+                    { renderButton() }
                 </div>
-            ) : "+" }
+            )
+            : (
+                <div
+                    className={ styles.name }
+                >
+                    +
+                </div>
+            ) }
         </div>
     );
 };

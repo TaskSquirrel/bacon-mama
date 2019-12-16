@@ -129,15 +129,21 @@ const ItemPicker: React.FC = () => {
 
         const {
             id: dependencyID,
-            item: { name },
+            item: { id: itemID, name },
             amount,
-            unit
+            unit,
         } = result;
+
+        const item = items
+            .find(({ id }) => itemID === id);
 
         return (
             <ItemCard
                 showButton
                 name={ name }
+                image={ item && item.image
+                    ? getImageURL(item.image)
+                    : undefined }
                 quantity={ { amount, unit } }
                 onCloseClick={ createOnItemCloseClick(
                     "result", dependencyID

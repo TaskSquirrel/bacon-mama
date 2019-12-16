@@ -9,13 +9,22 @@ import Responsive from "../../shared/Responsive";
 import NavBar from "../../controls/NavBar";
 import Card from "./Card";
 import CreateRecipeModal from "../home/CreateRecipeModal";
+import ConfirmationModal from "../creator/modals/ConfirmationModal";
 
 import styles from "./Dashboard.module.scss";
+
+export interface ConfirmationModalState {
+    show: boolean;
+    recipeID: string | null;
+}
 
 const Dashboard: React.FC = () => {
     const { name, role } = useUser();
     const [recipes, setRecipes] = useState<APIRecipeList[] | null>(null);
     const [create, setCreate] = useState<boolean>(false);
+    const [confirmationState, setConfirmationState] = useState<
+        ConfirmationModalState
+    >({ show: false, recipeID: null });
     const request = useAPI();
 
     const isStudent = role === "student";
@@ -45,18 +54,6 @@ const Dashboard: React.FC = () => {
         }
     }, [name, request]);
 
-    const renderCreateRecipe = () => {
-        if (!create) {
-            return;
-        }
-
-        return (
-            <CreateRecipeModal control={ setCreate } update={ update } />
-        );
-    };
-
-    const setC = () => setCreate(true);
-
     const removeRecipe = useCallback(
         async (id: string) => {
             const {
@@ -76,6 +73,47 @@ const Dashboard: React.FC = () => {
         },
         [request, update]
     );
+
+    const confirmationAction = (action: boolean) => {
+        const { recipeID } = confirmationState;
+
+        if (action && recipeID) {
+            removeRecipe(recipeID);
+        }
+
+        setConfirmationState({ show: false, recipeID: null });
+    };
+
+    const renderCreateRecipe = () => {
+        if (!create) {
+            return;
+        }
+
+        return (
+            <CreateRecipeModal control={ setCreate } update={ update } />
+        );
+    };
+
+    const renderConfirmationModal = () => {
+        const { show } = confirmationState;
+
+        if (!show) {
+            return null;
+        }
+
+        return (
+            <ConfirmationModal
+                show
+                title="Delete recipe?"
+                prompt="Really delete this recipe?"
+                cancelText="No"
+                actionText="Yes"
+                onAction={ confirmationAction }
+            />
+        );
+    };
+
+    const setC = () => setCreate(true);
 
     useEffect(() => {
         if (recipes === null) {
@@ -100,6 +138,13 @@ const Dashboard: React.FC = () => {
                             { recipes.map((each) => {
                                 let showStatus: "complete" | "incomplete" | null = null;
 
+                                const updateConfirmationState = () => {
+                                    setConfirmationState({
+                                        show: true,
+                                        recipeID: `${each.id}`
+                                    });
+                                };
+
                                 if (isStudent) {
                                     showStatus = each.status
                                         ? "complete"
@@ -113,8 +158,8 @@ const Dashboard: React.FC = () => {
                                         name={ each.recipeName }
                                         description={ each.description }
                                         role={ role }
-                                        remove={ removeRecipe }
                                         status={ showStatus || undefined }
+                                        onButtonClick={ updateConfirmationState }
                                     />
                                 );
                             }) }
@@ -127,6 +172,7 @@ const Dashboard: React.FC = () => {
                     ) }
             </Responsive>
             { renderCreateRecipe() }
+            { renderConfirmationModal() }
         </div>
     );
 };

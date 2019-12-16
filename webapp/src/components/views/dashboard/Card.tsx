@@ -5,7 +5,6 @@ import classNames from "classnames";
 import Stack from "../../shared/Stack";
 import ButtonBase from "../../controls/ButtonBase";
 import AuraButton from "../../controls/AuraButton";
-import ConfirmationModal from "../creator/modals/ConfirmationModal";
 
 import styles from "./Card.module.scss";
 
@@ -15,7 +14,7 @@ export interface CardProps extends React.HTMLProps<HTMLDivElement> {
     id: string;
     role?: "student" | "professor";
     status?: "complete" | "incomplete";
-    remove?: (i: string) => void;
+    onButtonClick?: () => void;
 }
 
 const Card: React.FC<CardProps> = ({
@@ -25,14 +24,19 @@ const Card: React.FC<CardProps> = ({
     id,
     role,
     status,
-    remove,
+    onButtonClick,
 }) => {
     const [hovering, setHovering] = useState<boolean>(false);
-    const [showDeletePrompt, setShowDeletePrompt] = useState<boolean>(false);
 
     const isStudent = role === "student";
 
+    const click = () => onButtonClick && onButtonClick();
+
     const createHoveringSetter = (state: boolean) => () => {
+        if (isStudent) {
+            return;
+        }
+
         setHovering(state);
     };
 
@@ -59,38 +63,14 @@ const Card: React.FC<CardProps> = ({
         );
     };
 
-    const renderDeleteStepConfirmation = () => {
-        return (
-            <ConfirmationModal
-                show={ showDeletePrompt }
-                title="Delete recipe?"
-                prompt="Are you sure you want to delete this recipe?"
-                cancelText="No"
-                actionText="Yes"
-                onAction={ () => {
-                    if (remove && id) { remove(id); }
-                    createHoveringSetter(false);
-                    setShowDeletePrompt(false);
-                } }
-            />
-        );
-    };
-
     const renderButton = () => {
-        if (showDeletePrompt) {
-            return;
-        }
-
         return (
             <AuraButton
                 className={ classNames(
                     styles.button,
                     hovering && styles.hovering
                 ) }
-                onClick={ () => {
-                    setShowDeletePrompt(true);
-                    createHoveringSetter(false);
-                } }
+                onClick={ click }
             >
                 <i className="fas fa-times" />
             </AuraButton>
@@ -100,16 +80,8 @@ const Card: React.FC<CardProps> = ({
     return (
         <Stack
             className={ classNames(styles.card, className) }
-            onMouseOver={
-                role === "professor" && !showDeletePrompt
-                    ? createHoveringSetter(true)
-                    : () => {}
-            }
-            onMouseOut={
-                role === "professor" && !showDeletePrompt
-                    ? createHoveringSetter(false)
-                    : () => {}
-            }
+            onMouseOver={ createHoveringSetter(true) }
+            onMouseOut={ createHoveringSetter(false) }
         >
             <div
                 className={ styles.name }
@@ -142,8 +114,7 @@ const Card: React.FC<CardProps> = ({
                     </Link>
                 </div>
             </div>
-            { renderButton() }
-            { renderDeleteStepConfirmation() }
+            { !isStudent && renderButton() }
         </Stack>
     );
 };

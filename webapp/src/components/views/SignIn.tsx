@@ -93,11 +93,6 @@ const SignIn: React.FC = () => {
                         className={ styles.actions }
                     >
                         <Link
-                            to="/forgot"
-                        >
-                            Forgot password?
-                        </Link>
-                        <Link
                             to="/sign-up"
                         >
                             Sign up

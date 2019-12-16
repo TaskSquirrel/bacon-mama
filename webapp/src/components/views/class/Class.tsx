@@ -22,6 +22,7 @@ import CreateClassModal from "./modals/CreateClassModal";
 import AddStudentModal from "./modals/AddStudentModal";
 
 import styles from "./Class.module.scss";
+import Stack from "../../shared/Stack";
 
 interface Options {
     key: number;
@@ -46,7 +47,6 @@ const Class: React.FC = () => {
     const request = useAPI();
 
     const getClasses = useCallback(async () => {
-
         const { data: {
             status,
             message,
@@ -119,7 +119,6 @@ const Class: React.FC = () => {
     }, []);
 
     const getRecipes = useCallback(async () => {
-
         const { data: {
             status,
             message,
@@ -275,7 +274,6 @@ const Class: React.FC = () => {
     };
 
     const removeStudentFromCourse = useCallback(async (username: string) => {
-
         const { data: {
             status,
             message,
@@ -300,7 +298,6 @@ const Class: React.FC = () => {
     }, [request, name]);
 
     const removeClassFromCourse = useCallback(async (courseID: number) => {
-
         const { data: {
             status,
             message,
@@ -354,81 +351,99 @@ const Class: React.FC = () => {
                 role={ role }
             />
             <Responsive>
-                <div
-                    className={ styles.title }
+                <Stack
+                    className={ styles.section }
                 >
-                    Your Courses
-                </div>
-                <div
-                    className={ styles["card-container"] }
-                >
-                    { classes && classes.map((each, i) => (
-                        <ClassCard
-                            key={ each.id }
-                            index={ i }
-                            classid={ each.id }
-                            name={ each.courseName }
-                            click={ selectClass }
-                            remove={ removeClassFromCourse }
-                            color={ selectedClass ? selectedClass.id === each.id ? "lightblue" : "white" : "white" }
-                        />
-                    )) }
-
-                    { <ClassCard add={ () => setCreateClass(true) } /> }
-                </div>
-
-            </Responsive>
-            <Responsive>
-                <div
-                    className={ styles.title }
-                >
-                    Students In the Course
-                </div>
-                <div
-                    className={ styles["card-container"] }
-                >
-                    { !students && (
-                        <div>
-                            No Courses Selected!
+                    <div
+                        className={ styles.title }
+                    >
+                        Your Courses
+                    </div>
+                    <div
+                        className={ styles["card-container"] }
+                    >
+                        { classes && classes.map((each, i) => (
+                            <ClassCard
+                                key={ each.id }
+                                index={ i }
+                                classid={ each.id }
+                                name={ each.courseName }
+                                click={ selectClass }
+                                remove={ removeClassFromCourse }
+                                className={ selectedClass && selectedClass.id === each.id
+                                    ? styles.selected
+                                    : "" }
+                            />
+                        )) }
+                        { <ClassCard add={ () => setCreateClass(true) } /> }
+                    </div>
+                </Stack>
+                { selectedClass && (
+                    <Stack
+                        className={ styles.section }
+                    >
+                        <div
+                            className={ styles.title }
+                        >
+                            { `Students in ${selectedClass.courseName}` }
                         </div>
-                    ) }
-                    { students && students.map((each) => (
-                        <StudentCard
-                            key={ each.userName }
-                            name={ each.userName }
-                            remove={ removeStudentFromCourse }
-                        />
-                    )) }
+                        <div
+                            className={ styles["card-container"] }
+                        >
+                            { !students && (
+                                <div>
+                                    No Courses Selected!
+                                </div>
+                            ) }
+                            { students && students.map((each) => (
+                                <StudentCard
+                                    key={ each.userName }
+                                    name={ each.userName }
+                                    remove={ removeStudentFromCourse }
+                                />
+                            )) }
 
-                    { selectedClass && <StudentCard add={ () => setAddStudents(true) } /> }
-                </div>
-            </Responsive>
-            <Responsive>
-                <div
-                    className={ styles.title }
-                >
-                    Recipes In the Course
-                </div>
-                <div
-                    className={ styles["card-container2"] }
-                >
-                    { !recipes && (
-                        <div>
-                            No Courses Selected!
+                            { selectedClass && <StudentCard add={ () => setAddStudents(true) } /> }
                         </div>
-                    ) }
-                    { recipes && recipes.map((each) => (
-                        <Card
-                            key={ each.id }
-                            id={ `${each.id}` }
-                            name={ each.recipeName }
-                            description={ each.description }
-                            remove={ removeRecipeFromCourse }
-                            role={ role }
-                        />
-                    )) }
-                    { selectedClass && <ClassCard add={ () => setaddRecipes(true) } /> }
-                </div>
+                    </Stack>
+                ) }
+                { recipes && (
+                    <Stack
+                        className={ styles.section }
+                    >
+                        <div
+                            className={ styles.title }
+                        >
+                            Assigned Recipes
+                        </div>
+                        <div
+                            className={ styles["card-container2"] }
+                        >
+                            { !recipes && (
+                                <div>
+                                    No Courses Selected!
+                                </div>
+                            ) }
+                            { recipes && recipes.map((each) => {
+                                const deleteRecipeAction = () => {
+                                    removeRecipeFromCourse(`${each.id}`);
+                                };
+
+                                return (
+                                    <Card
+                                        key={ each.id }
+                                        id={ `${each.id}` }
+                                        name={ each.recipeName }
+                                        description={ each.description }
+                                        role={ role }
+                                        onButtonClick={ deleteRecipeAction }
+                                    />
+                                );
+                            }) }
+                            { selectedClass && <ClassCard add={ () => setaddRecipes(true) } /> }
+                        </div>
+                    </Stack>
+                ) }
             </Responsive>
             { addClass() }
             { addStudentToCourse() }

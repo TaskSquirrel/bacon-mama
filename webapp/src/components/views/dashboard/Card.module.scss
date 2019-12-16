@@ -1,5 +1,5 @@
 .card {
-    overflow: hidden;
+    position: relative;
 
     flex-basis: calc(25% - 1rem);
     flex-grow: 0;
@@ -21,10 +21,6 @@
     transition: transform 150ms ease-in-out;
 
     box-sizing: border-box;
-
-    &:hover {
-        transform: scale(1.1);
-    }
 }
 
 .name,
@@ -85,11 +81,13 @@
     top: 0;
     right: 0;
 
-    transform: translate(0%, 0%) scale(0);
+    box-shadow: 0 0 5px 0 rgba(0, 0, 0, 0.1);
+
+    transform: translate(50%, -50%) scale(0);
 
     transition: transform 150ms ease-in-out;
 
     &.hovering {
-        transform: translate(0%, 0%) scale(1);
+        transform: translate(50%, -50%) scale(1);
     }
 }
