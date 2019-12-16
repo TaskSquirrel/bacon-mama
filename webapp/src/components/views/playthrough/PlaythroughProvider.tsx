@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, Prompt } from "react-router-dom";
 import { AxiosRequestConfig } from "axios";
 
 import { APIRecipeResponse } from "../../../models/API";
@@ -258,6 +258,10 @@ const PlaythroughProvider: React.FC = ({ children }) => {
         <PlaythroughContext.Provider
             value={ value }
         >
+            <Prompt
+                when={ !!currentStep }
+                message="Are you sure you want to leave? You'll lose your progress!"
+            />
             { children }
         </PlaythroughContext.Provider>
     );
