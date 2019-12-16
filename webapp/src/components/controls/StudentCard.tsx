@@ -1,8 +1,9 @@
 import React, { useState } from "react";
 import classNames from "classnames";
 
-import styles from "./ClassCard.module.scss";
 import AuraButton from "./AuraButton";
+
+import styles from "./ClassCard.module.scss";
 
 export interface CardProps extends React.HTMLProps<HTMLDivElement> {
     name?: string;
@@ -18,7 +19,6 @@ const StudentCard: React.FC<CardProps> = ({
     add,
     remove
 }) => {
-
     const [hovering, setHovering] = useState<boolean>(false);
 
     const createHoveringSetter = (state: boolean) => () => {
@@ -32,8 +32,7 @@ const StudentCard: React.FC<CardProps> = ({
                     styles.button,
                     hovering && styles.hovering
                 ) }
-                onClick={() => {if(name && remove) remove(name)}}
-                
+                onClick={ () => {if (name && remove) { remove(name) }} }
             >
                 <i
                     className="fas fa-times"
@@ -48,8 +47,8 @@ const StudentCard: React.FC<CardProps> = ({
                 styles.card,
                 className
             ) }
-            onMouseOver={createHoveringSetter(true)}
-            onMouseOut={createHoveringSetter(false)}
+            onMouseOver={ createHoveringSetter(true) }
+            onMouseOut={ createHoveringSetter(false) }
             onClick={ name ? () => { } : add }
         >
             { name ? (
@@ -64,9 +63,15 @@ const StudentCard: React.FC<CardProps> = ({
                     >
                         { description }
                     </div>
-                    {renderButton()}
+                    { renderButton() }
                 </div>
-            ) : "+" }
+            ) : (
+                <div
+                    className={ styles.name }
+                >
+                    +
+                </div>
+            ) }
         </div>
     );
 };

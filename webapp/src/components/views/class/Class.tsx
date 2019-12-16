@@ -402,7 +402,6 @@ const Class: React.FC = () => {
                                     remove={ removeStudentFromCourse }
                                 />
                             )) }
-
                             { selectedClass && <StudentCard add={ () => setAddStudents(true) } /> }
                         </div>
                     </Stack>

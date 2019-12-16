@@ -35,5 +35,7 @@
 }
 
 .right {
+    overflow-y: scroll;
+
     flex-grow: 1;
 }

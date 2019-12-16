@@ -130,7 +130,6 @@ const Card: React.FC<CardProps> = ({
                                 </ButtonBase>
                             </Link>
                         ) }
-
                         size="mini"
                         content="Play"
                     />

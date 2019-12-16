@@ -259,7 +259,7 @@ const PlaythroughProvider: React.FC = ({ children }) => {
             value={ value }
         >
             <Prompt
-                when={ !!currentStep }
+                when={ !!currentStep && !isLastStep }
                 message="Are you sure you want to leave? You'll lose your progress!"
             />
             { children }

@@ -106,10 +106,6 @@ const ItemPicker: React.FC = () => {
     };
 
     const renderResult = (currentStep: Step) => {
-        if (isStudent) {
-            return;
-        }
-
         const { result } = currentStep;
 
         if (!result) {

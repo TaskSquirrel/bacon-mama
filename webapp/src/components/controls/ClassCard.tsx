@@ -39,8 +39,7 @@ const ClassCard: React.FC<CardProps> = ({
                     styles.button,
                     hovering && styles.hovering
                 ) }
-                onClick={() => {if(remove && classid) remove(classid)}}
-
+                onClick={ () => {if (remove && classid) { remove(classid) }} }
             >
                 <i
                     className="fas fa-times"
@@ -55,10 +54,10 @@ const ClassCard: React.FC<CardProps> = ({
                 styles.card,
                 className
             ) }
-            onMouseOver={createHoveringSetter(true)}
-            onMouseOut={createHoveringSetter(false)}
+            onMouseOver={ createHoveringSetter(true) }
+            onMouseOut={ createHoveringSetter(false) }
             style={ { backgroundColor: color } }
-            onClick={ name ? () => { if (click && index != null) click(index) } : add }
+            onClick={ name ? () => { if (click && index != null) { click(index) } } : add }
         >
             { name ? (
                 <div>
