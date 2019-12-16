@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 
 import { Item } from "../../../models/recipe";
 
+import VerbSelector from "./VerbSelector";
 import ItemSelector from "./ItemSelector";
 import ButtonBase from "../../controls/ButtonBase";
 import usePlaythrough from "./usePlaythrough";
@@ -99,6 +100,9 @@ const Play: React.FC = () => {
         >
             { !currentStep && renderInstructions() }
             { currentStep && renderFeedback() }
+            { currentStep && currentStep.dependencies.length > 0 && (
+                <VerbSelector />
+            ) }
             { currentStep && (
                 <ItemSelector
                     items={ shownItems }

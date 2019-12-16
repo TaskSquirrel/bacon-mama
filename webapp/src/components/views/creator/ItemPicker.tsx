@@ -152,7 +152,7 @@ const ItemPicker: React.FC = () => {
         );
     };
 
-    if (isStudent) {
+    if (isStudent && !step) {
         return (
             <div
                 className={ styles.empty }
